@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  bot_db:
+    container_name: "liefer_bot_db"
+    restart: always
+    image: postgres:12.20-alpine
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+      - ./initiate_database.sql:/docker-entrypoint-initdb.d/initiate_database.sql
+    ports:
+      - 5432:5432
+
+volumes:
+  pgdata:
+    external: true
