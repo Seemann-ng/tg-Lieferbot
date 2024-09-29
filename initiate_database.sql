@@ -13,18 +13,22 @@ CREATE TABLE couriers (
 );
 CREATE TABLE customers (
     customer_id INT,
+    customer_username VARCHAR,
     customer_name VARCHAR,
     customer_address VARCHAR,
+    customer_latlon FLOAT(4) [],
     customer_phone_num VARCHAR
 );
 CREATE TABLE restaurants (
     restaurant_uuid uuid,
     restaurant_tg_ids INT [],
     restaurant_name VARCHAR,
+    restaurant_type VARCHAR,
     restaurant_is_open BOOLEAN
 );
 CREATE TABLE dishes (
     restaurant_uuid uuid,
+    restaurant_employees VARCHAR [],
     category VARCHAR,
     dish_name VARCHAR,
     dish_price FLOAT(2),
@@ -45,5 +49,10 @@ CREATE TABLE orders (
     service_fee FLOAT(2),
     total FLOAT(2),
     order_status VARCHAR
+);
+CREATE TABLE cart (
+    customer_id INT,
+    dishes VARCHAR [],
+    price FLOAT(2)
 );
 CREATE EXTENSION "pgcrypto";

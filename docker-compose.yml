@@ -7,7 +7,7 @@ services:
     image: postgres:12.20-alpine
     environment:
       POSTGRES_DB: postgres
-      POSTGRES_USER: username
+      POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     volumes:
       - ./pgdata:/var/lib/postgresql/data
