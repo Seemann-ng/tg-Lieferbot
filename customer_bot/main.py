@@ -17,13 +17,16 @@ bot = tb.TeleBot(token=BOT_TOKEN)
 
 # Auxiliary functions.
 def show_main_menu(message: types.Message) -> None:
-    """Show Customer main menu.
+    """Show Customer main menu if Customer is in the DB, otherwise call start().
 
     Args:
         message: Main menu request from Customer.
 
     """
-    bot.send_message(message.from_user.id, customermessages.MAIN_MENU_MSG, reply_markup=customermenus.main_menu)
+    if Interface.user_in_db(message):
+        bot.send_message(message.from_user.id, customermessages.MAIN_MENU_MSG, reply_markup=customermenus.main_menu)
+    else:
+        start(message)
 
 
 def phone_from_msg(message: types.Message) -> str | None:
@@ -131,7 +134,7 @@ def contact(message: types.Message) -> None:
         message: Customer's Telegram contact info.
 
     """
-    phone_number = "+" + message.contact.phone_number
+    phone_number = message.contact.phone_number
     Interface.update_phone_number(message.from_user.id, phone_number)
     bot.send_message(message.from_user.id, customermessages.PHONE_RECEIVED_MSG + phone_number)
     bot.send_message(
@@ -223,7 +226,9 @@ def my_orders(message: types.Message) -> None:
     Returns:
 
     """
-    pass
+    orders = Interface.show_my_orders(message)
+    while orders:
+        bot.send_message(message.from_user.id, customermessages.my_orders_msg(orders))
 
 
 @bot.message_handler(regexp=customermenus.NEW_ORDER_BTN)
@@ -239,9 +244,33 @@ def new_order(message: types.Message) -> None:
     pass
 
 
+# Options menu block.
+@bot.message_handler(regexp=customermenus.MAIN_MENU_BTN)
+def main_menu(message: types.Message) -> None:
+    """Get back to main menu.
+
+    Args:
+        message: Main menu request from Customer.
+
+    """
+    show_main_menu(message)
+
+
+# TODO Contact support.
+@bot.message_handler(regexp=customermenus.CONTACT_SUPPORT_BTN)
+def contact_support(message: types.Message) -> None:
+    """
+
+    Args:
+        message:
+
+    """
+    pass
+
+
 @bot.message_handler(regexp=customermenus.RESET_CONTACT_INFO_BTN)
 def reset_contact_info(message: types.Message) -> None:
-    """Ask Customer for contact info confirmation.
+    """Ask Customer for contact info reset confirmation.
 
     Args:
         message: Request form Customer to reset contact info.
@@ -251,6 +280,21 @@ def reset_contact_info(message: types.Message) -> None:
         message.from_user.id,
         customermessages.RESET_CONTACT_INFO_MSG,
         reply_markup=customermenus.reset_info_menu
+    )
+
+
+@bot.message_handler(regexp=customermenus.DELETE_PROFILE_BTN)
+def delete_profile(message: types.Message) -> None:
+    """Ask Customer for profile deletion confirmation.
+
+    Args:
+        message: Deletion request from Customer.
+
+    """
+    bot.send_message(
+        message.from_user.id,
+        customermessages.DELETE_PROFILE_MSG,
+        reply_markup=customermenus.confirm_delete_profile_menu
     )
 
 
@@ -266,6 +310,19 @@ def confirm_reset(message: types.Message) -> None:
     Interface.delete_customer(message)
     bot.send_message(message.from_user.id, customermessages.CONTACT_INFO_DELETED_MSG)
     agreement_accepted(message)
+
+
+#Profile deletion block.
+@bot.message_handler(regexp=customermenus.CONFIRM_DELETE_PROFILE_BTN)
+def confirm_delete(message: types.Message) -> None:
+    """Delete Customer's profile from DB.
+
+    Args:
+        message: Confirmation from Customer.
+
+    """
+    Interface.delete_customer(message)
+    bot.send_message(message.from_user.id, customermessages.PROFILE_DELETED_MSG)
 
 
 def main():

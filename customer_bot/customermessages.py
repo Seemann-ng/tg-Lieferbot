@@ -17,3 +17,28 @@ REG_LOCATION_RECEIVED_MSG = "Your current location is:"
 OPTIONS_MSG = "Here You can contact Support, reset or delete Your contact info."
 RESET_CONTACT_INFO_MSG = "Are You sure You want to reset Your contact info?"
 CONTACT_INFO_DELETED_MSG = "Your contact info were deleted."
+DELETE_PROFILE_MSG = "Are You sure You want to delete Your profile?"
+PROFILE_DELETED_MSG = "Your profile has been deleted."
+
+
+def my_orders_msg(orders: list) -> str:
+    if not orders:
+        return "You have no orders yet."
+    order_id = orders[0][0][-6:]
+    order_from = orders[0][1]
+    courier_name = orders[0][2]
+    dishes = orders[0][3]
+    total = orders[0][4]
+    order_date = orders[0][5]
+    order_status = orders[0][6]
+    orders.pop(0)
+    msg = (f"Order Number: {order_id}\n"
+           f"from: {order_from}\n"
+           f"Courier: {courier_name}\n"
+           f"Dish(es): {dishes}\n"
+           f"Total: €{total}\n"
+           f"Date: {order_date}\n"
+           f"Status: {order_status}\n")
+    return msg
+
+

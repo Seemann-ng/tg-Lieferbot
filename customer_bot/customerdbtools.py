@@ -1,3 +1,5 @@
+from typing import List
+
 import psycopg2
 import telebot.types as types
 from environs import Env
@@ -14,15 +16,17 @@ DB_USER = env.str("DB_USER")
 DB_PASSWORD = env.str("DB_PASSWORD")
 
 
-conn = psycopg2.connect(
-    database=DB,
-    host=DB_HOST,
-    port=DB_PORT,
-    user=DB_USER,
-    password=DB_PASSWORD
-)
-
-cursor = conn.cursor()
+# TODO: make it a decorator.
+def cursor():
+    conn = psycopg2.connect(
+        database=DB,
+        host=DB_HOST,
+        port=DB_PORT,
+        user=DB_USER,
+        password=DB_PASSWORD
+    )
+    cur = conn.cursor()
+    return cur
 
 
 class DBInterface:
@@ -35,20 +39,20 @@ class DBInterface:
 
         Returns:
             Customer name from the DB if Customer is in the DB and has provided their name,
-            Telegram username if Customer is in the DB and has NOT provided their name,
-            None if Customer is not in the DB.
+            Telegram username if Customer is in the DB and has NOT provided their name.
 
         """
-        cursor.execute(
+        cur = cursor()
+        cur.execute(
             "SELECT customer_name, customer_username FROM customers WHERE customers.customer_id = %s",
             (message.from_user.id,)
         )
-        customer_names = cursor.fetchone()
+        customer_names = cur.fetchone()
+        cur.connection.close()
         if customer_names:
             if customer_names[0]:
                 return customer_names[0]
             return customer_names[1]
-        return None
 
     @classmethod
     def add_customer(cls, message: types.Message) -> None:
@@ -57,15 +61,15 @@ class DBInterface:
         Args:
             message:
 
-        Returns:
-
         """
+        cur = cursor()
         if not cls.user_in_db(message):
-            cursor.execute(
+            cur.execute(
                 "INSERT INTO customers (customer_id, customer_username) VALUES (%s, %s)",
                 (message.from_user.id, message.from_user.username)
             )
-            conn.commit()
+            cur.connection.commit()
+        cur.connection.close()
 
     @staticmethod
     def update_name(message: types.Message) -> None:
@@ -74,14 +78,14 @@ class DBInterface:
         Args:
             message:
 
-        Returns:
-
         """
-        cursor.execute(
+        cur = cursor()
+        cur.execute(
             "UPDATE customers SET customer_name = %s WHERE customers.customer_id = %s",
             (message.text, message.from_user.id)
         )
-        conn.commit()
+        cur.connection.commit()
+        cur.connection.close()
 
     @staticmethod
     def update_phone_number(customer_id: int, phone_number: str) -> None:
@@ -91,26 +95,65 @@ class DBInterface:
             customer_id:
             phone_number:
 
-        Returns:
-
         """
-        cursor.execute(
+        cur = cursor()
+        cur.execute(
             "UPDATE customers SET customer_phone_num = %s WHERE customers.customer_id = %s",
             (phone_number, customer_id)
         )
-        conn.commit()
+        cur.connection.commit()
+        cur.connection.close()
 
     @staticmethod
     def update_customer_location(lat: float, lon: float, message: types.Message) -> None:
-        cursor.execute(
-            "UPDATE customers SET customer_latlon = '{%s, %s}' WHERE customers.customer_id = %s",
+        """
+
+        Args:
+            lat:
+            lon:
+            message:
+
+        """
+        cur = cursor()
+        cur.execute(
+            "UPDATE customers SET customer_location = '{%s, %s}' WHERE customers.customer_id = %s",
             (lat, lon, message.from_user.id)
         )
-        conn.commit()
+        cur.connection.commit()
+        cur.connection.close()
 
     @staticmethod
     def delete_customer(message: types.Message) -> None:
-        cursor.execute(
+        """
+
+        Args:
+            message:
+
+        """
+        cur = cursor()
+        cur.execute(
             "DELETE FROM customers WHERE customers.customer_id = %s",
             (message.from_user.id,)
         )
+        cur.connection.commit()
+        cur.connection.close()
+
+    @staticmethod
+    def show_my_orders(message: types.Message) -> List | None:
+        """
+
+        Args:
+            message:
+
+        Returns:
+
+        """
+        cur = cursor()
+        cur.execute(
+            "SELECT order_uuid, restaurant_name, courier_name, dishes, total, order_date, order_status "
+            "FROM orders WHERE orders.customer_id = %s",
+            (message.from_user.id,)
+        )
+        orders = cur.fetchall()
+        cur.connection.close()
+        return orders

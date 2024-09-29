@@ -8,15 +8,14 @@ CREATE TABLE couriers (
     courier_legal_name VARCHAR,
     courier_type VARCHAR,
     courier_status VARCHAR,
-    courier_rating FLOAT(2),
+    courier_rating NUMERIC(3, 2),
     courier_phone_num VARCHAR
 );
 CREATE TABLE customers (
     customer_id INT,
     customer_username VARCHAR,
     customer_name VARCHAR,
-    customer_address VARCHAR,
-    customer_latlon FLOAT(4) [],
+    customer_location NUMERIC(9, 6) [],
     customer_phone_num VARCHAR
 );
 CREATE TABLE restaurants (
@@ -28,31 +27,32 @@ CREATE TABLE restaurants (
 );
 CREATE TABLE dishes (
     restaurant_uuid uuid,
-    restaurant_employees VARCHAR [],
+    dish_uuid uuid,
     category VARCHAR,
     dish_name VARCHAR,
-    dish_price FLOAT(2),
+    dish_price NUMERIC(6, 2),
     dish_is_available BOOLEAN
 );
 CREATE TABLE orders (
     order_uuid uuid,
-    restaurant_name VARCHAR,
     restaurant_uuid uuid,
-    courier_name VARCHAR,
+    restaurant_name VARCHAR,
     courier_id INT,
-    customer_name VARCHAR,
+    courier_name VARCHAR,
     customer_id INT,
-    delivery_address VARCHAR,
+    customer_name VARCHAR,
+    delivery_location NUMERIC(9, 6) [],
     dishes VARCHAR [],
-    dishes_price FLOAT(2),
-    courier_fee FLOAT(2),
-    service_fee FLOAT(2),
-    total FLOAT(2),
+    dishes_price NUMERIC(6, 2),
+    courier_fee NUMERIC(6, 2),
+    service_fee NUMERIC(6, 2),
+    total NUMERIC(6, 2),
+    order_date TIMESTAMP,
     order_status VARCHAR
 );
 CREATE TABLE cart (
     customer_id INT,
     dishes VARCHAR [],
-    price FLOAT(2)
+    price NUMERIC(6, 2)
 );
 CREATE EXTENSION "pgcrypto";
