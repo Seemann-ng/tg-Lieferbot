@@ -35,7 +35,7 @@ def logger_decorator(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         logger.info(
-            f"Function {func.__name__} called by with args {args} and kwargs {kwargs}."
+            f"Function {func.__name__} called with args {args} and kwargs {kwargs}."
         )
         return func(*args, **kwargs)
     return wrapper

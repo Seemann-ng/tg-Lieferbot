@@ -1,32 +1,15 @@
 import telebot.types as types
-# TODO export buttons to textes
-# Button textes.
-AGREEMENT_MENU_PLACEHOLDER = "📑 Agreement"
-SHOW_AGREEMENT_BTN = "🔍📑 Show Customer Agreement"
-ACCEPT_AGREEMENT_BTN = "📝 Accept Customer Agreement"
-REG_PHONE_MENU_PLACEHOLDER = "📱 Phone number input"
-REG_PHONE_MAN_BTN = "👨🏼‍💻 Input phone number manually"
-REG_PHONE_IMPORT_BTN = "⬆️ Import phone number from account"
-REG_LOCATION_BTN = "🌍 Send location"
-REG_LOCATION_PLACEHOLDER = "🌍 Location"
-MAIN_MENU_BTN = "🟰 Main Menu"
-NEW_ORDER_BTN = "⭕️ New Order"
-MY_ORDERS_BTN = "📑 My Orders"
-OPTIONS_BTN = "🟰 Options"
-CONTACT_SUPPORT_BTN = "📞 Contact support (in development)."
-RESET_CONTACT_INFO_BTN = "⚠️ Reset Contact Info"
-CONFIRM_RESET_BTN = "✅ YES, reset my contact info"
-DELETE_PROFILE_BTN = "⚠️ Delete profile"
-CONFIRM_DELETE_PROFILE_BTN = "✅ YES, delete my profile"
-CONFIRM_LOCATION_BTN = "✅ Yes!"
-WRONG_LOCATION_MSG = "❌ No."
-GO_BACK_BTN = "⬅️ Go back"
-CART_BTN = "🛒 My cart"
-CANCEL_ORDER_BTN = "🚫 CANCEL ORDER"
-ADD_DISH_BTN = "✅ Add to cart"
-PAY_BTN = "💳 Confirm order"
-ADD_MORE_BTN = "🛍 Continue shopping"
-DELETE_ITEM_BTN = "📤 Delete item"
+from environs import Env
+
+env = Env()
+env.read_env()
+
+LANG = env.str("LANG", default="en_US")
+
+if LANG == "en_US":
+    from langs.customer_bot_textes_en_US import *
+if LANG == "de_DE":
+    from langs.customer_bot_textes_de_DE import *
 
 # Agreement menu.
 show_agreement_button = types.KeyboardButton(text=SHOW_AGREEMENT_BTN)

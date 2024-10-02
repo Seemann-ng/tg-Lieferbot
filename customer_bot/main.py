@@ -2,8 +2,7 @@ import telebot as tb
 import telebot.types as types
 from environs import Env
 
-import customermenus  # TODO: make localization optionality.
-import customermessages
+import customermenus
 from loggertool import logger  # TODO add decorators
 from customerdbtools import DBInterface as Interface
 
@@ -23,8 +22,9 @@ def show_main_menu(message: types.Message) -> None:
         message: Main menu request from Customer.
 
     """
-    if Interface.user_in_db(message):
-        bot.send_message(message.from_user.id, customermessages.MAIN_MENU_MSG, reply_markup=customermenus.main_menu)
+    msg = Interface(message)
+    if msg.user_in_db():
+        bot.send_message(message.from_user.id, customermenus.MAIN_MENU_MSG, reply_markup=customermenus.main_menu)
     else:
         start(message)
 
@@ -43,11 +43,12 @@ def phone_from_msg(message: types.Message) -> str | None:
     for symbol in phone_number:
         if not symbol.isdigit():
             phone_number = phone_number.replace(symbol, "")
-    if len(phone_number) not in range(2, customermessages.MAX_PHONE_LENGTH_WO_PREFIX + 1):
+    if len(phone_number) not in range(2, customermenus.MAX_PHONE_LENGTH_WO_PREFIX + 1):
         return None
     else:
-        phone_number = f"{customermessages.PHONE_NUM_PREFIX}" + phone_number
-        Interface.update_phone_number(message.from_user.id, phone_number)
+        phone_number = f"{customermenus.PHONE_NUM_PREFIX}" + phone_number
+        msg = Interface(message)
+        msg.update_phone_number(phone_number)
         return phone_number
 
 
@@ -60,10 +61,11 @@ def callback_to_msg(call: types.CallbackQuery) -> types.Message:
 
 def clear_cart(call: types.CallbackQuery) -> None:
     """""" # TODO
-    bot.answer_callback_query(call.id, customermessages.DELETING_CART_ALERT, show_alert=True)
-    bot.delete_message(call.from_user.id, call.message.message_id)
-    Interface.delete_cart(call.from_user.id)
-    show_main_menu(callback_to_msg(call))
+    c_back = Interface(call)
+    bot.answer_callback_query(c_back.input_object.id, customermenus.DELETING_CART_ALERT, show_alert=True)
+    bot.delete_message(c_back.input_object.from_user.id, c_back.input_object.message.message_id)
+    c_back.delete_cart()
+    show_main_menu(callback_to_msg(c_back.input_object))
 
 
 # Sing in/sign up block.
@@ -76,16 +78,17 @@ def start(message: types.Message) -> None:
         message: /start command from Customer.
 
     """
-    Interface.delete_cart(message.from_user.id)
-    user = Interface.user_in_db(message)
+    msg = Interface(message)
+    msg.delete_cart()
+    user = msg.user_in_db()
     if user:
-        bot.send_message(message.from_user.id, customermessages.WELCOME_BACK_MSG + user)
+        bot.send_message(message.from_user.id, customermenus.WELCOME_BACK_MSG + user)
         show_main_menu(message)
     else:
-        bot.send_message(message.from_user.id, customermessages.FIRST_WELCOME_MSG)
+        bot.send_message(message.from_user.id, customermenus.FIRST_WELCOME_MSG)
         bot.send_message(
             message.from_user.id,
-            customermessages.ASK_AGREEMENT_MSG,
+            customermenus.ASK_AGREEMENT_MSG,
             reply_markup=customermenus.agreement_menu
         )
 
@@ -98,7 +101,7 @@ def show_agreement(message: types.Message) -> None:
         message: Show Agreement input from Customer.
 
     """
-    bot.send_message(message.from_user.id, customermessages.AGREEMENT_TEXT)
+    bot.send_message(message.from_user.id, customermenus.AGREEMENT_TEXT)
 
 
 @bot.message_handler(regexp=customermenus.ACCEPT_AGREEMENT_BTN)
@@ -109,20 +112,21 @@ def agreement_accepted(message: types.Message) -> None:
         message: Accept Agreement input from Customer.
 
     """
-    user = Interface.user_in_db(message)
+    msg = Interface(message)
+    user = msg.user_in_db()
     if not user:
-        Interface.add_customer(message)
-    bot.send_message(message.from_user.id, customermessages.AGREEMENT_ACCEPTED_MSG)
+        msg.add_customer()
+    bot.send_message(message.from_user.id, customermenus.AGREEMENT_ACCEPTED_MSG)
     bot.send_message(
         message.from_user.id,
-        customermessages.REG_NAME_MSG,
-        reply_markup=types.ForceReply(input_field_placeholder=customermessages.REG_NAME_PLACEHOLDER)
+        customermenus.REG_NAME_MSG,
+        reply_markup=types.ForceReply(input_field_placeholder=customermenus.REG_NAME_PLACEHOLDER)
     )
 
 
 @bot.message_handler(
     func=lambda message: message.reply_to_message and\
-                         message.reply_to_message.text == customermessages.REG_NAME_MSG
+                         message.reply_to_message.text == customermenus.REG_NAME_MSG
 )
 def reg_name(message: types.Message) -> None:
     """Add Customer's name to the DB. Ask Customer to choose phone number input method.
@@ -131,17 +135,18 @@ def reg_name(message: types.Message) -> None:
         message: Customer's name.
 
     """
-    Interface.update_name(message)
-    bot.send_message(message.from_user.id, customermessages.REG_NAME_RECEIVED_MSG + message.text)
+    msg = Interface(message)
+    msg.update_name()
+    bot.send_message(message.from_user.id, customermenus.REG_NAME_RECEIVED_MSG + message.text)
     bot.send_message(
         message.from_user.id,
-        customermessages.REG_PHONE_METHOD_MSG,
+        customermenus.REG_PHONE_METHOD_MSG,
         reply_markup=customermenus.reg_phone_menu
     )
 
 
 @bot.message_handler(content_types=["contact"])
-@bot.message_handler(regexp=customermessages.REG_PHONE_METHOD_MSG)
+@bot.message_handler(regexp=customermenus.REG_PHONE_METHOD_MSG)
 def contact(message: types.Message) -> None:
     """Add Customer's phone number imported via Telegram contact info into the DB.
     Ask Customer to choose delivery address input method.
@@ -151,11 +156,12 @@ def contact(message: types.Message) -> None:
 
     """
     phone_number = message.contact.phone_number
-    Interface.update_phone_number(message.from_user.id, phone_number)
-    bot.send_message(message.from_user.id, customermessages.PHONE_RECEIVED_MSG + phone_number)
+    msg = Interface(message)
+    msg.update_phone_number(phone_number)
+    bot.send_message(message.from_user.id, customermenus.PHONE_RECEIVED_MSG + phone_number)
     bot.send_message(
         message.from_user.id,
-        customermessages.REG_LOCATION_MSG,
+        customermenus.REG_LOCATION_MSG,
         reply_markup=customermenus.reg_location_menu
     )
 
@@ -170,14 +176,14 @@ def reg_phone_str(message: types.Message) -> None:
     """
     bot.send_message(
         message.from_user.id,
-        customermessages.REG_PHONE_MSG,
-        reply_markup=types.ForceReply(input_field_placeholder=customermessages.REG_PHONE_PLACEHOLDER)
+        customermenus.REG_PHONE_MSG,
+        reply_markup=types.ForceReply(input_field_placeholder=customermenus.REG_PHONE_PLACEHOLDER)
     )
 
 
 @bot.message_handler(
     func=lambda message: message.reply_to_message and\
-                         message.reply_to_message.text == customermessages.REG_PHONE_MSG
+                         message.reply_to_message.text == customermenus.REG_PHONE_MSG
 )
 def reg_phone(message: types.Message) -> None:
     """Check if phone number was added to the DB. Ask Customer to choose delivery input method if so.
@@ -189,17 +195,17 @@ def reg_phone(message: types.Message) -> None:
     """
     phone_number = phone_from_msg(message)
     if not phone_number:
-        bot.send_message(message.from_user.id, customermessages.INVALID_PHONE_MSG)
+        bot.send_message(message.from_user.id, customermenus.INVALID_PHONE_MSG)
         bot.send_message(
             message.from_user.id,
-            customermessages.REG_PHONE_MSG,
-            reply_markup=types.ForceReply(input_field_placeholder=customermessages.REG_PHONE_PLACEHOLDER)
+            customermenus.REG_PHONE_MSG,
+            reply_markup=types.ForceReply(input_field_placeholder=customermenus.REG_PHONE_PLACEHOLDER)
         )
     else:
-        bot.send_message(message.from_user.id, customermessages.PHONE_RECEIVED_MSG + phone_number)
+        bot.send_message(message.from_user.id, customermenus.PHONE_RECEIVED_MSG + phone_number)
         bot.send_message(
             message.from_user.id,
-            customermessages.REG_LOCATION_MSG,
+            customermenus.REG_LOCATION_MSG,
             reply_markup=customermenus.reg_location_menu
         )
 
@@ -212,10 +218,11 @@ def reg_location(message: types.Message) -> None:
         message: Location from Customer.
 
     """
-    latitude = message.location.latitude
-    longitude = message.location.longitude
-    Interface.update_customer_location(latitude, longitude, message)
-    bot.send_message(message.from_user.id, customermessages.REG_LOCATION_RECEIVED_MSG)
+    msg = Interface(message)
+    msg.update_customer_location()
+    bot.send_message(message.from_user.id, customermenus.REG_LOCATION_RECEIVED_MSG)
+    latitude = msg.input_object.location.latitude
+    longitude = msg.input_object.location.longitude
     bot.send_location(message.from_user.id, latitude, longitude)
     show_main_menu(message)
 
@@ -229,19 +236,20 @@ def options(message: types.Message) -> None:
         message: Options request from Customer.
 
     """
-    bot.send_message(message.from_user.id, customermessages.OPTIONS_MSG, reply_markup=customermenus.options_menu)
+    bot.send_message(message.from_user.id, customermenus.OPTIONS_MSG, reply_markup=customermenus.options_menu)
 
 
 @bot.message_handler(regexp=customermenus.MY_ORDERS_BTN)
 def my_orders(message: types.Message) -> None:
     """"""  # TODO
-    orders = Interface.show_my_orders(message)
+    msg = Interface(message)
+    orders = msg.show_my_orders()
     if not orders:
-        bot.send_message(message.from_user.id, customermessages.NO_ORDERS_FOUND_MSG)
+        bot.send_message(message.from_user.id, customermenus.NO_ORDERS_FOUND_MSG)
         show_main_menu(message)
     else:
         while orders:
-            bot.send_message(message.from_user.id, customermessages.my_orders_msg(orders))
+            bot.send_message(message.from_user.id, customermenus.my_orders_msg(orders))
         show_main_menu(message)
 
 
@@ -253,14 +261,15 @@ def new_order(message: types.Message) -> None:
         message: Request form Customer to create new order.
 
     """
-    location = Interface.check_if_location(message)
+    msg = Interface(message)
+    location = msg.check_if_location()
     if not location:
-        bot.send_message(message.from_user.id, customermessages.LOCATION_NOT_FOUND_MSG)
+        bot.send_message(message.from_user.id, customermenus.LOCATION_NOT_FOUND_MSG)
         show_main_menu(message)
     else:
         bot.send_message(
             message.from_user.id,
-            customermessages.CONFIRM_LOCATION_MSG,
+            customermenus.CONFIRM_LOCATION_MSG,
             reply_markup=types.ReplyKeyboardRemove()
         )
         bot.send_location(
@@ -287,7 +296,8 @@ def main_menu(message: types.Message) -> None:
 @bot.message_handler(regexp=customermenus.CONTACT_SUPPORT_BTN)
 def contact_support(message: types.Message) -> None:
     """"""  # TODO
-    pass
+    bot.send_message(message.from_user.id, customermenus.IN_DEV)
+    show_main_menu(message)
 
 
 @bot.message_handler(regexp=customermenus.RESET_CONTACT_INFO_BTN)
@@ -300,7 +310,7 @@ def reset_contact_info(message: types.Message) -> None:
     """
     bot.send_message(
         message.from_user.id,
-        customermessages.RESET_CONTACT_INFO_MSG,
+        customermenus.RESET_CONTACT_INFO_MSG,
         reply_markup=customermenus.reset_info_menu
     )
 
@@ -315,7 +325,7 @@ def delete_profile(message: types.Message) -> None:
     """
     bot.send_message(
         message.from_user.id,
-        customermessages.DELETE_PROFILE_MSG,
+        customermenus.DELETE_PROFILE_MSG,
         reply_markup=customermenus.confirm_delete_profile_menu
     )
 
@@ -329,8 +339,9 @@ def confirm_reset(message: types.Message) -> None:
         message: Confirmation from Customer.
 
     """
-    Interface.delete_customer(message)
-    bot.send_message(message.from_user.id, customermessages.CONTACT_INFO_DELETED_MSG)
+    msg = Interface(message)
+    msg.delete_customer()
+    bot.send_message(message.from_user.id, customermenus.CONTACT_INFO_DELETED_MSG)
     agreement_accepted(message)
 
 
@@ -343,22 +354,23 @@ def confirm_delete(message: types.Message) -> None:
         message: Confirmation from Customer.
 
     """
-    Interface.delete_customer(message)
-    bot.send_message(message.from_user.id, customermessages.PROFILE_DELETED_MSG)
+    msg = Interface(message)
+    msg.delete_customer()
+    bot.send_message(message.from_user.id, customermenus.PROFILE_DELETED_MSG, reply_markup=types.ReplyKeyboardRemove())
 
 
 # Creating order sequence block.
 @bot.callback_query_handler(func=lambda call: call.message.location)
 def check_location_confirmation(call: types.CallbackQuery) -> None:
     """"""  # TODO
-    bot.delete_message(call.from_user.id, call.message.id - 1)
-    bot.delete_message(call.from_user.id, call.message.id)
-    if call.data == customermenus.WRONG_LOCATION_MSG:
-        bot.send_message(call.from_user.id, customermessages.REQUEST_NEW_LOCATION_MSG)
-        msg = callback_to_msg(call)
-        show_main_menu(msg)
+    c_back = Interface(call)
+    bot.delete_message(c_back.input_object.from_user.id, c_back.input_object.message.id - 1)
+    bot.delete_message(c_back.input_object.from_user.id, c_back.input_object.message.id)
+    if c_back.input_object.data == customermenus.WRONG_LOCATION_MSG:
+        bot.send_message(c_back.input_object.from_user.id, customermenus.REQUEST_NEW_LOCATION_MSG)
+        show_main_menu(callback_to_msg(call))
     elif call.data == customermenus.CONFIRM_LOCATION_BTN:
-        Interface.new_cart(call)
+        c_back.new_cart()
         restaurant_types = Interface.show_restaurant_types()
         menu = types.InlineKeyboardMarkup(row_width=1)
         if restaurant_types:
@@ -367,46 +379,48 @@ def check_location_confirmation(call: types.CallbackQuery) -> None:
         menu.add(customermenus.back_button)
         bot.send_message(
             call.from_user.id,
-            customermessages.CHOOSE_REST_TYPE_MSG,
+            customermenus.CHOOSE_REST_TYPE_MSG,
             reply_markup=menu
         )
 
-@bot.callback_query_handler(func=lambda call: call.message.text == customermessages.CHOOSE_REST_TYPE_MSG)
+@bot.callback_query_handler(func=lambda call: call.message.text == customermenus.CHOOSE_REST_TYPE_MSG)
 def rest_type_chosen(call: types.CallbackQuery) -> None:
     """"""  # TODO
-    if call.data == customermenus.back_button.callback_data:
-        bot.answer_callback_query(call.id, customermessages.EXITING_ORDER_MENU_MSG)
-        bot.delete_message(call.from_user.id, call.message.message_id)
-        Interface.delete_cart(call.from_user.id)
-        msg = callback_to_msg(call)
+    c_back = Interface(call)
+    if c_back.input_object.data == customermenus.back_button.callback_data:
+        bot.answer_callback_query(c_back.input_object.id, customermenus.EXITING_ORDER_MENU_MSG)
+        bot.delete_message(c_back.input_object.from_user.id, c_back.input_object.message.message_id)
+        c_back.delete_cart()
+        msg = callback_to_msg(c_back.input_object)
         show_main_menu(msg)
     else:
-        Interface.add_to_cart("restaurant_type", call)
-        restaurants = Interface.show_restaurants(call.data)
+        c_back.add_to_cart("restaurant_type")
+        restaurants = c_back.show_restaurants()
         menu = types.InlineKeyboardMarkup(row_width=1)
         if restaurants:
             for restaurant in restaurants:
                 menu.add(types.InlineKeyboardButton(text=restaurant[0], callback_data=restaurant[1]))
         menu.add(customermenus.back_button)
         bot.edit_message_text(
-            customermessages.SELECTED_REST_TYPE_MSG + f"\n{call.data}\n" + customermessages.CHOOSE_REST_MSG,  # TODO export to texts as lambda
+            customermenus.SELECTED_REST_TYPE_MSG + f"\n{call.data}\n" + customermenus.CHOOSE_REST_MSG,  # TODO export to texts as lambda
             call.from_user.id,
             call.message.message_id,
             reply_markup=menu
         )
 
 
-@bot.callback_query_handler(func=lambda call: customermessages.CHOOSE_REST_MSG in call.message.text)
+@bot.callback_query_handler(func=lambda call: customermenus.CHOOSE_REST_MSG in call.message.text)
 def restaurant_chosen(call: types.CallbackQuery) -> None:
     """"""  # TODO
-    if call.data == customermenus.back_button.callback_data:
-        bot.answer_callback_query(call.id, customermessages.DELETING_CART_ALERT, show_alert=True)
-        bot.delete_message(call.from_user.id, call.message.message_id)
-        Interface.delete_cart(call.from_user.id)
+    c_back = Interface(call)
+    if c_back.input_object.data == customermenus.back_button.callback_data:
+        bot.answer_callback_query(c_back.input_object.id, customermenus.DELETING_CART_ALERT, show_alert=True)
+        bot.delete_message(c_back.input_object.from_user.id, c_back.input_object.message.message_id)
+        c_back.delete_cart()
         show_main_menu(callback_to_msg(call))
     else:
-        Interface.add_to_cart("restaurant_uuid", call)
-        dish_categories = Interface.show_dish_categories(call.data)
+        c_back.add_to_cart("restaurant_uuid")
+        dish_categories = c_back.show_dish_categories()
         menu = types.InlineKeyboardMarkup(row_width=1)
         if dish_categories:
             for category in dish_categories:
@@ -414,28 +428,30 @@ def restaurant_chosen(call: types.CallbackQuery) -> None:
         menu.add(customermenus.cart_button)
         menu.add(customermenus.back_button)
         menu.add(customermenus.cancel_order_button)
-        restaurant = Interface.rest_name_by_uuid(call.data)
+        c_back = Interface(call)
+        restaurant = c_back.rest_name_by_uuid()
         bot.edit_message_text(
-            customermessages.SELECTED_REST_MSG + f"\n{restaurant}\n" + customermessages.CHOOSE_DISH_CATEGORY_MSG,  # TODO export to texts as lambda
+            customermenus.SELECTED_REST_MSG + f"\n{restaurant}\n" + customermenus.CHOOSE_DISH_CATEGORY_MSG,  # TODO export to texts as lambda
             call.from_user.id,
             call.message.message_id,
             reply_markup=menu
         )
 
 
-@bot.callback_query_handler(func=lambda call: customermessages.CHOOSE_DISH_CATEGORY_MSG in call.message.text)
+@bot.callback_query_handler(func=lambda call: customermenus.CHOOSE_DISH_CATEGORY_MSG in call.message.text)
 def dish_category_chosen(call: types.CallbackQuery) -> None:
     """"""  # TODO
-    if call.data == customermenus.back_button.callback_data:
-        Interface.delete_from_cart("restaurant_uuid", call)
-        call.data = Interface.get_from_cart("restaurant_type", call)
-        rest_type_chosen(call)
-    elif call.data == customermenus.cancel_order_button.callback_data:
-        clear_cart(call)
-    elif call.data == customermenus.cart_button.callback_data:
-        is_dish_added(call)
+    c_back = Interface(call)
+    if c_back.input_object.data == customermenus.back_button.callback_data:
+        c_back.delete_from_cart("restaurant_uuid")
+        c_back.input_object.data = c_back.get_from_cart("restaurant_type")
+        rest_type_chosen(c_back.input_object)
+    elif c_back.input_object.data == customermenus.cancel_order_button.callback_data:
+        clear_cart(c_back.input_object)
+    elif c_back.input_object.data == customermenus.cart_button.callback_data:
+        is_dish_added(c_back.input_object)
     else:
-        dishes = Interface.show_dishes(call)
+        dishes = c_back.show_dishes()
         menu = types.InlineKeyboardMarkup(row_width=1)
         if dishes:
             for dish in dishes:
@@ -444,69 +460,71 @@ def dish_category_chosen(call: types.CallbackQuery) -> None:
         menu.add(customermenus.back_button)
         menu.add(customermenus.cancel_order_button)
         bot.edit_message_text(
-            customermessages.SELECTED_DISH_CAT_MSG + f"\n{call.data}\n" + customermessages.CHOOSE_DISH_MSG,  # TODO export to texts as lambda
-            call.from_user.id,
-            call.message.message_id,
+            customermenus.SELECTED_DISH_CAT_MSG + f"\n{c_back.input_object.data}\n" + customermenus.CHOOSE_DISH_MSG,  # TODO export to texts as lambda
+            c_back.input_object.from_user.id,
+            c_back.input_object.message.message_id,
             reply_markup=menu
         )
 
 
-@bot.callback_query_handler(func=lambda call: customermessages.CHOOSE_DISH_MSG in call.message.text)
+@bot.callback_query_handler(func=lambda call: customermenus.CHOOSE_DISH_MSG in call.message.text)
 def dish_chosen(call: types.CallbackQuery) -> None:
     """"""  # TODO
-    if call.data == customermenus.back_button.callback_data:
-        data = Interface.get_from_cart("restaurant_uuid", call)
-        call.data = data
-        restaurant_chosen(call)
-    elif call.data == customermenus.cancel_order_button.callback_data:
-        clear_cart(call)
-    elif call.data == customermenus.cart_button.callback_data:
-        is_dish_added(call)
+    c_back = Interface(call)
+    if c_back.input_object.data == customermenus.back_button.callback_data:
+        data = c_back.get_from_cart("restaurant_uuid")
+        c_back.input_object.data = data
+        restaurant_chosen(c_back.input_object)
+    elif c_back.input_object.data == customermenus.cancel_order_button.callback_data:
+        clear_cart(c_back.input_object)
+    elif c_back.input_object.data == customermenus.cart_button.callback_data:
+        is_dish_added(c_back.input_object)
     else:
-        add_dish_button = types.InlineKeyboardButton(text=customermenus.ADD_DISH_BTN, callback_data=call.data)
+        add_dish_button = types.InlineKeyboardButton(text=customermenus.ADD_DISH_BTN, callback_data=c_back.input_object.data)
         menu = types.InlineKeyboardMarkup(row_width=2)
         menu.add(customermenus.back_button, add_dish_button)
-        dish = Interface.get_dish(call)
+        dish = c_back.get_dish()
         new_text = "\n".join(
             [
-                customermessages.SELECTED_DISH_MSG,
+                customermenus.SELECTED_DISH_MSG,
                 f"{dish[0]}",
-                customermessages.DISH_DESC_MSG,
+                customermenus.DISH_DESC_MSG,
                 f"{dish[1]}",
-                customermessages.DISH_PRICE_MSG,
-                f"{customermessages.CURRENCY}{dish[2]}"
+                customermenus.DISH_PRICE_MSG,
+                f"{customermenus.CURRENCY}{dish[2]}"
             ]
         )
         bot.edit_message_text(
             new_text,  # TODO export to texts as lambda
-            call.from_user.id,
-            call.message.message_id,
+            c_back.input_object.from_user.id,
+            c_back.input_object.message.message_id,
             reply_markup=menu
         )
 
 
-@bot.callback_query_handler(func=lambda call: customermessages.SELECTED_DISH_MSG in call.message.text)
+@bot.callback_query_handler(func=lambda call: customermenus.SELECTED_DISH_MSG in call.message.text)
 def is_dish_added(call: types.CallbackQuery) -> None:
     """"""  # TODO
-    if call.data == customermenus.back_button.callback_data:
-        data = Interface.get_from_cart("restaurant_uuid", call)
-        call.data = data
-        restaurant_chosen(call)
+    c_back = Interface(call)  # TODO
+    if c_back.input_object.data == customermenus.back_button.callback_data:
+        data = c_back.get_from_cart("restaurant_uuid")
+        c_back.input_object.data = data
+        restaurant_chosen(c_back.input_object)
     else:
-        if call.data != customermenus.cart_button.callback_data:
-            dishes_uuids = Interface.get_from_cart("dishes_uuids", call)  #TODO FIX BUG!!!
+        if c_back.input_object.data != customermenus.cart_button.callback_data:
+            dishes_uuids = c_back.get_from_cart("dishes_uuids")  #TODO FIX BUG!!!
             if not dishes_uuids:
                 dishes_uuids = []
-            dishes_uuids.append(call.data)
-            call.data = dishes_uuids
-            Interface.add_to_cart("dishes_uuids", call)
+            dishes_uuids.append(c_back.input_object.data)
+            c_back.input_object.data = dishes_uuids
+            c_back.add_to_cart("dishes_uuids")
             subtotal = 0
             for dish in dishes_uuids:
-                call.data = dish
-                dish_price = Interface.get_dish(call)[2]
+                c_back.input_object.data = dish
+                dish_price = c_back.get_dish()[2]
                 subtotal += dish_price
-            call.data = subtotal
-            Interface.add_to_cart("subtotal", call)
+            c_back.input_object.data = subtotal
+            c_back.add_to_cart("subtotal")
         pay_button = types.InlineKeyboardButton(text=customermenus.PAY_BTN, callback_data="DEV")
         add_more_button = types.InlineKeyboardButton(text=customermenus.ADD_MORE_BTN, callback_data="aaa")
         delete_item_button = types.InlineKeyboardButton(
@@ -515,26 +533,26 @@ def is_dish_added(call: types.CallbackQuery) -> None:
         )
         menu = types.InlineKeyboardMarkup(row_width=1)
         menu.add(pay_button, add_more_button, delete_item_button, customermenus.cancel_order_button)
-        call.data = Interface.get_from_cart("dishes_uuids", call) # TODO: transfer to textes as lambda expr.
+        c_back.input_object.data = c_back.get_from_cart("dishes_uuids") # TODO: transfer to textes as lambda expr.
         dishes = []
-        if call.data:
-            for dish in call.data:
-                call.data = dish
-                dish_name = Interface.get_dish(call)[0]
+        if c_back.input_object.data:
+            for dish in c_back.input_object.data:
+                c_back.input_object.data = dish
+                dish_name = c_back.get_dish()[0]
                 dishes.append(dish_name)
-        subtotal = Interface.get_from_cart("subtotal", call)
+        subtotal = c_back.get_from_cart("subtotal")
         new_text = "\n".join(
             [
-                customermessages.YOUR_CART_MSG,
+                customermenus.YOUR_CART_MSG,
                 f"{dishes}",
-                customermessages.SUBTOTAL_MSG,
-                f"{customermessages.CURRENCY}{subtotal}"
+                customermenus.SUBTOTAL_MSG,
+                f"{customermenus.CURRENCY}{subtotal}"
             ]
         )
         bot.edit_message_text(
             new_text,
-            call.from_user.id,
-            call.message.message_id,
+            c_back.input_object.from_user.id,
+            c_back.input_object.message.message_id,
             reply_markup=menu
         )
 

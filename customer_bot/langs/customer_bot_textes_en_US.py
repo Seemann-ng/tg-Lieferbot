@@ -1,8 +1,38 @@
-import customermenus
+# Menu buttons.
+AGREEMENT_MENU_PLACEHOLDER = "📑 Agreement"
+SHOW_AGREEMENT_BTN = "🔍📑 Show Customer Agreement"
+ACCEPT_AGREEMENT_BTN = "📝 Accept Customer Agreement"
+REG_PHONE_MENU_PLACEHOLDER = "📱 Phone number input"
+REG_PHONE_MAN_BTN = "👨🏼‍💻 Input phone number manually"
+REG_PHONE_IMPORT_BTN = "⬆️ Import phone number from account"
+REG_LOCATION_BTN = "🌍 Send location"
+REG_LOCATION_PLACEHOLDER = "🌍 Location"
+MAIN_MENU_BTN = "🟰 Main Menu"
+NEW_ORDER_BTN = "⭕️ New Order"
+MY_ORDERS_BTN = "📑 My Orders"
+OPTIONS_BTN = "🟰 Options"
+CONTACT_SUPPORT_BTN = "📞 Contact support\n🛠IN DEVELOPMENT🛠"
+RESET_CONTACT_INFO_BTN = "⚠️ Reset Contact Info"
+CONFIRM_RESET_BTN = "✅ YES, reset my contact info"
+DELETE_PROFILE_BTN = "⚠️ Delete profile"
+CONFIRM_DELETE_PROFILE_BTN = "✅ YES, delete my profile"
+CONFIRM_LOCATION_BTN = "✅ Yes!"
+WRONG_LOCATION_MSG = "❌ No."
+GO_BACK_BTN = "⬅️ Go back"
+CART_BTN = "🛒 My cart"
+CANCEL_ORDER_BTN = "🚫 CANCEL ORDER"
+ADD_DISH_BTN = "✅ Add to cart"
+PAY_BTN = "💳 Confirm order"
+ADD_MORE_BTN = "🛍 Continue shopping"
+DELETE_ITEM_BTN = "📤 Delete item"
 
-PHONE_NUM_PREFIX = "+49"
+# Localization variables.
+PHONE_NUM_PREFIX = "+1"
 MAX_PHONE_LENGTH_WO_PREFIX = 11
-CURRENCY = "€"
+CURRENCY = "💲"
+
+# Bot messages.
+IN_DEV = "I've told You, IT IS IN DEVELOPMENT!"
 WELCOME_BACK_MSG = "Welcome back, "
 MAIN_MENU_MSG = "You're in main menu now."
 FIRST_WELCOME_MSG = "Welcome to the %BOT_NAME%."
@@ -30,9 +60,9 @@ DELETING_CART_ALERT = "⚠️ Your cart was cleared."
 GOING_BACK_MSG = "Going back..."
 LOCATION_NOT_FOUND_MSG = f"Contact information wasn't found.\n"\
                          f"Please, reset Your contact information.\n"\
-                         f"(\'{customermenus.OPTIONS_BTN}\' -> \'{customermenus.RESET_CONTACT_INFO_BTN}\')"
+                         f"(\'{OPTIONS_BTN}\' => \'{RESET_CONTACT_INFO_BTN}\')"
 REQUEST_NEW_LOCATION_MSG = f"Please, reset Your contact information.\n"\
-                         f"(\'{customermenus.OPTIONS_BTN}\' -> \'{customermenus.RESET_CONTACT_INFO_BTN}\')"
+                         f"(\'{OPTIONS_BTN}\' => \'{RESET_CONTACT_INFO_BTN}\')"
 CONFIRM_LOCATION_MSG = "Is this delivery address right?"
 CHOOSE_REST_TYPE_MSG = "Please, choose a restaurant type."
 SELECTED_REST_TYPE_MSG = "Selected restaurant type:"
@@ -67,5 +97,3 @@ def my_orders_msg(orders: list) -> str:
            f"Date: {order_date}\n"
            f"Status: {order_status}\n")
     return msg
-
-# TODO transfer button textes from /customermenus.py
