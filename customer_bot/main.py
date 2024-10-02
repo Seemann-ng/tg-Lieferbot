@@ -3,7 +3,8 @@ import telebot.types as types
 from environs import Env
 
 import customermenus
-from loggertool import logger  # TODO add decorators
+from customer_bot.langs.customer_bot_textes_en_US import PAY_BTN
+from loggertool import logger, logger_decorator_callback, logger_decorator_msg
 from customerdbtools import DBInterface as Interface
 
 env = Env()
@@ -15,6 +16,7 @@ bot = tb.TeleBot(token=BOT_TOKEN)
 
 
 # Auxiliary functions.
+@logger_decorator_msg
 def show_main_menu(message: types.Message) -> None:
     """Show Customer main menu if Customer is in the DB, otherwise call start().
 
@@ -29,6 +31,7 @@ def show_main_menu(message: types.Message) -> None:
         start(message)
 
 
+@logger_decorator_msg
 def phone_from_msg(message: types.Message) -> str | None:
     """Check if manually entered phone number is valid and add it into the DB.Customers if so.
 
@@ -52,15 +55,30 @@ def phone_from_msg(message: types.Message) -> str | None:
         return phone_number
 
 
+@logger_decorator_callback
 def callback_to_msg(call: types.CallbackQuery) -> types.Message:
-    """"""  # TODO
+    """Extract types.Message object from types.CallbackQuery object replacing sender ID from bot's to Customer's one.
+
+    Args:
+        call: CallbackQuery object.
+
+    Returns:
+        Message object with Customer's ID in it.
+
+    """
     call.message.from_user.id = call.from_user.id
     msg = call.message
     return msg
 
 
+@logger_decorator_callback
 def clear_cart(call: types.CallbackQuery) -> None:
-    """""" # TODO
+    """Clear Customer's cart on receiving corresponding callback query.
+
+    Args:
+        call: Callback query with Customer's cart deletion request.
+
+    """
     c_back = Interface(call)
     bot.answer_callback_query(c_back.input_object.id, customermenus.DELETING_CART_ALERT, show_alert=True)
     bot.delete_message(c_back.input_object.from_user.id, c_back.input_object.message.message_id)
@@ -70,6 +88,7 @@ def clear_cart(call: types.CallbackQuery) -> None:
 
 # Sing in/sign up block.
 @bot.message_handler(commands=["start"])
+@logger_decorator_msg
 def start(message: types.Message) -> None:
     """Commence interaction between Customer and the bot. Check if Customer in the DB and
     start corresponding interaction sequence.
@@ -94,6 +113,7 @@ def start(message: types.Message) -> None:
 
 
 @bot.message_handler(regexp=customermenus.SHOW_AGREEMENT_BTN)
+@logger_decorator_msg
 def show_agreement(message: types.Message) -> None:
     """Show Customer agreement.
 
@@ -105,6 +125,7 @@ def show_agreement(message: types.Message) -> None:
 
 
 @bot.message_handler(regexp=customermenus.ACCEPT_AGREEMENT_BTN)
+@logger_decorator_msg
 def agreement_accepted(message: types.Message) -> None:
     """Commence Customer sign up sequence. Add new Customer to the DB.
 
@@ -125,9 +146,10 @@ def agreement_accepted(message: types.Message) -> None:
 
 
 @bot.message_handler(
-    func=lambda message: message.reply_to_message and\
+    func=lambda message: message.reply_to_message and \
                          message.reply_to_message.text == customermenus.REG_NAME_MSG
 )
+@logger_decorator_msg
 def reg_name(message: types.Message) -> None:
     """Add Customer's name to the DB. Ask Customer to choose phone number input method.
 
@@ -147,6 +169,7 @@ def reg_name(message: types.Message) -> None:
 
 @bot.message_handler(content_types=["contact"])
 @bot.message_handler(regexp=customermenus.REG_PHONE_METHOD_MSG)
+@logger_decorator_msg
 def contact(message: types.Message) -> None:
     """Add Customer's phone number imported via Telegram contact info into the DB.
     Ask Customer to choose delivery address input method.
@@ -167,6 +190,7 @@ def contact(message: types.Message) -> None:
 
 
 @bot.message_handler(regexp=customermenus.REG_PHONE_MAN_BTN)
+@logger_decorator_msg
 def reg_phone_str(message: types.Message) -> None:
     """Ask Customer to input phone number manually.
 
@@ -182,9 +206,10 @@ def reg_phone_str(message: types.Message) -> None:
 
 
 @bot.message_handler(
-    func=lambda message: message.reply_to_message and\
+    func=lambda message: message.reply_to_message and \
                          message.reply_to_message.text == customermenus.REG_PHONE_MSG
 )
+@logger_decorator_msg
 def reg_phone(message: types.Message) -> None:
     """Check if phone number was added to the DB. Ask Customer to choose delivery input method if so.
     Ask Customer to input phone number again otherwise.
@@ -209,8 +234,10 @@ def reg_phone(message: types.Message) -> None:
             reply_markup=customermenus.reg_location_menu
         )
 
+
 @bot.message_handler(content_types=["location"])
 @bot.message_handler(regexp=customermenus.REG_LOCATION_BTN)
+@logger_decorator_msg
 def reg_location(message: types.Message) -> None:
     """Add location to the DB. Proceed to main menu.
 
@@ -229,6 +256,7 @@ def reg_location(message: types.Message) -> None:
 
 # Main menu block.
 @bot.message_handler(regexp=customermenus.OPTIONS_BTN)
+@logger_decorator_msg
 def options(message: types.Message) -> None:
     """Show options menu.
 
@@ -240,8 +268,14 @@ def options(message: types.Message) -> None:
 
 
 @bot.message_handler(regexp=customermenus.MY_ORDERS_BTN)
+@logger_decorator_msg
 def my_orders(message: types.Message) -> None:
-    """"""  # TODO
+    """Send Customer their order history.
+
+    Args:
+        message: Message from Customer with corresponding request.
+
+    """
     msg = Interface(message)
     orders = msg.show_my_orders()
     if not orders:
@@ -254,6 +288,7 @@ def my_orders(message: types.Message) -> None:
 
 
 @bot.message_handler(regexp=customermenus.NEW_ORDER_BTN)
+@logger_decorator_msg
 def new_order(message: types.Message) -> None:
     """Commence order creation sequence. Check if User location is provided. If location is provided, ask confirmation.
 
@@ -282,6 +317,7 @@ def new_order(message: types.Message) -> None:
 
 # Options menu block.
 @bot.message_handler(regexp=customermenus.MAIN_MENU_BTN)
+@logger_decorator_msg
 def main_menu(message: types.Message) -> None:
     """Get back to main menu.
 
@@ -292,15 +328,21 @@ def main_menu(message: types.Message) -> None:
     show_main_menu(message)
 
 
-# TODO Contact support.
 @bot.message_handler(regexp=customermenus.CONTACT_SUPPORT_BTN)
-def contact_support(message: types.Message) -> None:
-    """"""  # TODO
+@logger_decorator_msg
+def contact_support(message: types.Message) -> None:  # TODO Contact support.
+    """Start communication with support.
+
+    Args:
+        message: Message from Customer with corresponding request.
+
+    """
     bot.send_message(message.from_user.id, customermenus.IN_DEV)
     show_main_menu(message)
 
 
 @bot.message_handler(regexp=customermenus.RESET_CONTACT_INFO_BTN)
+@logger_decorator_msg
 def reset_contact_info(message: types.Message) -> None:
     """Ask Customer for contact info reset confirmation.
 
@@ -316,6 +358,7 @@ def reset_contact_info(message: types.Message) -> None:
 
 
 @bot.message_handler(regexp=customermenus.DELETE_PROFILE_BTN)
+@logger_decorator_msg
 def delete_profile(message: types.Message) -> None:
     """Ask Customer for profile deletion confirmation.
 
@@ -330,8 +373,9 @@ def delete_profile(message: types.Message) -> None:
     )
 
 
-#Contact Info reset block.
+# Contact Info reset block.
 @bot.message_handler(regexp=customermenus.CONFIRM_RESET_BTN)
+@logger_decorator_msg
 def confirm_reset(message: types.Message) -> None:
     """Commence contact info reset sequence.
 
@@ -345,8 +389,9 @@ def confirm_reset(message: types.Message) -> None:
     agreement_accepted(message)
 
 
-#Profile deletion block.
+# Profile deletion block.
 @bot.message_handler(regexp=customermenus.CONFIRM_DELETE_PROFILE_BTN)
+@logger_decorator_msg
 def confirm_delete(message: types.Message) -> None:
     """Delete Customer's profile from DB.
 
@@ -361,8 +406,15 @@ def confirm_delete(message: types.Message) -> None:
 
 # Creating order sequence block.
 @bot.callback_query_handler(func=lambda call: call.message.location)
+@logger_decorator_callback
 def check_location_confirmation(call: types.CallbackQuery) -> None:
-    """"""  # TODO
+    """Process Customer's response to location confirmation request. Show Customer restaurant type selection menu if
+    confirmed, send back to main menu if not.
+
+    Args:
+        call: Callback query from Customer with response to location confirmation request.
+
+    """
     c_back = Interface(call)
     bot.delete_message(c_back.input_object.from_user.id, c_back.input_object.message.id - 1)
     bot.delete_message(c_back.input_object.from_user.id, c_back.input_object.message.id)
@@ -383,9 +435,17 @@ def check_location_confirmation(call: types.CallbackQuery) -> None:
             reply_markup=menu
         )
 
+
 @bot.callback_query_handler(func=lambda call: call.message.text == customermenus.CHOOSE_REST_TYPE_MSG)
+@logger_decorator_callback
 def rest_type_chosen(call: types.CallbackQuery) -> None:
-    """"""  # TODO
+    """Process Customer's response to restaurant type selection. Show Customer restaurants of selected type and add
+    restaurant type to the Customer's cart or go back to main menu if "go back" button is clicked.
+    
+    Args:
+        call: Callback query from Customer with response to restaurant type selection.
+
+    """
     c_back = Interface(call)
     if c_back.input_object.data == customermenus.back_button.callback_data:
         bot.answer_callback_query(c_back.input_object.id, customermenus.EXITING_ORDER_MENU_MSG)
@@ -410,8 +470,15 @@ def rest_type_chosen(call: types.CallbackQuery) -> None:
 
 
 @bot.callback_query_handler(func=lambda call: customermenus.CHOOSE_REST_MSG in call.message.text)
+@logger_decorator_callback
 def restaurant_chosen(call: types.CallbackQuery) -> None:
-    """"""  # TODO
+    """Process Customer's response to restaurant selection. Show Customer dish types available in selected restaurant
+    and add restaurant UUID to the Customer's cart or go back to main menu if "go back" button is clicked.
+
+    Args:
+        call: Callback query from Customer with response to restaurant selection.
+
+    """
     c_back = Interface(call)
     if c_back.input_object.data == customermenus.back_button.callback_data:
         bot.answer_callback_query(c_back.input_object.id, customermenus.DELETING_CART_ALERT, show_alert=True)
@@ -439,8 +506,16 @@ def restaurant_chosen(call: types.CallbackQuery) -> None:
 
 
 @bot.callback_query_handler(func=lambda call: customermenus.CHOOSE_DISH_CATEGORY_MSG in call.message.text)
+@logger_decorator_callback
 def dish_category_chosen(call: types.CallbackQuery) -> None:
-    """"""  # TODO
+    """Process Customer's response to dish category selection. Show Customer dishes of selected category
+    available in selected restaurant or go back to restaurant selection menu if "go back" button is clicked.
+    Show Customer their cart or clear it if corresponding buttons are clicked.
+
+    Args:
+        call: Callback query from Customer with response to dish category selection.
+
+    """
     c_back = Interface(call)
     if c_back.input_object.data == customermenus.back_button.callback_data:
         c_back.delete_from_cart("restaurant_uuid")
@@ -468,8 +543,16 @@ def dish_category_chosen(call: types.CallbackQuery) -> None:
 
 
 @bot.callback_query_handler(func=lambda call: customermenus.CHOOSE_DISH_MSG in call.message.text)
+@logger_decorator_callback
 def dish_chosen(call: types.CallbackQuery) -> None:
-    """"""  # TODO
+    """Process Customer's response to dish selection. Show Customer dish selection confirmation menu displaying
+    dish description and price or go back to restaurant selection menu if "go back" button is clicked.
+    Show Customer their cart or clear it if corresponding buttons are clicked.
+
+    Args:
+        call: Callback query from Customer with response to dish selection.
+
+    """
     c_back = Interface(call)
     if c_back.input_object.data == customermenus.back_button.callback_data:
         data = c_back.get_from_cart("restaurant_uuid")
@@ -480,11 +563,12 @@ def dish_chosen(call: types.CallbackQuery) -> None:
     elif c_back.input_object.data == customermenus.cart_button.callback_data:
         is_dish_added(c_back.input_object)
     else:
-        add_dish_button = types.InlineKeyboardButton(text=customermenus.ADD_DISH_BTN, callback_data=c_back.input_object.data)
+        add_dish_button = types.InlineKeyboardButton(text=customermenus.ADD_DISH_BTN,
+                                                     callback_data=c_back.input_object.data)
         menu = types.InlineKeyboardMarkup(row_width=2)
         menu.add(customermenus.back_button, add_dish_button)
         dish = c_back.get_dish()
-        new_text = "\n".join(
+        new_text = "\n".join(  # TODO export to texts as lambda
             [
                 customermenus.SELECTED_DISH_MSG,
                 f"{dish[0]}",
@@ -495,7 +579,7 @@ def dish_chosen(call: types.CallbackQuery) -> None:
             ]
         )
         bot.edit_message_text(
-            new_text,  # TODO export to texts as lambda
+            new_text,
             c_back.input_object.from_user.id,
             c_back.input_object.message.message_id,
             reply_markup=menu
@@ -503,8 +587,15 @@ def dish_chosen(call: types.CallbackQuery) -> None:
 
 
 @bot.callback_query_handler(func=lambda call: customermenus.SELECTED_DISH_MSG in call.message.text)
+@logger_decorator_callback
 def is_dish_added(call: types.CallbackQuery) -> None:
-    """"""  # TODO
+    """Process Customer's response to selected dish confirmation. Show Customer's cart menu displaying
+    dishes and price or go back to dish category selection menu if confirmation isn't obtained.
+
+    Args:
+        call: Callback query from Customer with response to selected dish confirmation.
+
+    """
     c_back = Interface(call)  # TODO
     if c_back.input_object.data == customermenus.back_button.callback_data:
         data = c_back.get_from_cart("restaurant_uuid")
@@ -512,7 +603,7 @@ def is_dish_added(call: types.CallbackQuery) -> None:
         restaurant_chosen(c_back.input_object)
     else:
         if c_back.input_object.data != customermenus.cart_button.callback_data:
-            dishes_uuids = c_back.get_from_cart("dishes_uuids")  #TODO FIX BUG!!!
+            dishes_uuids = c_back.get_from_cart("dishes_uuids")  # TODO FIX BUG!!!
             if not dishes_uuids:
                 dishes_uuids = []
             dishes_uuids.append(c_back.input_object.data)
@@ -525,15 +616,15 @@ def is_dish_added(call: types.CallbackQuery) -> None:
                 subtotal += dish_price
             c_back.input_object.data = subtotal
             c_back.add_to_cart("subtotal")
-        pay_button = types.InlineKeyboardButton(text=customermenus.PAY_BTN, callback_data="DEV")
-        add_more_button = types.InlineKeyboardButton(text=customermenus.ADD_MORE_BTN, callback_data="aaa")
+        pay_button = types.InlineKeyboardButton(text=customermenus.PAY_BTN, callback_data=customermenus.PAY_BTN)
+        add_more_button = types.InlineKeyboardButton(text=customermenus.ADD_MORE_BTN, callback_data=customermenus.ADD_MORE_BTN)
         delete_item_button = types.InlineKeyboardButton(
             text=customermenus.DELETE_ITEM_BTN,
             callback_data=customermenus.DELETE_ITEM_BTN
         )
         menu = types.InlineKeyboardMarkup(row_width=1)
         menu.add(pay_button, add_more_button, delete_item_button, customermenus.cancel_order_button)
-        c_back.input_object.data = c_back.get_from_cart("dishes_uuids") # TODO: transfer to textes as lambda expr.
+        c_back.input_object.data = c_back.get_from_cart("dishes_uuids")  # TODO: transfer to textes as lambda expr.
         dishes = []
         if c_back.input_object.data:
             for dish in c_back.input_object.data:
@@ -557,10 +648,12 @@ def is_dish_added(call: types.CallbackQuery) -> None:
         )
 
 
-
 @bot.callback_query_handler()
+@logger_decorator_callback
 def cart_actions(call: types.CallbackQuery) -> None:
-    """"""  # TODO
+    """"""
+    c_back = Interface(call)
+
     pass
 
 

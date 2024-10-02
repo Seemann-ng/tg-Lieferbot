@@ -16,8 +16,7 @@ DB_USER = env.str("DB_USER")
 DB_PASSWORD = env.str("DB_PASSWORD")
 
 
-# TODO: make it a decorator.
-def cursor():
+def cursor():  # TODO: make it a decorator?
     conn = psycopg2.connect(
         database=DB,
         host=DB_HOST,

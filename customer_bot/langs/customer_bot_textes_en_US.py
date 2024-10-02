@@ -43,7 +43,7 @@ REG_NAME_MSG = "How can I call You?"
 REG_NAME_PLACEHOLDER = "Your name"
 REG_NAME_RECEIVED_MSG = "Your name has been changed to: "
 REG_PHONE_METHOD_MSG = "How would You like to provide your phone number?"
-REG_PHONE_MSG = "Please provide us Your phone number (without '+49'!)."
+REG_PHONE_MSG = f"Please provide us Your phone number (without '{PHONE_NUM_PREFIX}'!)."
 REG_PHONE_PLACEHOLDER = "Your phone number"
 PHONE_RECEIVED_MSG = "Your phone number has been changed to: "
 INVALID_PHONE_MSG = "‼️ Invalid phone number."
@@ -77,8 +77,8 @@ DISH_PRICE_MSG = "Price:"
 YOUR_CART_MSG = "🛒 Your cart:"
 SUBTOTAL_MSG = "Subtotal"
 
-# TODO: lambda
-def my_orders_msg(orders: list) -> str:
+
+def my_orders_msg(orders: list) -> str:  # TODO: lambda
     if not orders:
         return "You have no orders yet."
     order_id = orders[0][0][-6:]

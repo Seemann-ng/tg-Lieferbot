@@ -8,7 +8,7 @@ LANG = env.str("LANG", default="en_US")
 
 if LANG == "en_US":
     from langs.customer_bot_textes_en_US import *
-if LANG == "de_DE":
+elif LANG == "de_DE":
     from langs.customer_bot_textes_de_DE import *
 
 # Agreement menu.
