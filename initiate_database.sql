@@ -30,6 +30,7 @@ CREATE TABLE dishes (
     dish_uuid uuid,
     category VARCHAR,
     dish_name VARCHAR,
+    dish_description VARCHAR,
     dish_price NUMERIC(6, 2),
     dish_is_available BOOLEAN
 );
@@ -43,16 +44,21 @@ CREATE TABLE orders (
     customer_name VARCHAR,
     delivery_location NUMERIC(9, 6) [],
     dishes VARCHAR [],
-    dishes_price NUMERIC(6, 2),
-    courier_fee NUMERIC(6, 2),
-    service_fee NUMERIC(6, 2),
-    total NUMERIC(6, 2),
+    dishes_subtotal NUMERIC(10, 2),
+    courier_fee NUMERIC(10, 2),
+    service_fee NUMERIC(10, 2),
+    total NUMERIC(10, 2),
     order_date TIMESTAMP,
     order_status VARCHAR
 );
 CREATE TABLE cart (
     customer_id INT,
-    dishes VARCHAR [],
-    price NUMERIC(6, 2)
+    restaurant_type VARCHAR,
+    restaurant_uuid uuid,
+    dishes_uuids uuid [],
+    subtotal NUMERIC(10, 2),
+    service_fee NUMERIC (10, 2),
+    courier_fee NUMERIC (10, 2),
+    total NUMERIC (10, 2)
 );
 CREATE EXTENSION "pgcrypto";

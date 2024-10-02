@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 
 import psycopg2
 import telebot.types as types
@@ -157,3 +157,171 @@ class DBInterface:
         orders = cur.fetchall()
         cur.connection.close()
         return orders
+
+    @staticmethod
+    def show_restaurant_types() -> List | None:
+        """
+
+        Returns:
+
+        """
+        cur = cursor()
+        cur.execute("SELECT DISTINCT restaurant_type FROM restaurants WHERE restaurants.restaurant_is_open=TRUE"
+                    " ORDER BY restaurant_type")
+        restaurant_types = cur.fetchall()
+        cur.connection.close()
+        return restaurant_types
+
+    @staticmethod
+    def show_restaurants(restaurant_type: str) -> List | None:
+        """
+
+        Args:
+            restaurant_type:
+
+        Returns:
+
+        """
+        cur = cursor()
+        cur.execute(
+            "SELECT restaurant_name, restaurant_uuid FROM restaurants WHERE restaurants.restaurant_type = %s AND restaurants.restaurant_is_open = TRUE",
+            (restaurant_type,)
+        )
+        restaurants = cur.fetchall()
+        cur.connection.close()
+        return restaurants
+
+    @staticmethod
+    def show_dish_categories(restaurant_uuid: str) -> List | None:
+        """
+
+        Args:
+            restaurant_uuid:
+
+        Returns:
+
+        """
+        cur = cursor()
+        cur.execute(
+            "SELECT DISTINCT category FROM dishes WHERE dishes.restaurant_uuid = %s AND dishes.dish_is_available = TRUE",
+            (restaurant_uuid,)
+        )
+        categories = cur.fetchall()
+        cur.connection.close()
+        return categories
+
+    @classmethod
+    def show_dishes(cls, call: types.CallbackQuery) -> List | None:
+        """"""
+        cur = cursor()
+        restaurant_uuid = cls.get_from_cart("restaurant_uuid",call)
+        cur.execute(
+            "SELECT dish_name, dish_uuid FROM dishes WHERE dishes.restaurant_uuid = %s AND dishes.dish_is_available = TRUE AND dishes.category = %s",
+            (restaurant_uuid, call.data)
+        )
+        dishes = cur.fetchall()
+        cur.connection.close()
+        return dishes
+
+    @staticmethod
+    def rest_name_by_uuid(rest_uuid: str) -> str | None:
+        """
+
+        Args:
+            rest_uuid:
+
+        Returns:
+
+        """
+        cur = cursor()
+        cur.execute(
+            "SELECT restaurant_name FROM restaurants WHERE restaurants.restaurant_uuid = %s",
+            (rest_uuid,)
+        )
+        rest_name = cur.fetchone()
+        return rest_name[0]
+    @staticmethod
+    def get_dish(call: types.CallbackQuery) -> List | None:
+        """"""
+        cur = cursor()
+        cur.execute(
+            "SELECT dish_name, dish_description, dish_price FROM dishes WHERE dishes.dish_uuid = %s",
+            (call.data,)
+        )
+        dish = cur.fetchone()
+        cur.connection.close()
+        return dish
+
+    @staticmethod
+    def new_cart(call: types.CallbackQuery) -> None:
+        """"""
+        cur = cursor()
+        cur.execute("INSERT INTO cart (customer_id) VALUES (%s)", (call.from_user.id,))
+        cur.connection.commit()
+        cur.connection.close()
+
+    @staticmethod
+    def add_to_cart(column_name: str, call: types.CallbackQuery) -> None:
+        """"""
+        cur = cursor()
+        cur.execute(
+            "UPDATE cart SET " + column_name + " =%s WHERE cart.customer_id = %s",
+            (call.data, call.from_user.id)
+        )
+        cur.connection.commit()
+        cur.connection.close()
+
+    @staticmethod
+    def get_from_cart(column_name: str, call: types.CallbackQuery) -> str | List | None:
+        """"""
+        cur = cursor()
+        cur.execute("SELECT " + column_name + " FROM cart WHERE cart.customer_id = %s", (call.from_user.id,))
+        value = cur.fetchone()
+        return value
+
+    @staticmethod
+    def delete_from_cart(column_name: str, call: types.CallbackQuery) -> None:
+        """"""
+        cur = cursor()
+        cur.execute("UPDATE cart SET " + column_name + " =null WHERE cart.customer_id = %s", (call.from_user.id,))
+        cur.connection.commit()
+        cur.connection.close()
+
+    @staticmethod
+    def delete_cart(uid) -> None:
+        """
+
+        Args:
+            uid:
+
+        Returns:
+
+        """
+        cur = cursor()
+        cur.execute("DELETE FROM cart WHERE cart.customer_id = %s", (uid,))
+        cur.connection.commit()
+        cur.connection.close()
+
+    @staticmethod
+    def check_if_location(message: types.Message) -> Dict[str, float] | None:
+        """
+
+        Args:
+            message:
+
+        Returns:
+
+        """
+        cur = cursor()
+        cur.execute(
+            "SELECT customer_location FROM customers WHERE customers.customer_id = %s",
+            (message.from_user.id,)
+        )
+        latlon = cur.fetchone()
+        cur.connection.close()
+        if latlon[0]:
+            location = {
+                "lat": latlon[0][0],
+                "lon": latlon[0][1]
+            }
+            return location

@@ -51,6 +51,28 @@ def phone_from_msg(message: types.Message) -> str | None:
         return phone_number
 
 
+def callback_to_msg(call: types.CallbackQuery) -> types.Message:
+    """
+
+    Args:
+        call:
+
+    Returns:
+
+    """
+    call.message.from_user.id = call.from_user.id
+    msg = call.message
+    return msg
+
+
+def clear_cart(call: types.CallbackQuery) -> None:
+    """"""
+    bot.answer_callback_query(call.id, customermessages.DELETING_CART_ALERT, show_alert=True)
+    bot.delete_message(call.from_user.id, call.message.message_id)
+    Interface.delete_cart(call.from_user.id)
+    show_main_menu(callback_to_msg(call))
+
+
 # Sing in/sign up block.
 @bot.message_handler(commands=["start"])
 def start(message: types.Message) -> None:
@@ -61,6 +83,7 @@ def start(message: types.Message) -> None:
         message: /start command from Customer.
 
     """
+    Interface.delete_cart(message.from_user.id)
     user = Interface.user_in_db(message)
     if user:
         bot.send_message(message.from_user.id, customermessages.WELCOME_BACK_MSG + user)
@@ -227,21 +250,39 @@ def my_orders(message: types.Message) -> None:
 
     """
     orders = Interface.show_my_orders(message)
-    while orders:
-        bot.send_message(message.from_user.id, customermessages.my_orders_msg(orders))
+    if not orders:
+        bot.send_message(message.from_user.id, customermessages.NO_ORDERS_FOUND_MSG)
+        show_main_menu(message)
+    else:
+        while orders:
+            bot.send_message(message.from_user.id, customermessages.my_orders_msg(orders))
+        show_main_menu(message)
 
 
 @bot.message_handler(regexp=customermenus.NEW_ORDER_BTN)
 def new_order(message: types.Message) -> None:
-    """
+    """Commence order creation sequence. Check if User location is provided. If location is provided, ask confirmation.
 
     Args:
-        message:
-
-    Returns:
+        message: Request form Customer to create new order.
 
     """
-    pass
+    location = Interface.check_if_location(message)
+    if not location:
+        bot.send_message(message.from_user.id, customermessages.LOCATION_NOT_FOUND_MSG)
+        show_main_menu(message)
+    else:
+        bot.send_message(
+            message.from_user.id,
+            customermessages.CONFIRM_LOCATION_MSG,
+            reply_markup=types.ReplyKeyboardRemove()
+        )
+        bot.send_location(
+            message.from_user.id,
+            location["lat"],
+            location["lon"],
+            reply_markup=customermenus.confirm_location_menu
+        )
 
 
 # Options menu block.
@@ -323,6 +364,254 @@ def confirm_delete(message: types.Message) -> None:
     """
     Interface.delete_customer(message)
     bot.send_message(message.from_user.id, customermessages.PROFILE_DELETED_MSG)
+
+
+# Creating order sequence block.
+@bot.callback_query_handler(func=lambda call: call.message.location)
+def check_location_confirmation(call: types.CallbackQuery) -> None:
+    """
+
+    Args:
+        call:
+
+    Returns:
+
+    """
+    bot.delete_message(call.from_user.id, call.message.id - 1)
+    bot.delete_message(call.from_user.id, call.message.id)
+    if call.data == customermenus.WRONG_LOCATION_MSG:
+        bot.send_message(call.from_user.id, customermessages.REQUEST_NEW_LOCATION_MSG)
+        msg = callback_to_msg(call)
+        show_main_menu(msg)
+    elif call.data == customermenus.CONFIRM_LOCATION_BTN:
+        Interface.new_cart(call)
+        restaurant_types = Interface.show_restaurant_types()
+        menu = types.InlineKeyboardMarkup(row_width=1)
+        if restaurant_types:
+            for restaurant_type in restaurant_types:
+                menu.add(types.InlineKeyboardButton(text=restaurant_type[0], callback_data=restaurant_type[0]))
+        menu.add(customermenus.back_button)
+        bot.send_message(
+            call.from_user.id,
+            customermessages.CHOOSE_REST_TYPE_MSG,
+            reply_markup=menu
+        )
+
+@bot.callback_query_handler(func=lambda call: call.message.text == customermessages.CHOOSE_REST_TYPE_MSG)
+def rest_type_chosen(call: types.CallbackQuery) -> None:
+    """
+
+    Args:
+        call:
+
+    Returns:
+
+    """
+    if call.data == customermenus.back_button.callback_data:
+        bot.answer_callback_query(call.id, customermessages.EXITING_ORDER_MENU_MSG)
+        bot.delete_message(call.from_user.id, call.message.message_id)
+        Interface.delete_cart(call.from_user.id)
+        msg = callback_to_msg(call)
+        show_main_menu(msg)
+    else:
+        Interface.add_to_cart("restaurant_type", call)
+        restaurants = Interface.show_restaurants(call.data)
+        menu = types.InlineKeyboardMarkup(row_width=1)
+        if restaurants:
+            for restaurant in restaurants:
+                menu.add(types.InlineKeyboardButton(text=restaurant[0], callback_data=restaurant[1]))
+        menu.add(customermenus.back_button)
+        bot.edit_message_text(
+            customermessages.SELECTED_REST_TYPE_MSG + f"\n{call.data}\n" + customermessages.CHOOSE_REST_MSG,
+            call.from_user.id,
+            call.message.message_id,
+            reply_markup=menu
+        )
+
+
+@bot.callback_query_handler(func=lambda call: customermessages.CHOOSE_REST_MSG in call.message.text)
+def restaurant_chosen(call: types.CallbackQuery) -> None:
+    """
+
+    Args:
+        call:
+
+    Returns:
+
+    """
+    if call.data == customermenus.back_button.callback_data:
+        bot.answer_callback_query(call.id, customermessages.DELETING_CART_ALERT, show_alert=True)
+        bot.delete_message(call.from_user.id, call.message.message_id)
+        Interface.delete_cart(call.from_user.id)
+        show_main_menu(callback_to_msg(call))
+    else:
+        Interface.add_to_cart("restaurant_uuid", call)
+        dish_categories = Interface.show_dish_categories(call.data)
+        menu = types.InlineKeyboardMarkup(row_width=1)
+        if dish_categories:
+            for category in dish_categories:
+                menu.add(types.InlineKeyboardButton(text=category[0], callback_data=category[0]))
+        menu.add(customermenus.cart_button)
+        menu.add(customermenus.back_button)
+        menu.add(customermenus.cancel_order_button)
+        restaurant = Interface.rest_name_by_uuid(call.data)
+        bot.edit_message_text(
+            customermessages.SELECTED_REST_MSG + f"\n{restaurant}\n" + customermessages.CHOOSE_DISH_CATEGORY_MSG,
+            call.from_user.id,
+            call.message.message_id,
+            reply_markup=menu
+        )
+
+
+@bot.callback_query_handler(func=lambda call: customermessages.CHOOSE_DISH_CATEGORY_MSG in call.message.text)
+def dish_category_chosen(call: types.CallbackQuery) -> None:
+    """
+
+    Args:
+        call:
+
+    Returns:
+
+    """
+    if call.data == customermenus.back_button.callback_data:
+        Interface.delete_from_cart("restaurant_uuid", call)
+        call.data = Interface.get_from_cart("restaurant_type", call)
+        rest_type_chosen(call)
+    elif call.data == customermenus.cancel_order_button.callback_data:
+        clear_cart(call)
+    elif call.data == customermenus.cart_button.callback_data:
+        is_dish_added(call)
+    else:
+        dishes = Interface.show_dishes(call)
+        menu = types.InlineKeyboardMarkup(row_width=1)
+        if dishes:
+            for dish in dishes:
+                menu.add(types.InlineKeyboardButton(text=dish[0], callback_data=dish[1]))
+        menu.add(customermenus.cart_button)
+        menu.add(customermenus.back_button)
+        menu.add(customermenus.cancel_order_button)
+        bot.edit_message_text(
+            customermessages.SELECTED_DISH_CAT_MSG + f"\n{call.data}\n" + customermessages.CHOOSE_DISH_MSG,
+            call.from_user.id,
+            call.message.message_id,
+            reply_markup=menu
+        )
+
+
+@bot.callback_query_handler(func=lambda call: customermessages.CHOOSE_DISH_MSG in call.message.text)
+def dish_chosen(call: types.CallbackQuery) -> None:
+    """
+
+    Args:
+        call:
+
+    Returns:
+
+    """
+    if call.data == customermenus.back_button.callback_data:
+        data = Interface.get_from_cart("restaurant_uuid", call)
+        call.data = data
+        restaurant_chosen(call)
+    elif call.data == customermenus.cancel_order_button.callback_data:
+        clear_cart(call)
+    elif call.data == customermenus.cart_button.callback_data:
+        is_dish_added(call)
+    else:
+        add_dish_button = types.InlineKeyboardButton(text=customermenus.ADD_DISH_BTN, callback_data=call.data)
+        menu = types.InlineKeyboardMarkup(row_width=2)
+        menu.add(customermenus.back_button, add_dish_button)
+        dish = Interface.get_dish(call)
+        new_text = "\n".join(
+            [
+                customermessages.SELECTED_DISH_MSG,
+                f"{dish[0]}",
+                customermessages.DISH_DESC_MSG,
+                f"{dish[1]}",
+                customermessages.DISH_PRICE_MSG,
+                f"{customermessages.CURRENCY}{dish[2]}"
+            ]
+        )
+        bot.edit_message_text(
+            new_text,
+            call.from_user.id,
+            call.message.message_id,
+            reply_markup=menu
+        )
+
+
+@bot.callback_query_handler(func=lambda call: customermessages.SELECTED_DISH_MSG in call.message.text)
+def is_dish_added(call: types.CallbackQuery) -> None:
+    """
+
+    Args:
+        call:
+
+    Returns:
+
+    """
+    if call.data == customermenus.back_button.callback_data:
+        data = Interface.get_from_cart("restaurant_uuid", call)
+        call.data = data
+        restaurant_chosen(call)
+    else:
+        if call.data != customermenus.cart_button.callback_data:
+            dishes_uuids = Interface.get_from_cart("dishes_uuids", call)  #TODO FIX BUG!!!
+            if not dishes_uuids:
+                dishes_uuids = []
+            dishes_uuids.append(call.data)
+            call.data = dishes_uuids
+            Interface.add_to_cart("dishes_uuids", call)
+            subtotal = 0
+            for dish in dishes_uuids:
+                call.data = dish
+                dish_price = Interface.get_dish(call)[2]
+                subtotal += dish_price
+            call.data = subtotal
+            Interface.add_to_cart("subtotal", call)
+        pay_button = types.InlineKeyboardButton(text=customermenus.PAY_BTN, callback_data="DEV")
+        add_more_button = types.InlineKeyboardButton(text=customermenus.ADD_MORE_BTN, callback_data="aaa")
+        delete_item_button = types.InlineKeyboardButton(
+            text=customermenus.DELETE_ITEM_BTN,
+            callback_data=customermenus.DELETE_ITEM_BTN
+        )
+        menu = types.InlineKeyboardMarkup(row_width=1)
+        menu.add(pay_button, add_more_button, delete_item_button, customermenus.cancel_order_button)
+        call.data = Interface.get_from_cart("dishes_uuids", call)
+        dishes = []
+        if call.data:
+            for dish in call.data:
+                call.data = dish
+                dish_name = Interface.get_dish(call)[0]
+                dishes.append(dish_name)
+        subtotal = Interface.get_from_cart("subtotal", call)
+        new_text = "\n".join(
+            [
+                customermessages.YOUR_CART_MSG,
+                f"{dishes}",
+                customermessages.SUBTOTAL_MSG,
+                f"{customermessages.CURRENCY}{subtotal}"
+            ]
+        )
+        bot.edit_message_text(
+            new_text,
+            call.from_user.id,
+            call.message.message_id,
+            reply_markup=menu
+        )
+
+
+
+@bot.callback_query_handler()
+def cart_actions(call: types.CallbackQuery) -> None:
+    """
+
+    Args:
+        call:
+
+    Returns:
+
+    """
+    pass
 
 
 def main():
