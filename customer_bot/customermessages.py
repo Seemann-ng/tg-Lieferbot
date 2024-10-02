@@ -1,5 +1,7 @@
 import customermenus
 
+PHONE_NUM_PREFIX = "+49"
+MAX_PHONE_LENGTH_WO_PREFIX = 11
 CURRENCY = "€"
 WELCOME_BACK_MSG = "Welcome back, "
 MAIN_MENU_MSG = "You're in main menu now."
@@ -66,4 +68,4 @@ def my_orders_msg(orders: list) -> str:
            f"Status: {order_status}\n")
     return msg
 
-
+# TODO transfer button textes from /customermenus.py

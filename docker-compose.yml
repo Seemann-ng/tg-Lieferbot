@@ -17,6 +17,19 @@ services:
     ports:
       - 5433:5432
 
+  customer_bot:
+    build:
+      context: .
+      dockerfile: Dockerfile_customer_bot
+    env_file:
+      - .env
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - LANG=${LANG}
+    image: liefer_bot-customer
+    container_name: liefer_bot_customer
+    restart: always
+
 volumes:
   pgdata:
     external: true

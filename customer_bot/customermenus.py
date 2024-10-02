@@ -1,5 +1,5 @@
 import telebot.types as types
-
+# TODO export buttons to textes
 # Button textes.
 AGREEMENT_MENU_PLACEHOLDER = "📑 Agreement"
 SHOW_AGREEMENT_BTN = "🔍📑 Show Customer Agreement"
