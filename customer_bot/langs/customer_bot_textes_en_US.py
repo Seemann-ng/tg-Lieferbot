@@ -1,3 +1,8 @@
+from environs import Env
+
+env = Env()
+env.read_env()
+
 # Menu buttons.
 AGREEMENT_MENU_PLACEHOLDER = "📑 Agreement"
 SHOW_AGREEMENT_BTN = "🔍📑 Show Customer Agreement"
@@ -22,14 +27,18 @@ GO_BACK_BTN = "⬅️ Go back"
 CART_BTN = "🛒 My cart"
 CANCEL_ORDER_BTN = "🚫 CANCEL ORDER"
 ADD_DISH_BTN = "✅ Add to cart"
-PAY_BTN = "💳 Confirm order"
+PAY_BTN = "💳 Confirm order\n🛠IN DEVELOPMENT🛠"
 ADD_MORE_BTN = "🛍 Continue shopping"
 DELETE_ITEM_BTN = "📤 Delete item"
 
 # Localization variables.
 PHONE_NUM_PREFIX = "+1"
 MAX_PHONE_LENGTH_WO_PREFIX = 11
-CURRENCY = "💲"
+CURRENCY = "$"
+COURIER_FEE_BASE = env.float("COURIER_FEE_BASE", default=2.25)
+COURIER_FEE_RATE = env.float("COURIER_FEE_RATE", default=0.08)
+SERVICE_FEE_BASE = env.float("SERVICE_FEE_BASE", default=1.75)
+SERVICE_FEE_RATE = env.float("SERVICE_FEE_RATE", default=0.05)
 
 # Bot messages.
 IN_DEV = "I've told You, IT IS IN DEVELOPMENT!"
@@ -75,7 +84,11 @@ SELECTED_DISH_MSG = "Selected dish:"
 DISH_DESC_MSG = "Description:"
 DISH_PRICE_MSG = "Price:"
 YOUR_CART_MSG = "🛒 Your cart:"
-SUBTOTAL_MSG = "Subtotal"
+SUBTOTAL_MSG = "Subtotal:"
+COURIER_FEE_MSG = "Courier fee:"
+SERVICE_FEE_MSG = "Service fee:"
+TOTAL_MSG = "Total:"
+DELETE_ITEM_MSG = "Choose item to delete"
 
 
 def my_orders_msg(orders: list) -> str:  # TODO: lambda

@@ -10,30 +10,27 @@ env = Env()
 env.read_env()
 
 DB = env.str("DB")
-DB_HOST = env.str("DB_HOST")
-DB_PORT = env.str("DB_PORT")
 DB_USER = env.str("DB_USER")
 DB_PASSWORD = env.str("DB_PASSWORD")
+DB_HOST = env.str("DB_HOST", default="localhost")
+DB_PORT = env.str("DB_PORT", default="5432")
 
 
 def cursor():  # TODO: make it a decorator?
-    conn = psycopg2.connect(
-        database=DB,
-        host=DB_HOST,
-        port=DB_PORT,
-        user=DB_USER,
-        password=DB_PASSWORD
-    )
+    conn = psycopg2.connect(database=DB,
+                            user=DB_USER,
+                            password=DB_PASSWORD,
+                            host=DB_HOST,
+                            port=DB_PORT)
     cur = conn.cursor()
     return cur
 
 
-class DBInterface:
-    def __init__(self, input_obj: types.Message | types.CallbackQuery):
-        self.input_object = input_obj
-        logger.info(
-            f"DBInterface instance initialized with self.data = {self.input_object} of type {type(self.input_object)}."
-        )
+class Interface:
+    def __init__(self, data_to_read: types.Message | types.CallbackQuery):  # TODO: refactor!!!
+        self.data_to_read = data_to_read
+        logger.info(f"Interface instance initialized with "
+                    f"self.data = {self.data_to_read} of type {type(self.data_to_read)}.")
 
     @logger_decorator
     def user_in_db(self) -> str | None:
@@ -45,13 +42,11 @@ class DBInterface:
 
         """
         cur = cursor()
-        customer_id = self.input_object.from_user.id
-        cur.execute(
-            "SELECT customer_name, customer_username "
-            "FROM customers "
-            "WHERE customers.customer_id = %s",
-            [customer_id]
-        )
+        customer_id = self.data_to_read.from_user.id
+        cur.execute("SELECT customer_name, customer_username "
+                    "FROM customers "
+                    "WHERE customers.customer_id = %s",
+                    [customer_id])
         customer_names = cur.fetchone()
         cur.connection.close()
         if customer_names:
@@ -66,16 +61,14 @@ class DBInterface:
         """
         cur = cursor()
         if not self.user_in_db():
-            customer_id = self.input_object.from_user.id
-            customer_username = self.input_object.from_user.username
-            cur.execute(
-                "INSERT INTO customers (customer_id, customer_username) "
-                "VALUES (%s, %s)",
-                [
-                    customer_id,
-                    customer_username
-                ]
-            )
+            customer_id = self.data_to_read.from_user.id
+            customer_username = self.data_to_read.from_user.username
+            cur.execute("INSERT INTO customers (customer_id, customer_username) "
+                        "VALUES (%s, %s)",
+                        [
+                            customer_id,
+                            customer_username
+                        ])
             cur.connection.commit()
         cur.connection.close()
 
@@ -85,17 +78,15 @@ class DBInterface:
 
         """
         cur = cursor()
-        customer_name = self.input_object.text
-        customer_id = self.input_object.from_user.id
-        cur.execute(
-            "UPDATE customers "
-            "SET customer_name = %s "
-            "WHERE customers.customer_id = %s",
-            [
-                customer_name,
-                customer_id
-            ]
-        )
+        customer_name = self.data_to_read.text
+        customer_id = self.data_to_read.from_user.id
+        cur.execute("UPDATE customers "
+                    "SET customer_name = %s "
+                    "WHERE customers.customer_id = %s",
+                    [
+                        customer_name,
+                        customer_id
+                    ])
         cur.connection.commit()
         cur.connection.close()
 
@@ -108,16 +99,14 @@ class DBInterface:
 
         """
         cur = cursor()
-        customer_id = self.input_object.from_user.id
-        cur.execute(
-            "UPDATE customers "
-            "SET customer_phone_num = %s "
-            "WHERE customers.customer_id = %s",
-            [
-                phone_number,
-                customer_id
-            ]
-        )
+        customer_id = self.data_to_read.from_user.id
+        cur.execute("UPDATE customers "
+                    "SET customer_phone_num = %s "
+                    "WHERE customers.customer_id = %s",
+                    [
+                        phone_number,
+                        customer_id
+                    ])
         cur.connection.commit()
         cur.connection.close()
 
@@ -127,19 +116,17 @@ class DBInterface:
 
         """
         cur = cursor()
-        latitude = self.input_object.location.latitude
-        longitude = self.input_object.location.longitude
-        customer_id = self.input_object.from_user.id
-        cur.execute(
-            "UPDATE customers "
-            "SET customer_location = '{%s, %s}' "
-            "WHERE customers.customer_id = %s",
-            [
-                latitude,
-                longitude,
-                customer_id
-            ]
-        )
+        latitude = self.data_to_read.location.latitude
+        longitude = self.data_to_read.location.longitude
+        customer_id = self.data_to_read.from_user.id
+        cur.execute("UPDATE customers "
+                    "SET customer_location = '{%s, %s}' "
+                    "WHERE customers.customer_id = %s",
+                    [
+                        latitude,
+                        longitude,
+                        customer_id
+                    ])
         cur.connection.commit()
         cur.connection.close()
 
@@ -149,7 +136,7 @@ class DBInterface:
 
         """
         cur = cursor()
-        customer_id = self.input_object.from_user.id
+        customer_id = self.data_to_read.from_user.id
         cur.execute("DELETE FROM customers WHERE customers.customer_id = %s", [customer_id])
         cur.connection.commit()
         cur.connection.close()
@@ -163,15 +150,11 @@ class DBInterface:
 
         """
         cur = cursor()
-        customer_id = self.input_object.from_user.id
-        cur.execute(
-            "SELECT order_uuid, restaurant_name, courier_name, dishes, total, order_date, order_status "
-            "FROM orders "
-            "WHERE orders.customer_id = %s",
-            [
-                customer_id
-            ]
-        )
+        customer_id = self.data_to_read.from_user.id
+        cur.execute("SELECT order_uuid, restaurant_name, courier_name, dishes, total, order_date, order_status "
+                    "FROM orders "
+                    "WHERE orders.customer_id = %s",
+                    [customer_id])
         orders = cur.fetchall()
         cur.connection.close()
         return orders
@@ -186,12 +169,10 @@ class DBInterface:
 
         """
         cur = cursor()
-        cur.execute(
-            "SELECT DISTINCT restaurant_type "
-            "FROM restaurants "
-            "WHERE restaurants.restaurant_is_open=TRUE "
-            "ORDER BY restaurant_type"
-        )
+        cur.execute("SELECT DISTINCT restaurant_type "
+                    "FROM restaurants "
+                    "WHERE restaurants.restaurant_is_open=TRUE "
+                    "ORDER BY restaurant_type")
         restaurant_types = cur.fetchall()
         cur.connection.close()
         return restaurant_types
@@ -205,14 +186,12 @@ class DBInterface:
 
         """
         cur = cursor()
-        callback_data = self.input_object.data
-        cur.execute(
-            "SELECT restaurant_name, restaurant_uuid "
-            "FROM restaurants "
-            "WHERE restaurants.restaurant_type = %s "
-            "AND restaurants.restaurant_is_open = TRUE",
-            [callback_data]
-        )
+        callback_data = self.data_to_read.data
+        cur.execute("SELECT restaurant_name, restaurant_uuid "
+                    "FROM restaurants "
+                    "WHERE restaurants.restaurant_type = %s "
+                    "AND restaurants.restaurant_is_open = TRUE",
+                    [callback_data])
         restaurants = cur.fetchall()
         cur.connection.close()
         return restaurants
@@ -226,14 +205,12 @@ class DBInterface:
 
         """
         cur = cursor()
-        callback_data = self.input_object.data
-        cur.execute(
-            "SELECT DISTINCT category "
-            "FROM dishes "
-            "WHERE dishes.restaurant_uuid = %s "
-            "AND dishes.dish_is_available = TRUE",
-            [callback_data]
-        )
+        callback_data = self.data_to_read.data
+        cur.execute("SELECT DISTINCT category "
+                    "FROM dishes "
+                    "WHERE dishes.restaurant_uuid = %s "
+                    "AND dishes.dish_is_available = TRUE",
+                    [callback_data])
         categories = cur.fetchall()
         cur.connection.close()
         return categories
@@ -248,18 +225,16 @@ class DBInterface:
         """
         cur = cursor()
         restaurant_uuid = self.get_from_cart("restaurant_uuid")
-        callback_data = self.input_object.data
-        cur.execute(
-            "SELECT dish_name, dish_uuid "
-            "FROM dishes "
-            "WHERE dishes.restaurant_uuid = %s "
-            "AND dishes.dish_is_available = TRUE "
-            "AND dishes.category = %s",
-            [
-                restaurant_uuid,
-                callback_data
-            ]
-        )
+        callback_data = self.data_to_read.data
+        cur.execute("SELECT dish_name, dish_uuid "
+                    "FROM dishes "
+                    "WHERE dishes.restaurant_uuid = %s "
+                    "AND dishes.dish_is_available = TRUE "
+                    "AND dishes.category = %s",
+                    [
+                        restaurant_uuid,
+                        callback_data
+                    ])
         dishes = cur.fetchall()
         cur.connection.close()
         return dishes
@@ -273,13 +248,11 @@ class DBInterface:
 
         """
         cur = cursor()
-        callback_data = self.input_object.data
-        cur.execute(
-            "SELECT restaurant_name "
-            "FROM restaurants "
-            "WHERE restaurants.restaurant_uuid = %s",
-            [callback_data]
-        )
+        callback_data = self.data_to_read.data
+        cur.execute("SELECT restaurant_name "
+                    "FROM restaurants "
+                    "WHERE restaurants.restaurant_uuid = %s",
+                    [callback_data])
         rest_name = cur.fetchone()
         return rest_name[0]
 
@@ -292,13 +265,11 @@ class DBInterface:
 
         """
         cur = cursor()
-        callback_data = self.input_object.data
-        cur.execute(
-            "SELECT dish_name, dish_description, dish_price "
-            "FROM dishes "
-            "WHERE dishes.dish_uuid = %s",
-            [callback_data]
-        )
+        callback_data = self.data_to_read.data
+        cur.execute("SELECT dish_name, dish_description, dish_price "
+                    "FROM dishes "
+                    "WHERE dishes.dish_uuid = %s",
+                    [callback_data])
         dish = cur.fetchone()
         cur.connection.close()
         return dish
@@ -309,7 +280,7 @@ class DBInterface:
 
         """
         cur = cursor()
-        customer_id = self.input_object.from_user.id
+        customer_id = self.data_to_read.from_user.id
         cur.execute("INSERT INTO cart (customer_id) VALUES (%s)", [customer_id])
         cur.connection.commit()
         cur.connection.close()
@@ -323,17 +294,15 @@ class DBInterface:
 
         """
         cur = cursor()
-        callback_data = self.input_object.data
-        customer_id = self.input_object.from_user.id
-        cur.execute(
-            "UPDATE cart "
-            "SET " + column_name + " =%s "
-            "WHERE cart.customer_id = %s",
-            [
-                callback_data,
-                customer_id
-            ]
-        )
+        callback_data = self.data_to_read.data
+        customer_id = self.data_to_read.from_user.id
+        cur.execute("UPDATE cart "
+                    "SET " + column_name + " =%s "
+                    "WHERE cart.customer_id = %s",
+                    [
+                        callback_data,
+                        customer_id
+                    ])
         cur.connection.commit()
         cur.connection.close()
 
@@ -349,7 +318,7 @@ class DBInterface:
 
         """
         cur = cursor()
-        customer_id = self.input_object.from_user.id
+        customer_id = self.data_to_read.from_user.id
         cur.execute("SELECT " + column_name + " FROM cart WHERE cart.customer_id = %s", [customer_id])
         value = cur.fetchone()
         return value[0] if value is not None else None
@@ -363,7 +332,7 @@ class DBInterface:
 
         """
         cur = cursor()
-        customer_id = self.input_object.from_user.id
+        customer_id = self.data_to_read.from_user.id
         cur.execute("UPDATE cart SET " + column_name + " =null WHERE cart.customer_id = %s", [customer_id])
         cur.connection.commit()
         cur.connection.close()
@@ -374,7 +343,7 @@ class DBInterface:
 
         """
         cur = cursor()
-        customer_id = self.input_object.from_user.id
+        customer_id = self.data_to_read.from_user.id
         cur.execute("DELETE FROM cart WHERE cart.customer_id = %s", [customer_id])
         cur.connection.commit()
         cur.connection.close()
@@ -388,13 +357,11 @@ class DBInterface:
 
         """
         cur = cursor()
-        customer_id = self.input_object.from_user.id
-        cur.execute(
-            "SELECT customer_location "
-            "FROM customers "
-            "WHERE customers.customer_id = %s",
-            [customer_id]
-        )
+        customer_id = self.data_to_read.from_user.id
+        cur.execute("SELECT customer_location "
+                    "FROM customers "
+                    "WHERE customers.customer_id = %s",
+                    [customer_id])
         latlon = cur.fetchone()
         cur.connection.close()
         if latlon[0]:
