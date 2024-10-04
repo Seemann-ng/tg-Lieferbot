@@ -16,7 +16,7 @@ DB_HOST = env.str("DB_HOST", default="localhost")
 DB_PORT = env.str("DB_PORT", default="5432")
 
 
-def cursor():  # TODO: make it a decorator?
+def curs():  # TODO: make it a decorator?
     conn = psycopg2.connect(database=DB,
                             user=DB_USER,
                             password=DB_PASSWORD,
@@ -41,7 +41,7 @@ class Interface:
             Telegram username if Customer is in the DB and has NOT provided their name.
 
         """
-        cur = cursor()
+        cur = curs()
         customer_id = self.data_to_read.from_user.id
         cur.execute("SELECT customer_name, customer_username "
                     "FROM customers "
@@ -59,7 +59,7 @@ class Interface:
         """Add Customer to DB.
 
         """
-        cur = cursor()
+        cur = curs()
         if not self.user_in_db():
             customer_id = self.data_to_read.from_user.id
             customer_username = self.data_to_read.from_user.username
@@ -77,7 +77,7 @@ class Interface:
         """Update Customer name in the DB.
 
         """
-        cur = cursor()
+        cur = curs()
         customer_name = self.data_to_read.text
         customer_id = self.data_to_read.from_user.id
         cur.execute("UPDATE customers "
@@ -98,7 +98,7 @@ class Interface:
             phone_number: Customer's phone number.
 
         """
-        cur = cursor()
+        cur = curs()
         customer_id = self.data_to_read.from_user.id
         cur.execute("UPDATE customers "
                     "SET customer_phone_num = %s "
@@ -115,7 +115,7 @@ class Interface:
         """Update Customer Location in the DB.
 
         """
-        cur = cursor()
+        cur = curs()
         latitude = self.data_to_read.location.latitude
         longitude = self.data_to_read.location.longitude
         customer_id = self.data_to_read.from_user.id
@@ -135,7 +135,7 @@ class Interface:
         """Delete Customer from the DB.
 
         """
-        cur = cursor()
+        cur = curs()
         customer_id = self.data_to_read.from_user.id
         cur.execute("DELETE FROM customers WHERE customers.customer_id = %s", [customer_id])
         cur.connection.commit()
@@ -149,7 +149,7 @@ class Interface:
             List of tuples with Customer's orders info inside them.
 
         """
-        cur = cursor()
+        cur = curs()
         customer_id = self.data_to_read.from_user.id
         cur.execute("SELECT order_uuid, restaurant_name, courier_name, dishes, total, order_date, order_status "
                     "FROM orders "
@@ -168,7 +168,7 @@ class Interface:
             List of available restaurant types.
 
         """
-        cur = cursor()
+        cur = curs()
         cur.execute("SELECT DISTINCT restaurant_type "
                     "FROM restaurants "
                     "WHERE restaurants.restaurant_is_open=TRUE "
@@ -185,7 +185,7 @@ class Interface:
             List of available restaurants.
 
         """
-        cur = cursor()
+        cur = curs()
         callback_data = self.data_to_read.data
         cur.execute("SELECT restaurant_name, restaurant_uuid "
                     "FROM restaurants "
@@ -204,7 +204,7 @@ class Interface:
             List of available dish categories.
 
         """
-        cur = cursor()
+        cur = curs()
         callback_data = self.data_to_read.data
         cur.execute("SELECT DISTINCT category "
                     "FROM dishes "
@@ -223,7 +223,7 @@ class Interface:
             List of available dishes.
 
         """
-        cur = cursor()
+        cur = curs()
         restaurant_uuid = self.get_from_cart("restaurant_uuid")
         callback_data = self.data_to_read.data
         cur.execute("SELECT dish_name, dish_uuid "
@@ -247,7 +247,7 @@ class Interface:
             Restaurant name.
 
         """
-        cur = cursor()
+        cur = curs()
         callback_data = self.data_to_read.data
         cur.execute("SELECT restaurant_name "
                     "FROM restaurants "
@@ -264,7 +264,7 @@ class Interface:
             Tuple with dish info.
 
         """
-        cur = cursor()
+        cur = curs()
         callback_data = self.data_to_read.data
         cur.execute("SELECT dish_name, dish_description, dish_price "
                     "FROM dishes "
@@ -279,7 +279,7 @@ class Interface:
         """Create new cart in the DB.cart table and add Customer's Telegram ID in it.
 
         """
-        cur = cursor()
+        cur = curs()
         customer_id = self.data_to_read.from_user.id
         cur.execute("INSERT INTO cart (customer_id) VALUES (%s)", [customer_id])
         cur.connection.commit()
@@ -293,7 +293,7 @@ class Interface:
             column_name: Name of column containing required info.
 
         """
-        cur = cursor()
+        cur = curs()
         callback_data = self.data_to_read.data
         customer_id = self.data_to_read.from_user.id
         cur.execute("UPDATE cart "
@@ -317,7 +317,7 @@ class Interface:
             Required info.
 
         """
-        cur = cursor()
+        cur = curs()
         customer_id = self.data_to_read.from_user.id
         cur.execute("SELECT " + column_name + " FROM cart WHERE cart.customer_id = %s", [customer_id])
         value = cur.fetchone()
@@ -331,7 +331,7 @@ class Interface:
             column_name: Name of column containing required info.
 
         """
-        cur = cursor()
+        cur = curs()
         customer_id = self.data_to_read.from_user.id
         cur.execute("UPDATE cart SET " + column_name + " =null WHERE cart.customer_id = %s", [customer_id])
         cur.connection.commit()
@@ -342,7 +342,7 @@ class Interface:
         """Delete cart connected to given Customer's Telegram ID.
 
         """
-        cur = cursor()
+        cur = curs()
         customer_id = self.data_to_read.from_user.id
         cur.execute("DELETE FROM cart WHERE cart.customer_id = %s", [customer_id])
         cur.connection.commit()
@@ -356,7 +356,7 @@ class Interface:
             Customer's longitude and latitude if ones are provided.
 
         """
-        cur = cursor()
+        cur = curs()
         customer_id = self.data_to_read.from_user.id
         cur.execute("SELECT customer_location "
                     "FROM customers "
