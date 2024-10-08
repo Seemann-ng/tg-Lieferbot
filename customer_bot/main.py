@@ -2,7 +2,6 @@ import telebot as tb
 import telebot.types as types
 from environs import Env
 from telebot.apihelper import ApiTelegramException
-from telebot.types import ReplyKeyboardRemove
 
 import customer_menus
 from customer_db_tools import Interface as DBInterface
