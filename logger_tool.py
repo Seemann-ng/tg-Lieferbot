@@ -1,5 +1,5 @@
-import logging
 import functools
+import logging
 
 import telebot.types as types
 
@@ -17,7 +17,9 @@ def logger_decorator_msg(func):
         logger.info(
             f"Function {func.__name__} called by user {message.from_user.username} by message {message.text}."
         )
-        return func(message)
+        result = func(message)
+        logger.info(f"Function {func.__name__} executed successfully.")
+        return result
     return wrapper
 
 
@@ -27,7 +29,9 @@ def logger_decorator_callback(func):
         logger.info(
             f"Function {func.__name__} called by user {call.from_user.username} by callback query {call.data}."
         )
-        return func(call)
+        result = func(call)
+        logger.info(f"Function {func.__name__} executed successfully.")
+        return result
     return wrapper
 
 
@@ -35,7 +39,9 @@ def logger_decorator(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         logger.info(
-            f"Function {func.__name__} called with args {args}."
+            f"Function {func.__name__} called."
         )
-        return func(*args, **kwargs)
+        result = func(*args, **kwargs)
+        logger.info(f"Function {func.__name__} executed successfully.")
+        return result
     return wrapper

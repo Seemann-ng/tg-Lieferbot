@@ -1,21 +1,21 @@
 version: "3.8"
 
 services:
-  bot_db:
+  liefer_bot_db:
     container_name: "liefer_bot_db"
     restart: always
     image: postgres:12.20-alpine
     env_file:
       - .env
     environment:
-      - POSTGRES_DB=${DB}
+      - POSTGRES_DB=postgres
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     volumes:
       - ./pgdata:/var/lib/postgresql/data
       - ./initiate_database.sql:/docker-entrypoint-initdb.d/initiate_database.sql
     ports:
-      - 5433:5432
+      - ${DB_EXT_PORT}:5432
 
   customer_bot:
     build:
@@ -24,8 +24,8 @@ services:
     env_file:
       - .env
     environment:
-      - BOT_TOKEN=${BOT_TOKEN}
-      - LANG=${LANG}
+      - CUSTOMER_BOT_TOKEN=${CUSTOMER_BOT_TOKEN}
+      - DEF_LANG=${DEF_LANG}
     image: liefer_bot-customer
     container_name: liefer_bot_customer
     restart: always

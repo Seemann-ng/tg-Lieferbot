@@ -16,7 +16,8 @@ CREATE TABLE customers (
     customer_username VARCHAR,
     customer_name VARCHAR,
     customer_location NUMERIC(9, 6) [],
-    customer_phone_num VARCHAR
+    customer_phone_num VARCHAR,
+    lang_code VARCHAR
 );
 CREATE TABLE restaurants (
     restaurant_uuid uuid,

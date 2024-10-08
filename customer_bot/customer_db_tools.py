@@ -1,125 +1,135 @@
+import functools
 from typing import Dict, List, Tuple, Any
 
 import psycopg2
 import telebot.types as types
 from environs import Env
 
-from loggertool import logger, logger_decorator
+from logger_tool import logger, logger_decorator
 
 env = Env()
 env.read_env()
 
-DB = env.str("DB")
 DB_USER = env.str("DB_USER")
 DB_PASSWORD = env.str("DB_PASSWORD")
-DB_HOST = env.str("DB_HOST", default="localhost")
-DB_PORT = env.str("DB_PORT", default="5432")
+DEF_LANG = env.str("DEF_LANG", default="en_US")
 
 
-def curs():  # TODO: make it a decorator?
-    conn = psycopg2.connect(database=DB,
-                            user=DB_USER,
-                            password=DB_PASSWORD,
-                            host=DB_HOST,
-                            port=DB_PORT)
-    cur = conn.cursor()
-    return cur
+def cursor(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        conn = psycopg2.connect(database="postgres",
+                                user=DB_USER,
+                                password=DB_PASSWORD,
+                                host="liefer_bot_db",
+                                port=5432)
+        curs = conn.cursor()
+        result = func(*args, **kwargs, curs=curs)
+        conn.commit()
+        conn.close()
+        return result
+
+    return wrapper
 
 
 class Interface:
-    def __init__(self, data_to_read: types.Message | types.CallbackQuery):  # TODO: refactor!!!
+    def __init__(self, data_to_read: types.Message | types.CallbackQuery):
         self.data_to_read = data_to_read
-        logger.info(f"Interface instance initialized with "
-                    f"self.data = {self.data_to_read} of type {type(self.data_to_read)}.")
+        logger.info(f"Interface instance initialized with {type(self.data_to_read)}.")
 
+    @cursor
     @logger_decorator
-    def user_in_db(self) -> str | None:
+    def user_in_db(self, curs: psycopg2.extensions.cursor) -> str | None:
         """Check if Customer is in the DB and if so get their name or Telegram username.
+
+        Args:
+            curs: PostgreSQL cursor object.
 
         Returns:
             Customer name from the DB if Customer is in the DB and has provided their name,
             Telegram username if Customer is in the DB and has NOT provided their name.
 
         """
-        cur = curs()
         customer_id = self.data_to_read.from_user.id
-        cur.execute("SELECT customer_name, customer_username "
+        curs.execute("SELECT customer_name, customer_username "
                     "FROM customers "
                     "WHERE customers.customer_id = %s",
                     [customer_id])
-        customer_names = cur.fetchone()
-        cur.connection.close()
-        if customer_names:
+        if customer_names := curs.fetchone():
             if customer_names[0]:
                 return customer_names[0]
             return customer_names[1]
 
+    @cursor
     @logger_decorator
-    def add_customer(self) -> None:
+    def add_customer(self, curs: psycopg2.extensions.cursor) -> None:
         """Add Customer to DB.
 
+        Args:
+            curs: PostgreSQL cursor object.
+
         """
-        cur = curs()
         if not self.user_in_db():
             customer_id = self.data_to_read.from_user.id
             customer_username = self.data_to_read.from_user.username
-            cur.execute("INSERT INTO customers (customer_id, customer_username) "
+            curs.execute("INSERT INTO customers (customer_id, customer_username) "
                         "VALUES (%s, %s)",
                         [
                             customer_id,
                             customer_username
                         ])
-            cur.connection.commit()
-        cur.connection.close()
 
+    @cursor
     @logger_decorator
-    def update_name(self) -> None:
+    def update_name(self, curs: psycopg2.extensions.cursor) -> None:
         """Update Customer name in the DB.
 
+        Args:
+            curs: PostgreSQL cursor object.
+
         """
-        cur = curs()
         customer_name = self.data_to_read.text
         customer_id = self.data_to_read.from_user.id
-        cur.execute("UPDATE customers "
+        curs.execute("UPDATE customers "
                     "SET customer_name = %s "
                     "WHERE customers.customer_id = %s",
                     [
                         customer_name,
                         customer_id
                     ])
-        cur.connection.commit()
-        cur.connection.close()
 
+    @cursor
     @logger_decorator
-    def update_phone_number(self, phone_number: str) -> None:
+    def update_phone_number(self, phone_number: str, curs: psycopg2.extensions.cursor) -> None:
         """Update Customer phone number in the DB.
 
         Args:
             phone_number: Customer's phone number.
+            curs: PostgreSQL cursor object.
 
         """
-        cur = curs()
         customer_id = self.data_to_read.from_user.id
-        cur.execute("UPDATE customers "
+        curs.execute("UPDATE customers "
                     "SET customer_phone_num = %s "
                     "WHERE customers.customer_id = %s",
                     [
                         phone_number,
                         customer_id
                     ])
-        cur.connection.commit()
-        cur.connection.close()
 
+    @cursor
     @logger_decorator
-    def update_customer_location(self) -> None:
+    def update_customer_location(self, curs: psycopg2.extensions.cursor) -> None:
         """Update Customer Location in the DB.
 
+        Args:
+            curs: PostgreSQL cursor object.
+
         """
-        cur = curs()
         latitude = self.data_to_read.location.latitude
         longitude = self.data_to_read.location.longitude
         customer_id = self.data_to_read.from_user.id
-        cur.execute("UPDATE customers "
+        curs.execute("UPDATE customers "
                     "SET customer_location = '{%s, %s}' "
                     "WHERE customers.customer_id = %s",
                     [
@@ -127,106 +137,116 @@ class Interface:
                         longitude,
                         customer_id
                     ])
-        cur.connection.commit()
-        cur.connection.close()
 
+    @cursor
     @logger_decorator
-    def delete_customer(self) -> None:
+    def delete_customer(self, curs: psycopg2.extensions.cursor) -> None:
         """Delete Customer from the DB.
 
-        """
-        cur = curs()
-        customer_id = self.data_to_read.from_user.id
-        cur.execute("DELETE FROM customers WHERE customers.customer_id = %s", [customer_id])
-        cur.connection.commit()
-        cur.connection.close()
+        Args:
+            curs: PostgreSQL cursor object.
 
+        """
+        customer_id = self.data_to_read.from_user.id
+        curs.execute("DELETE FROM customers WHERE customers.customer_id = %s", [customer_id])
+
+    @cursor
     @logger_decorator
-    def show_my_orders(self) -> List[Tuple[Any, ...]] | None:
+    def show_my_orders(self, curs: psycopg2.extensions.cursor) -> List[Tuple[Any, ...]] | None:
         """Get list of Customer's orders.
+
+        Args:
+            curs: PostgreSQL cursor object.
 
         Returns:
             List of tuples with Customer's orders info inside them.
 
         """
-        cur = curs()
         customer_id = self.data_to_read.from_user.id
-        cur.execute("SELECT order_uuid, restaurant_name, courier_name, dishes, total, order_date, order_status "
+        curs.execute("SELECT order_uuid, restaurant_name, courier_name, dishes, total, order_date, order_status "
                     "FROM orders "
                     "WHERE orders.customer_id = %s",
                     [customer_id])
-        orders = cur.fetchall()
-        cur.connection.close()
+        orders = curs.fetchall()
         return orders
 
     @staticmethod
+    @cursor
     @logger_decorator
-    def show_restaurant_types() -> List[Tuple[Any, ...]] | None:
+    def show_restaurant_types(curs: psycopg2.extensions.cursor) -> List[Tuple[Any, ...]] | None:
         """Get list of restaurant types containing at least one restaurant which is open now in each of the types.
+
+        Args:
+            curs: PostgreSQL cursor object.
 
         Returns:
             List of available restaurant types.
 
         """
-        cur = curs()
-        cur.execute("SELECT DISTINCT restaurant_type "
+        curs.execute("SELECT DISTINCT restaurant_type "
                     "FROM restaurants "
                     "WHERE restaurants.restaurant_is_open=TRUE "
                     "ORDER BY restaurant_type")
-        restaurant_types = cur.fetchall()
-        cur.connection.close()
+        restaurant_types = curs.fetchall()
         return restaurant_types
 
+    @cursor
     @logger_decorator
-    def show_restaurants(self) -> List[Tuple[Any, ...]] | None:
+    def show_restaurants(self, curs: psycopg2.extensions.cursor) -> List[Tuple[Any, ...]] | None:
         """Get list of open restaurants in chosen restaurant type.
+
+        Args:
+            curs: PostgreSQL cursor object.
 
         Returns:
             List of available restaurants.
 
         """
-        cur = curs()
         callback_data = self.data_to_read.data
-        cur.execute("SELECT restaurant_name, restaurant_uuid "
+        curs.execute("SELECT restaurant_name, restaurant_uuid "
                     "FROM restaurants "
                     "WHERE restaurants.restaurant_type = %s "
                     "AND restaurants.restaurant_is_open = TRUE",
                     [callback_data])
-        restaurants = cur.fetchall()
-        cur.connection.close()
+        restaurants = curs.fetchall()
         return restaurants
 
+    @cursor
     @logger_decorator
-    def show_dish_categories(self) -> List[Tuple[Any, ...]] | None:
+    def show_dish_categories(self, curs: psycopg2.extensions.cursor) -> List[Tuple[Any, ...]] | None:
         """Get list of available dish categories in the chosen restaurant.
+
+        Args:
+            curs: PostgreSQL cursor object.
 
         Returns:
             List of available dish categories.
 
         """
-        cur = curs()
         callback_data = self.data_to_read.data
-        cur.execute("SELECT DISTINCT category "
+        curs.execute("SELECT DISTINCT category "
                     "FROM dishes "
                     "WHERE dishes.restaurant_uuid = %s "
                     "AND dishes.dish_is_available = TRUE",
                     [callback_data])
-        categories = cur.fetchall()
-        cur.connection.close()
+        categories = curs.fetchall()
         return categories
 
+    @cursor
     @logger_decorator
-    def show_dishes(self) -> List[Tuple[Any, ...]] | None:
+    def show_dishes(self, curs: psycopg2.extensions.cursor) -> List[Tuple[Any, ...]] | None:
         """Get list of available dishes in specified category and restaurant.
+
+        Args:
+            curs: PostgreSQL cursor object.
 
         Returns:
             List of available dishes.
 
         """
-        cur = curs()
         restaurant_uuid = self.get_from_cart("restaurant_uuid")
         callback_data = self.data_to_read.data
-        cur.execute("SELECT dish_name, dish_uuid "
+        curs.execute("SELECT dish_name, dish_uuid "
                     "FROM dishes "
                     "WHERE dishes.restaurant_uuid = %s "
                     "AND dishes.dish_is_available = TRUE "
@@ -235,138 +255,184 @@ class Interface:
                         restaurant_uuid,
                         callback_data
                     ])
-        dishes = cur.fetchall()
-        cur.connection.close()
+        dishes = curs.fetchall()
         return dishes
 
+    @cursor
     @logger_decorator
-    def rest_name_by_uuid(self) -> str | None:
+    def rest_name_by_uuid(self, curs: psycopg2.extensions.cursor) -> str | None:
         """Get restaurant name by its UUID.
+
+        Args:
+            curs: PostgreSQL cursor object.
 
         Returns:
             Restaurant name.
 
         """
-        cur = curs()
         callback_data = self.data_to_read.data
-        cur.execute("SELECT restaurant_name "
+        curs.execute("SELECT restaurant_name "
                     "FROM restaurants "
                     "WHERE restaurants.restaurant_uuid = %s",
                     [callback_data])
-        rest_name = cur.fetchone()
+        rest_name = curs.fetchone()
         return rest_name[0]
 
+    @cursor
     @logger_decorator
-    def get_dish(self) -> Tuple[Any, ...] | None:
+    def get_dish(self, curs: psycopg2.extensions.cursor) -> Tuple[Any, ...] | None:
         """Get dish info (name, description and price) by given dish UUID.
+
+        Args:
+            curs: PostgreSQL cursor object.
 
         Returns:
             Tuple with dish info.
 
         """
-        cur = curs()
         callback_data = self.data_to_read.data
-        cur.execute("SELECT dish_name, dish_description, dish_price "
+        curs.execute("SELECT dish_name, dish_description, dish_price "
                     "FROM dishes "
                     "WHERE dishes.dish_uuid = %s",
                     [callback_data])
-        dish = cur.fetchone()
-        cur.connection.close()
+        dish = curs.fetchone()
         return dish
 
+    @cursor
     @logger_decorator
-    def new_cart(self) -> None:
+    def new_cart(self, curs: psycopg2.extensions.cursor) -> None:
         """Create new cart in the DB.cart table and add Customer's Telegram ID in it.
 
-        """
-        cur = curs()
-        customer_id = self.data_to_read.from_user.id
-        cur.execute("INSERT INTO cart (customer_id) VALUES (%s)", [customer_id])
-        cur.connection.commit()
-        cur.connection.close()
+        Args:
+            curs: PostgreSQL cursor object.
 
+        """
+        customer_id = self.data_to_read.from_user.id
+        curs.execute("INSERT INTO cart (customer_id) VALUES (%s)", [customer_id])
+
+    @cursor
     @logger_decorator
-    def add_to_cart(self, column_name: str) -> None:
+    def add_to_cart(self, column_name: str, curs: psycopg2.extensions.cursor) -> None:
         """Add required info into cart.
 
         Args:
             column_name: Name of column containing required info.
+            curs: PostgreSQL cursor object.
 
         """
-        cur = curs()
         callback_data = self.data_to_read.data
         customer_id = self.data_to_read.from_user.id
-        cur.execute("UPDATE cart "
+        curs.execute("UPDATE cart "
                     "SET " + column_name + " =%s "
                     "WHERE cart.customer_id = %s",
                     [
                         callback_data,
                         customer_id
                     ])
-        cur.connection.commit()
-        cur.connection.close()
 
+    @cursor
     @logger_decorator
-    def get_from_cart(self, column_name: str) -> float | int | str | List[Any] | None:
+    def get_from_cart(self, column_name: str, curs: psycopg2.extensions.cursor) -> float | int | str | List[Any] | None:
         """Get required info from cart.
 
         Args:
             column_name: Name of column containing required info.
+            curs: PostgreSQL cursor object.
 
         Returns:
             Required info.
 
         """
-        cur = curs()
         customer_id = self.data_to_read.from_user.id
-        cur.execute("SELECT " + column_name + " FROM cart WHERE cart.customer_id = %s", [customer_id])
-        value = cur.fetchone()
+        curs.execute("SELECT " + column_name + " FROM cart WHERE cart.customer_id = %s", [customer_id])
+        value = curs.fetchone()
         return value[0] if value is not None else None
 
+    @cursor
     @logger_decorator
-    def delete_from_cart(self, column_name: str) -> None:
+    def delete_from_cart(self, column_name: str, curs: psycopg2.extensions.cursor) -> None:
         """Delete required info from cart.
 
         Args:
             column_name: Name of column containing required info.
+            curs: PostgreSQL cursor object.
 
         """
-        cur = curs()
         customer_id = self.data_to_read.from_user.id
-        cur.execute("UPDATE cart SET " + column_name + " =null WHERE cart.customer_id = %s", [customer_id])
-        cur.connection.commit()
-        cur.connection.close()
+        curs.execute("UPDATE cart SET " + column_name + " =null WHERE cart.customer_id = %s", [customer_id])
 
+    @cursor
     @logger_decorator
-    def delete_cart(self) -> None:
+    def delete_cart(self, curs: psycopg2.extensions.cursor) -> None:
         """Delete cart connected to given Customer's Telegram ID.
 
-        """
-        cur = curs()
-        customer_id = self.data_to_read.from_user.id
-        cur.execute("DELETE FROM cart WHERE cart.customer_id = %s", [customer_id])
-        cur.connection.commit()
-        cur.connection.close()
+        Args:
+            curs: PostgreSQL cursor object.
 
+        """
+        customer_id = self.data_to_read.from_user.id
+        curs.execute("DELETE FROM cart WHERE cart.customer_id = %s", [customer_id])
+
+    @cursor
     @logger_decorator
-    def check_if_location(self) -> Dict[str, float] | None:
+    def check_if_location(self, curs: psycopg2.extensions.cursor) -> Dict[str, float] | None:
         """Check if Customer's location is provided and return it if so.
+
+        Args:
+            curs: PostgreSQL cursor object.
 
         Returns:
             Customer's longitude and latitude if ones are provided.
 
         """
-        cur = curs()
         customer_id = self.data_to_read.from_user.id
-        cur.execute("SELECT customer_location "
+        curs.execute("SELECT customer_location "
                     "FROM customers "
                     "WHERE customers.customer_id = %s",
                     [customer_id])
-        latlon = cur.fetchone()
-        cur.connection.close()
-        if latlon[0]:
+        if latlon := curs.fetchone()[0]:
             location = {
-                "lat": latlon[0][0],
-                "lon": latlon[0][1]
+                "lat": latlon[0],
+                "lon": latlon[1]
             }
             return location
+
+    @cursor
+    @logger_decorator
+    def get_customer_lang(self, curs: psycopg2.extensions.cursor) -> str:
+        """Get code of Customer's chosen language.
+
+        Args:
+            curs: PostgreSQL cursor object.
+
+        Returns:
+            Code of Customer's chosen language
+            if Customer has chosen one,
+            otherwise default language code, set in .env.
+
+        """
+        customer_id = self.data_to_read.from_user.id
+        curs.execute("SELECT lang_code FROM customers WHERE customers.customer_id = %s", [customer_id])
+        if customer_lang := curs.fetchone():
+            if customer_lang := customer_lang[0]:
+                print(customer_lang)
+                return customer_lang
+        return DEF_LANG
+
+
+    @cursor
+    @logger_decorator
+    def set_customer_lang(self, curs: psycopg2.extensions.cursor) -> None:
+        """Set language code for Customer.
+
+        Args:
+            curs: PostgreSQL cursor object.
+
+        """
+        customer_id = self.data_to_read.from_user.id
+        lang_code = self.data_to_read.data
+        curs.execute("UPDATE customers SET lang_code = %s WHERE customers.customer_id = %s",
+                     [
+                         lang_code,
+                         customer_id
+                     ])
