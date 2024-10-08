@@ -415,7 +415,6 @@ class Interface:
         curs.execute("SELECT lang_code FROM customers WHERE customers.customer_id = %s", [customer_id])
         if customer_lang := curs.fetchone():
             if customer_lang := customer_lang[0]:
-                print(customer_lang)
                 return customer_lang
         return DEF_LANG
 
