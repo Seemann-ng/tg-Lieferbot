@@ -1,7 +1,7 @@
 import telebot.types as types
 
 from customer_db_tools import Interface as DBInterface
-from translations import texts
+from customer_translations import texts
 
 # Some common buttons here.
 main_menu_button = lambda lang_code: types.KeyboardButton(text=texts[lang_code]["MAIN_MENU_BTN"])

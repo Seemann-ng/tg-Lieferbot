@@ -234,7 +234,7 @@ class Interface:
 
     @cursor
     @logger_decorator
-    def show_dishes(self, curs: psycopg2.extensions.cursor) -> List[Tuple[Any, ...]] | None:
+    def show_dishes(self, curs: psycopg2.extensions.cursor) -> List[Tuple[Any, ...]]:
         """Get list of available dishes in specified category and restaurant.
 
         Args:

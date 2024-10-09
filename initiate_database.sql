@@ -21,10 +21,11 @@ CREATE TABLE customers (
 );
 CREATE TABLE restaurants (
     restaurant_uuid uuid,
-    restaurant_tg_ids INT [],
+    restaurant_tg_id INT,
     restaurant_name VARCHAR,
     restaurant_type VARCHAR,
-    restaurant_is_open BOOLEAN
+    restaurant_is_open BOOLEAN,
+    lang_code VARCHAR
 );
 CREATE TABLE dishes (
     restaurant_uuid uuid,

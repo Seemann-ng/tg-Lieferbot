@@ -5,8 +5,8 @@ from telebot.apihelper import ApiTelegramException
 
 import customer_menus
 from customer_db_tools import Interface as DBInterface
+from customer_translations import texts
 from logger_tool import logger, logger_decorator_callback, logger_decorator_msg
-from translations import texts
 
 env = Env()
 env.read_env()

@@ -26,8 +26,19 @@ services:
     environment:
       - CUSTOMER_BOT_TOKEN=${CUSTOMER_BOT_TOKEN}
       - DEF_LANG=${DEF_LANG}
-    image: liefer_bot-customer
     container_name: liefer_bot_customer
+    restart: always
+
+  restaurant_bot:
+    build:
+      context: .
+      dockerfile: Dockerfile_restaurant_bot
+    env_file:
+      - .env
+    environment:
+      - RESTAURANT_BOT_TOKEN=${RESTAURANT_BOT_TOKEN}
+      - DEF_LANG=${DEF_LANG}
+    container_name: liefer_bot_restaurant
     restart: always
 
 volumes:
