@@ -1,11 +1,11 @@
 FROM python:3.12
 LABEL authors="Seemann-ng"
 
-COPY requirements.txt /app/requirements.txt
+COPY ../requirements.txt /app/requirements.txt
 RUN pip3 install -r /app/requirements.txt
 
-COPY resaurant_bot /app
-COPY logger_tool.py /app
+COPY customer_bot /app
+COPY ../tools /app/tools
 
 WORKDIR /app
 

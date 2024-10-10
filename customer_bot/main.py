@@ -6,7 +6,7 @@ from telebot.apihelper import ApiTelegramException
 import customer_menus
 from customer_db_tools import Interface as DBInterface
 from customer_translations import texts
-from logger_tool import logger, logger_decorator_callback, logger_decorator_msg
+from tools.logger_tool import logger, logger_decorator_callback, logger_decorator_msg
 
 env = Env()
 env.read_env()
@@ -801,8 +801,6 @@ def item_deletion(call: types.CallbackQuery) -> None:
 def payment_confirmation(call: types.CallbackQuery) -> None:
     """"""
     pass
-
-
 
 
 def main():

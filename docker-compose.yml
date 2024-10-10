@@ -20,7 +20,7 @@ services:
   customer_bot:
     build:
       context: .
-      dockerfile: Dockerfile_customer_bot
+      dockerfile: customer_bot/customer_bot.dockerfile
     env_file:
       - .env
     environment:
@@ -32,7 +32,7 @@ services:
   restaurant_bot:
     build:
       context: .
-      dockerfile: Dockerfile_restaurant_bot
+      dockerfile: restaurant_bot/restaurant_bot.dockerfile
     env_file:
       - .env
     environment:

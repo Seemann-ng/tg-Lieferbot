@@ -1,37 +1,18 @@
-import functools
 import random
 import uuid
-from typing import Dict, List, Tuple, Any
+from typing import List, Tuple, Any
 
 import psycopg2
 import telebot.types as types
 from environs import Env
 
-from logger_tool import logger, logger_decorator
+from tools.cursor_tool import cursor
+from tools.logger_tool import logger, logger_decorator
 
 env = Env()
 env.read_env()
 
-DB_USER = env.str("DB_USER")
-DB_PASSWORD = env.str("DB_PASSWORD")
 DEF_LANG = env.str("DEF_LANG", default="en_US")
-
-
-def cursor(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        conn = psycopg2.connect(database="postgres",
-                                user=DB_USER,
-                                password=DB_PASSWORD,
-                                host="liefer_bot_db",
-                                port=5432)
-        curs = conn.cursor()
-        result = func(*args, **kwargs, curs=curs)
-        conn.commit()
-        conn.close()
-        return result
-
-    return wrapper
 
 
 class Interface:
@@ -111,6 +92,89 @@ class Interface:
 
     @cursor
     @logger_decorator
+    def set_restaurant_lang(self, curs: psycopg2.extensions.cursor) -> None:
+        """
+        
+        Args:
+            curs: 
+
+        Returns:
+
+        """  # TODO
+        curs.execute("UPDATE restaurants SET lang_code = %s WHERE restaurants.restaurant_uuid = %s",
+                     (self.data_to_read.data, self.get_rest_uuid()))
+
+    @cursor
+    @logger_decorator
+    def open_shift(self, curs: psycopg2.extensions.cursor) -> None:
+        """
+        
+        Args:
+            curs: 
+
+        Returns:
+
+        """  # TODO
+        curs.execute("UPDATE restaurants SET restaurant_is_open = true WHERE restaurant_tg_id = %s",
+                     (self.user_id,))
+
+    @cursor
+    @logger_decorator
+    def close_shift(self, curs: psycopg2.extensions.cursor) -> None:
+        """
+
+        Args:
+            curs: 
+
+        Returns:
+
+        """  # TODO
+        curs.execute("UPDATE restaurants SET restaurant_is_open = false WHERE restaurant_tg_id = %s",
+                     (self.user_id,))
+
+    @cursor
+    @logger_decorator
+    def set_dish_available(self, curs: psycopg2.extensions.cursor) -> None:
+        """
+        
+        Args:
+            curs: 
+
+        Returns:
+
+        """  # TODO
+        curs.execute("UPDATE dishes SET dish_is_available = true WHERE dish_uuid = %s",
+                     (self.data_to_read.data,))
+
+    @cursor
+    @logger_decorator
+    def set_dish_unavailable(self, curs: psycopg2.extensions.cursor) -> None:
+        """
+
+        Args:
+            curs: 
+
+        Returns:
+
+        """  # TODO
+        curs.execute("UPDATE dishes SET dish_is_available = false WHERE dish_uuid = %s",
+                     (self.data_to_read.data,))
+
+    @cursor
+    @logger_decorator
+    def delete_dish(self, curs: psycopg2.extensions.cursor) -> None:
+        """
+
+        Args:
+            curs:
+
+        Returns:
+
+        """  # TODO
+        curs.execute("DELETE FROM dishes WHERE dish_uuid = %s", (self.data_to_read.data,))
+
+    @cursor
+    @logger_decorator
     def get_dishes(self, curs: psycopg2.extensions.cursor) -> List[Tuple[Any, ...]]:
         """
         
@@ -157,17 +221,18 @@ class Interface:
         curs.execute("INSERT INTO dishes(restaurant_uuid, dish_uuid, dish_name) VALUES (%s, %s, %s)",
                      (self.get_rest_uuid(), str(uuid.uuid4()), dish_name))
 
-    # @cursor
-    # @logger_decorator
-    # def edit_dish(self, param: str, curs: psycopg2.extensions.cursor) -> None:  # TODO
-    #     """
-    #
-    #     Args:
-    #         param:
-    #         curs:
-    #
-    #     Returns:
-    #
-    #     """
-    #     curs.execute("UPDATE dishes SET " + param + " = %s WHERE dish_uuid = %s",
-    #                  ())
+    @cursor
+    @logger_decorator
+    def edit_dish(self, param: str, dish_uuid: str, curs: psycopg2.extensions.cursor) -> None:  # TODO
+        """
+
+        Args:
+            param:
+            dish_uuid:
+            curs:
+
+        Returns:
+
+        """  # TODO
+        curs.execute("UPDATE dishes SET " + param + " = %s WHERE dish_uuid = %s",
+                     (self.data_to_read.text, dish_uuid))
