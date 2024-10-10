@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   liefer_bot_db:
     container_name: "liefer_bot_db"
@@ -20,7 +18,7 @@ services:
   customer_bot:
     build:
       context: .
-      dockerfile: customer_bot/dockerfile
+      dockerfile: customer_bot/Dockerfile
     env_file:
       - .env
     environment:
@@ -32,7 +30,7 @@ services:
   restaurant_bot:
     build:
       context: .
-      dockerfile: restaurant_bot/dockerfile
+      dockerfile: restaurant_bot/Dockerfile
     env_file:
       - .env
     environment:
