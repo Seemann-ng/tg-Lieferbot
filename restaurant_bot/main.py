@@ -226,9 +226,11 @@ def add_dish_command(message: types.Message) -> None:
     """  # TODO
     msg = DBInterface(message)
     lang_code = msg.get_rest_lang()
-    dish_name = msg.data_to_read.text.split(maxsplit=1)[1]
-    msg.add_dish(dish_name)
-    bot.send_message(msg.user_id, texts[lang_code]["DISH_ADDED_MSG"](dish_name))
+    if dish_name := msg.data_to_read.text.split(maxsplit=1)[1]:
+        msg.add_dish(dish_name)
+        bot.send_message(msg.user_id, texts[lang_code]["DISH_ADDED_MSG"](dish_name))
+    else:
+        bot.send_message(msg.user_id, "No dish name found")
 
 
 @bot.message_handler(commands=["edit_dish"])
