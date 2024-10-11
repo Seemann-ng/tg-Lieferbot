@@ -39,8 +39,8 @@ class Interface:
         curs.execute("SELECT lang_code FROM restaurants WHERE restaurants.restaurant_tg_id = %s",
                      (user_id,))
         if user_lang := curs.fetchone():
-            if customer_lang := user_lang[0]:
-                return customer_lang
+            if user_lang := user_lang[0]:
+                return user_lang
         return DEF_LANG
 
     @cursor

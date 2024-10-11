@@ -1,7 +1,6 @@
 import telebot as tb
 import telebot.types as types
 from environs import Env
-from telebot.types import ForceReply
 
 import restaurant_menus
 from tools.logger_tool import logger, logger_decorator_msg, logger_decorator_callback
@@ -31,7 +30,7 @@ def start(message: types.Message) -> None:
     lang_code = msg.get_rest_lang()
     user_id = msg.user_id
     if not msg.rest_in_db():
-        bot.send_message(user_id, texts[lang_code]["ASK_REGISTRATION_MSG"], reply_markup=ForceReply())
+        bot.send_message(user_id, texts[lang_code]["ASK_REGISTRATION_MSG"], reply_markup=types.ForceReply())
     else:
         bot.send_message(user_id, texts[lang_code]["WELCOME_MSG"])
 
@@ -69,9 +68,9 @@ def change_lang_menu(message: types.Message) -> None:
     """
     msg = DBInterface(message)
     lang_code = msg.get_rest_lang()
-    customer_id = msg.data_to_read.from_user.id
-    bot.send_message(customer_id, texts[lang_code]["LANG_SEL_MENU"])
-    bot.send_message(customer_id,
+    user_id = msg.data_to_read.from_user.id
+    bot.send_message(user_id, texts[lang_code]["LANG_SEL_MENU"])
+    bot.send_message(user_id,
                      texts[lang_code]["CHANGE_LANG_MSG"],
                      reply_markup=restaurant_menus.lang_sel_menu(lang_code))
 
@@ -301,11 +300,11 @@ def req_new_dish_param(call: types.CallbackQuery) -> None:
     if c_back.data_to_read.data == restaurant_menus.back_button(lang_code):
         bot.delete_message(user_id, message_id)
     elif param_to_edit == "cat":
-        bot.send_message(user_id, texts[lang_code]["EDIT_CATEGORY_MSG"](dish_uuid), reply_markup=ForceReply())
+        bot.send_message(user_id, texts[lang_code]["EDIT_CATEGORY_MSG"](dish_uuid), reply_markup=types.ForceReply())
     elif param_to_edit == "des":
-        bot.send_message(user_id, texts[lang_code]["EDIT_DESCRIPTION_MSG"](dish_uuid), reply_markup=ForceReply())
+        bot.send_message(user_id, texts[lang_code]["EDIT_DESCRIPTION_MSG"](dish_uuid), reply_markup=types.ForceReply())
     elif param_to_edit == "prc":
-        bot.send_message(user_id, texts[lang_code]["EDIT_PRICE_MSG"](dish_uuid), reply_markup=ForceReply())
+        bot.send_message(user_id, texts[lang_code]["EDIT_PRICE_MSG"](dish_uuid), reply_markup=types.ForceReply())
 
 
 @bot.message_handler(func=lambda message: message.reply_to_message\

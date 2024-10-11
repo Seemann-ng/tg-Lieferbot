@@ -7,9 +7,10 @@ CREATE TABLE couriers (
     courier_username VARCHAR,
     courier_legal_name VARCHAR,
     courier_type VARCHAR,
-    courier_status VARCHAR,
+    courier_status BOOLEAN,
     courier_rating NUMERIC(3, 2),
-    courier_phone_num VARCHAR
+    courier_phone_num VARCHAR,
+    lang_code VARCHAR
 );
 CREATE TABLE customers (
     customer_id INT,
