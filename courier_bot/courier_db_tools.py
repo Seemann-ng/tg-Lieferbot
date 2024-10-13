@@ -102,6 +102,22 @@ class Interface:
 
     @cursor
     @logger_decorator
+    def check_occupied(self, curs: psycopg2.extensions.cursor) -> bool:
+        """
+
+        Args:
+            curs:
+
+        Returns:
+
+        """  # TODO
+        curs.execute("SELECT is_occupied FROM couriers WHERE couriers.courier_id = %s",
+                     (self.courier_id, ))
+        occupation_status = curs.fetchone()[0]
+        return occupation_status
+
+    @cursor
+    @logger_decorator
     def close_shift(self, curs: psycopg2.extensions.cursor) -> None:
         """
 

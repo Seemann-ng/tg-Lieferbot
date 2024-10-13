@@ -126,8 +126,11 @@ def close_shift_command(message: types.Message) -> None:
     msg = DBInterface(message)
     lang_code = msg.get_courier_lang()
     courier_id = msg.courier_id
-    msg.close_shift()
-    bot.send_message(courier_id, texts[lang_code]["CLOSE_SHIFT_MSG"])
+    if msg.check_occupied():
+        bot.send_message(courier_id, texts[lang_code]["CANNOT_CLOSE_SHIFT_MSG"])
+    else:
+        msg.close_shift()
+        bot.send_message(courier_id, texts[lang_code]["CLOSE_SHIFT_MSG"])
 
 
 def main():

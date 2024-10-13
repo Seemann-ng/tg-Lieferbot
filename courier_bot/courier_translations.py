@@ -17,6 +17,7 @@ texts = {
         "LANG_SELECTED_MSG": "Language changed to English!",
         "OPEN_SHIFT_MSG": "Shift is opened, now You can receive orders.",
         "CLOSE_SHIFT_MSG": "Shift is closed.",
+        "CANNOT_CLOSE_SHIFT_MSG": "Can't close shift due to unclosed order.",
     },
     "de_DE":{
         "ASK_REG_MSG": "This Telegram account isn't registered as a Courier account.\n"
@@ -36,7 +37,7 @@ texts = {
         "LANG_SELECTED_MSG": "Language changed to English!",
         "OPEN_SHIFT_MSG": "Shift is opened, now You can receive orders.",
         "CLOSE_SHIFT_MSG": "Shift is closed.",
-
+        "CANNOT_CLOSE_SHIFT_MSG": "Can't close shift due to unclosed order."
     },
     "ru_RU":{
         "ASK_REG_MSG": "This Telegram account isn't registered as a Courier account.\n"
@@ -56,6 +57,6 @@ texts = {
         "LANG_SELECTED_MSG": "Language changed to English!",
         "OPEN_SHIFT_MSG": "Shift is opened, now You can receive orders.",
         "CLOSE_SHIFT_MSG": "Shift is closed.",
-
+        "CANNOT_CLOSE_SHIFT_MSG": "Can't close shift due to unclosed order."
     }
 }

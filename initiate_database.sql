@@ -8,6 +8,7 @@ CREATE TABLE couriers (
     courier_legal_name VARCHAR,
     courier_type VARCHAR,
     courier_status BOOLEAN,
+    is_occupied BOOLEAN,
     courier_rating NUMERIC(3, 2),
     courier_phone_num VARCHAR,
     lang_code VARCHAR
@@ -26,7 +27,9 @@ CREATE TABLE restaurants (
     restaurant_name VARCHAR,
     restaurant_type VARCHAR,
     restaurant_is_open BOOLEAN,
-    lang_code VARCHAR
+    lang_code VARCHAR,
+    address VARCHAR,
+    location NUMERIC(9, 6) []
 );
 CREATE TABLE dishes (
     restaurant_uuid uuid,
