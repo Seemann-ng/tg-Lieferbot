@@ -1,3 +1,5 @@
+import uuid
+import datetime
 from typing import Dict, List, Tuple, Any
 
 import psycopg2
@@ -391,3 +393,70 @@ class Interface:
         lang_code = self.data_to_read.data
         curs.execute("UPDATE customers SET lang_code = %s WHERE customers.customer_id = %s",
                      (lang_code, customer_id))
+
+    @cursor
+    @logger_decorator
+    def order_creation(self, curs: psycopg2.extensions.cursor) -> List[Any]:
+        """
+
+        Args:
+            curs:
+
+        Returns:
+
+        """  # TODO
+        curs.execute("SELECT restaurant_uuid, dishes_uuids, subtotal, service_fee, courier_fee, total FROM cart "
+                     "WHERE cart.customer_id = %s",
+                     (self.data_to_read.from_user.id,))
+        order_data = curs.fetchone()
+        rest_uuid = order_data[0]
+        dishes_uuids = order_data[1]
+        subtotal = order_data[2]
+        service_fee = order_data[3]
+        courier_fee = order_data[4]
+        total = order_data[5]
+        curs.execute("SELECT restaurant_name FROM restaurants WHERE restaurant_uuid = %s", (rest_uuid, ))
+        rest_name = curs.fetchone()[0]
+        curs.execute("SELECT customer_name, customer_location FROM customers WHERE customer_id = %s",
+                     (self.data_to_read.from_user.id, ))
+        customer_info = curs.fetchone()
+        customer_name = customer_info[0]
+        customer_location = customer_info[1]
+        dishes = []
+        for dish_uuid in dishes_uuids:
+            curs.execute("SELECT dish_name FROM dishes WHERE dish_uuid = %s", (dish_uuid, ))
+            current_dish = curs.fetchone()[0]
+            dishes += [current_dish]
+        order_uuid = str(uuid.uuid4())
+        order_creation_datetime = datetime.datetime.now()
+        curs.execute("INSERT INTO orders (order_uuid, restaurant_uuid, restaurant_name, "
+                     "customer_id, customer_name, delivery_location, dishes, dishes_subtotal, "
+                     "courier_fee, service_fee, total, order_date, order_status) "
+                     "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                     (order_uuid,
+                      rest_uuid,
+                      rest_name,
+                      self.data_to_read.from_user.id,
+                      customer_name,
+                      customer_location,
+                      dishes,
+                      subtotal,
+                      courier_fee,
+                      service_fee,
+                      total,
+                      order_creation_datetime,
+                      "Created"))
+        order_info = [order_uuid,
+                      rest_uuid,
+                      rest_name,
+                      self.data_to_read.from_user.id,
+                      customer_name,
+                      customer_location,
+                      dishes,
+                      subtotal,
+                      courier_fee,
+                      service_fee,
+                      total,
+                      order_creation_datetime,
+                      "Created"]
+        return order_info

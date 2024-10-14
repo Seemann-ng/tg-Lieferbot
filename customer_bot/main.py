@@ -769,8 +769,10 @@ def cart_actions(call: types.CallbackQuery) -> None:
         c_back.data_to_read.message.text = texts[lang_code]["ADD_MORE_BTN"]
         restaurant_chosen(c_back.data_to_read)
     elif c_back.data_to_read.data == texts[lang_code]["PAY_BTN"]:
-        bot.send_message(customer_id, texts[lang_code]["IN_DEV"])
-        clear_cart(c_back.data_to_read)
+        order_info = c_back.order_creation()
+        bot.edit_message_text(f"Order created: {order_info}", customer_id, message_id)
+        # bot.send_message(customer_id, texts[lang_code]["IN_DEV"])
+        # clear_cart(c_back.data_to_read)
 
 
 @bot.callback_query_handler(func=lambda call: call.message.text in [lang["DELETE_ITEM_MSG"] for lang in texts.values()])
@@ -795,12 +797,30 @@ def item_deletion(call: types.CallbackQuery) -> None:
     is_dish_added(c_back.data_to_read)
 
 
-# Payment block. # TODO
-@bot.callback_query_handler()
-@logger_decorator_callback
-def payment_confirmation(call: types.CallbackQuery) -> None:
-    """"""
-    pass
+# # Payment block. # TODO
+# @bot.callback_query_handler()
+# @logger_decorator_callback
+# def payment_confirmation(call: types.CallbackQuery) -> None:
+#     """"""
+#     pass
+
+
+# @bot.callback_query_handler(func=lambda call: call.data == )
+# @logger_decorator_callback
+# def order_paid(call: types.CallbackQuery) -> None:
+#     """
+#
+#     Args:
+#         call:
+#
+#     Returns:
+#
+#     """
+#     c_back = DBInterface(call)
+#     lang_code = c_back.get_customer_lang()
+#     customer_id = c_back.data_to_read.from_user.id
+#     message_id = c_back.data_to_read.message.id
+
 
 
 def main():
