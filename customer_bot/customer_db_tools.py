@@ -563,8 +563,8 @@ class Interface:
 
         """
         order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
-        curs.execute("UPDATE orders SET order_status = 'Order closed' WHERE order_uuid = %s",
-                     (order_uuid, ))
+        curs.execute("UPDATE orders SET order_status = 'Order closed', order_close_date = %s WHERE order_uuid = %s",
+                     (datetime.datetime.now(), order_uuid))
         curs.execute("SELECT courier_id FROM orders WHERE order_uuid = %s", (order_uuid, ))
         courier_id = curs.fetchone()[0]
         curs.execute("SELECT account_balance FROM couriers WHERE courier_id = %s", (courier_id, ))
