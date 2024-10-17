@@ -1,7 +1,8 @@
 CREATE TABLE admins
 (
     admin_username VARCHAR,
-    admin_id       INT
+    admin_id       INT,
+    lang_code      VARCHAR
 );
 
 
@@ -15,7 +16,8 @@ CREATE TABLE couriers
     is_occupied        BOOLEAN,
     courier_rating     NUMERIC(3, 2),
     courier_phone_num  VARCHAR,
-    lang_code          VARCHAR
+    lang_code          VARCHAR,
+    account_balance    NUMERIC(9, 2)
 );
 
 
@@ -39,7 +41,8 @@ CREATE TABLE restaurants
     restaurant_is_open BOOLEAN,
     lang_code          VARCHAR,
     address            VARCHAR,
-    location           NUMERIC(9, 6)[]
+    location           NUMERIC(9, 6)[],
+    account_balance    NUMERIC(9, 2)
 );
 
 
@@ -59,6 +62,7 @@ CREATE TABLE orders
 (
     order_uuid        uuid,
     restaurant_uuid   uuid,
+    restaurant_id     INT,
     restaurant_name   VARCHAR,
     courier_id        INT,
     courier_name      VARCHAR,
@@ -70,7 +74,8 @@ CREATE TABLE orders
     courier_fee       NUMERIC(10, 2),
     service_fee       NUMERIC(10, 2),
     total             NUMERIC(10, 2),
-    order_date        TIMESTAMP,
+    order_open_date   TIMESTAMP,
+    order_close_date  TIMESTAMP,
     order_status      VARCHAR
 );
 
@@ -89,19 +94,27 @@ CREATE TABLE cart
 
 
 CREATE EXTENSION "pgcrypto";
-CREATE TRIGGER order_status_change_trigger
-    AFTER INSERT OR UPDATE OF order_status
-    ON orders
-    FOR EACH ROW
-EXECUTE PROCEDURE notify_order_status_change();
 
-
-CREATE OR REPLACE FUNCTION notify_order_status_change()
-    RETURNS TRIGGER AS
-$$
-BEGIN
-    PERFORM pg_notify('order_status_channel', NEW.order_uuid::text || ' ' || NEW.order_status::text);
-    RETURN NEW;
-END;
-$$
-    LANGUAGE plpgsql;
+-- CREATE TRIGGER order_status_change_trigger
+--     AFTER INSERT OR UPDATE OF order_status
+--     ON orders
+--     FOR EACH ROW
+-- EXECUTE PROCEDURE notify_order_status_change();
+--
+--
+-- CREATE OR REPLACE FUNCTION notify_order_status_change()
+--     RETURNS TRIGGER AS
+-- $$
+-- DECLARE
+--     payload JSON;
+-- BEGIN
+--     payload := json_build_object(
+--         'order_uuid', NEW.order_uuid,
+--         'new_status', NEW.order_status,
+--         'rest_uuid', NEW.restaurant_uuid,
+--         'customer_id', NEW.customer_id,
+--         'courier_id', NEW.courier_id
+--     );
+--     PERFORM pg_notify('order_status_channel', payload);
+-- END;
+-- $$ LANGUAGE plpgsql;

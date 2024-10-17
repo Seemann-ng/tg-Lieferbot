@@ -1,4 +1,6 @@
 import random
+from typing import Tuple
+
 # from typing import List, Tuple, Any
 
 import psycopg2
@@ -53,7 +55,8 @@ class Interface:
         Returns:
 
         """  # TODO
-        curs.execute("SELECT courier_id FROM couriers")
+        courier_id = self.courier_id
+        curs.execute("SELECT courier_id FROM couriers WHERE couriers.courier_id = %s", (courier_id, ))
         courier_id = curs.fetchone()
         return courier_id if courier_id else 0
 
@@ -129,3 +132,84 @@ class Interface:
         """  # TODO
         curs.execute("UPDATE couriers SET courier_status = false WHERE courier_id = %s",
                      (self.courier_id, ))
+
+    @cursor
+    @logger_decorator
+    def cur_accept_order(self, curs: psycopg2.extensions.cursor) -> bool:
+        """
+
+        Args:
+            curs:
+
+        Returns:
+
+        """
+        order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
+        courier_id = self.courier_id
+        curs.execute("SELECT courier_legal_name FROM couriers WHERE couriers.courier_id = %s",
+                     (courier_id, ))
+        courier_name = curs.fetchone()[0]
+        curs.execute("UPDATE orders "
+                     "SET courier_id = %s, courier_name = %s, order_status = 'Preparing, courier found' "
+                     "WHERE order_uuid = %s AND courier_id = -1",
+                     (courier_id, courier_name, order_uuid))
+        curs.execute("SELECT courier_id FROM orders WHERE order_uuid = %s", (order_uuid, ))
+        courier_id_db = curs.fetchone()[0]
+        return courier_id_db == courier_id
+
+    @cursor
+    @logger_decorator
+    def get_customer_info(self, curs: psycopg2.extensions.cursor) -> Tuple[int, str]:
+        """
+
+        Args:
+            curs:
+
+        Returns:
+
+        """
+        order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
+        curs.execute("SELECT customer_id FROM orders WHERE order_uuid = %s", (order_uuid,))
+        customer_id = curs.fetchone()[0]
+        curs.execute("SELECT lang_code FROM customers WHERE customer_id = %s", (customer_id,))
+        lang_code = curs.fetchone()[0]
+        customer_info = (customer_id, lang_code)
+        return customer_info
+
+    @cursor
+    @logger_decorator
+    def get_courier_info(self, curs: psycopg2.extensions.cursor) -> Tuple[int, str]:
+        """
+
+        Args:
+            curs:
+
+        Returns:
+
+        """
+        courier_id = self.courier_id
+        curs.execute("SELECT courier_legal_name, courier_username, courier_phone_num "
+                     "FROM couriers WHERE courier_id = %s",
+                     (courier_id, ))
+        courier_info = curs.fetchone()
+        return courier_info
+
+    @cursor
+    @logger_decorator
+    def get_rest_info(self, curs: psycopg2.extensions.cursor) -> Tuple[int, str]:
+        """
+
+        Args:
+            curs:
+
+        Returns:
+
+        """
+        order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
+        curs.execute("SELECT restaurant_id FROM orders WHERE order_uuid = %s", (order_uuid,))
+        restaurant_id = curs.fetchone()[0]
+        curs.execute("SELECT lang_code FROM restaurants WHERE restaurant_tg_id = %s",
+                     (restaurant_id,))
+        lang_code = curs.fetchone()[0]
+        rest_info = (restaurant_id, lang_code)
+        return rest_info

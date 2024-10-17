@@ -18,6 +18,17 @@ texts = {
         "OPEN_SHIFT_MSG": "Shift is opened, now You can receive orders.",
         "CLOSE_SHIFT_MSG": "Shift is closed.",
         "CANNOT_CLOSE_SHIFT_MSG": "Can't close shift due to unclosed order.",
+        "COUR_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Order\n{order_uuid}\naccepted.",
+        "COURIER_FOUND_MSG": lambda order_uuid,
+                                        courier_name,
+                                        courier_username,
+                                        courier_phone: f"Order\n{order_uuid}\n"\
+                                                       f"Status update:\nCourier found.\n"\
+                                                       f"Courier's name:\n{courier_name}\n"\
+                                                       f"Courier's Telegram:\n@{courier_username}\n"\
+                                                       f"Courier's phone:\n{courier_phone}",
+        "ORDER_ALREADY_ACCEPTED_MSG": "Sorry, order is already accepted by another courier.",
+        "REST_READY_BTN": "Order is ready"
     },
     "de_DE":{
         "ASK_REG_MSG": "This Telegram account isn't registered as a Courier account.\n"
@@ -37,7 +48,18 @@ texts = {
         "LANG_SELECTED_MSG": "Language changed to English!",
         "OPEN_SHIFT_MSG": "Shift is opened, now You can receive orders.",
         "CLOSE_SHIFT_MSG": "Shift is closed.",
-        "CANNOT_CLOSE_SHIFT_MSG": "Can't close shift due to unclosed order."
+        "CANNOT_CLOSE_SHIFT_MSG": "Can't close shift due to unclosed order.",
+        "COUR_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Order\n{order_uuid}\naccepted.",
+        "COURIER_FOUND_MSG": lambda order_uuid,
+                                        courier_name,
+                                        courier_username,
+                                        courier_phone: f"Order\n{order_uuid}\n"\
+                                                       f"Status update:\nCourier found.\n"\
+                                                       f"Courier's name:\n{courier_name}\n"\
+                                                       f"Courier's Telegram:\n@{courier_username}\n"\
+                                                       f"Courier's phone:\n{courier_phone}",
+        "ORDER_ALREADY_ACCEPTED_MSG": "Sorry, order is already accepted by another courier.",
+        "REST_READY_BTN": "Order is ready"
     },
     "ru_RU":{
         "ASK_REG_MSG": "This Telegram account isn't registered as a Courier account.\n"
@@ -57,6 +79,17 @@ texts = {
         "LANG_SELECTED_MSG": "Language changed to English!",
         "OPEN_SHIFT_MSG": "Shift is opened, now You can receive orders.",
         "CLOSE_SHIFT_MSG": "Shift is closed.",
-        "CANNOT_CLOSE_SHIFT_MSG": "Can't close shift due to unclosed order."
+        "CANNOT_CLOSE_SHIFT_MSG": "Can't close shift due to unclosed order.",
+        "COUR_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Order\n{order_uuid}\naccepted.",
+        "COURIER_FOUND_MSG": lambda order_uuid,
+                                        courier_name,
+                                        courier_username,
+                                        courier_phone: f"Order\n{order_uuid}\n"\
+                                                       f"Status update:\nCourier found.\n"\
+                                                       f"Courier's name:\n{courier_name}\n"\
+                                                       f"Courier's Telegram:\n@{courier_username}\n"\
+                                                       f"Courier's phone:\n{courier_phone}",
+        "ORDER_ALREADY_ACCEPTED_MSG": "Sorry, order is already accepted by another courier.",
+        "REST_READY_BTN": "Order is ready"
     }
 }

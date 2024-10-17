@@ -18,3 +18,21 @@ def lang_sel_menu(lang_code: str) -> types.InlineKeyboardMarkup:
     ru_button = types.InlineKeyboardButton(text=texts[lang_code]["SEL_LANG_RU_BTN"], callback_data="ru_RU")
     menu.add(de_button, en_button, ru_button)
     return menu
+
+
+# Restaurant order ready menu.
+def rest_order_ready_menu(rest_lang: str, order_uuid: str) -> types.InlineKeyboardMarkup:
+    """
+
+    Args:
+        rest_lang:
+        order_uuid:
+
+    Returns:
+
+    """
+    menu = types.InlineKeyboardMarkup(row_width=1)
+    ready_button = types.InlineKeyboardButton(text=texts[rest_lang]["REST_READY_BTN"],
+                                              callback_data="ready " + order_uuid)
+    menu.add(ready_button)
+    return menu

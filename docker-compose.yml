@@ -23,6 +23,9 @@ services:
       - .env
     environment:
       - CUSTOMER_BOT_TOKEN=${CUSTOMER_BOT_TOKEN}
+      - RESTAURANT_BOT_TOKEN=${RESTAURANT_BOT_TOKEN}
+      - COURIER_BOT_TOKEN=${COURIER_BOT_TOKEN}
+      - ADMIN_BOT_TOKEN=${ADMIN_BOT_TOKEN}
       - DEF_LANG=${DEF_LANG}
     container_name: liefer_bot_customer
     restart: always
@@ -34,7 +37,10 @@ services:
     env_file:
       - .env
     environment:
+      - CUSTOMER_BOT_TOKEN=${CUSTOMER_BOT_TOKEN}
       - RESTAURANT_BOT_TOKEN=${RESTAURANT_BOT_TOKEN}
+      - COURIER_BOT_TOKEN=${COURIER_BOT_TOKEN}
+      - ADMIN_BOT_TOKEN=${ADMIN_BOT_TOKEN}
       - DEF_LANG=${DEF_LANG}
     container_name: liefer_bot_restaurant
     restart: always
@@ -46,9 +52,27 @@ services:
     env_file:
       - .env
     environment:
+      - CUSTOMER_BOT_TOKEN=${CUSTOMER_BOT_TOKEN}
+      - RESTAURANT_BOT_TOKEN=${RESTAURANT_BOT_TOKEN}
       - COURIER_BOT_TOKEN=${COURIER_BOT_TOKEN}
+      - ADMIN_BOT_TOKEN=${ADMIN_BOT_TOKEN}
       - DEF_LANG=${DEF_LANG}
     container_name: liefer_bot_courier
+    restart: always
+
+  admin_bot:
+    build:
+      context: .
+      dockerfile: admin_bot/Dockerfile
+    env_file:
+      - .env
+    environment:
+      - CUSTOMER_BOT_TOKEN=${CUSTOMER_BOT_TOKEN}
+      - RESTAURANT_BOT_TOKEN=${RESTAURANT_BOT_TOKEN}
+      - COURIER_BOT_TOKEN=${COURIER_BOT_TOKEN}
+      - ADMIN_BOT_TOKEN=${ADMIN_BOT_TOKEN}
+      - DEF_LANG=${DEF_LANG}
+    container_name: liefer_bot_admin
     restart: always
 
 volumes:

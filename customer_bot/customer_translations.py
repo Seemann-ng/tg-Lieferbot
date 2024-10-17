@@ -39,9 +39,11 @@ texts = {
         "CART_BTN": "🛒 Mein Einkaufskorb",
         "CANCEL_ORDER_BTN": "🚫 BESTELLUNG STORNIEREN",
         "ADD_DISH_BTN": "✅ In den Einkaufskorb",
-        "PAY_BTN": "💳 Bestellung bestätigen\n🛠IN ENTWICKLUNG🛠",
+        "MAKE_ORDER_BTN": "💳 Bestellung bestätigen",
         "ADD_MORE_BTN": "🛍 Weiter einkaufen",
         "DELETE_ITEM_BTN": "📤 Artikel löschen",
+        "PAID_BTN": "I have paid",
+        "ADM_PAY_CONF_BTN": "Confirm payment",
         "IN_DEV": "Ich habe dir gesagt, ES IST IN ENTWICKLUNG!",
         # Bot messages.
         "WELCOME_BACK_MSG": lambda customer_name: f"Willkommen zurück, {customer_name}!",
@@ -114,7 +116,18 @@ texts = {
                                              f"Gericht(e): {orders[0][3]}\n"\
                                              f"Gesamtkosten: €{orders[0][4]}\n"\
                                              f"Datum: {orders[0][5]}\n"\
-                                             f"Status: {orders[0][6]}"
+                                             f"Status: {orders[0][6]}\n"\
+                                             f"Order closed:{orders[0][7]}",  # TODO
+        "ORDER_CREATED_MSG": lambda order_info: f"Order created:\n`{order_info[0]}`\n"\
+                                                f"Restaurant:\n{order_info[3]}\n"\
+                                                f"Dishes:\n{order_info[7]}\n"\
+                                                f"Total:\n€ `{order_info[11]}`\n"\
+                                                f"Date:\n{order_info[12]}",
+        "PAYMENT_MENU_MSG": "Please proceed to payment via this link:",  # TODO
+        "PAID_ADM_MSG": lambda order_uuid, total: f"Confirm payment for order\n`{order_uuid}`.\n"\
+                                                  f"Total: € `{total}`",
+        "WAIT_FOR_CONFIRMATION_MSG": lambda order_uuid: f"Wait for payment confirmation from the Service\n"\
+                                                        f"Order № {order_uuid}.",
     },
     "en_US": {
         # Localization variables.
@@ -151,9 +164,12 @@ texts = {
         "CART_BTN": "🛒 My cart",
         "CANCEL_ORDER_BTN": "🚫 CANCEL ORDER",
         "ADD_DISH_BTN": "✅ Add to cart",
-        "PAY_BTN": "💳 Confirm order\n🛠IN DEVELOPMENT🛠",
+        "MAKE_ORDER_BTN": "💳 Confirm order",
         "ADD_MORE_BTN": "🛍 Continue shopping",
         "DELETE_ITEM_BTN": "📤 Delete item",
+        "PAY_BTN" : "Payment",
+        "PAID_BTN": "I have paid.",
+        "ADM_PAY_CONF_BTN": "Confirm payment",
         "IN_DEV": "I've told You, IT IS IN DEVELOPMENT!",
         # Bot messages.
         "WELCOME_BACK_MSG": lambda customer_name: f"Welcome back, {customer_name}!",
@@ -226,7 +242,18 @@ texts = {
                                              f"Dish(es): {orders[0][3]}\n"\
                                              f"Total: €{orders[0][4]}\n"\
                                              f"Date: {orders[0][5]}\n"\
-                                             f"Status: {orders[0][6]}"
+                                             f"Status: {orders[0][6]}"\
+                                             f"Order closed:{orders[0][7]}",  # TODO
+        "ORDER_CREATED_MSG": lambda order_info: f"Order created:\n`{order_info[0]}`\n"\
+                                                f"Restaurant:\n{order_info[3]}\n"\
+                                                f"Dishes:\n{order_info[7]}\n"\
+                                                f"Total:\n€ `{order_info[11]}`\n"\
+                                                f"Date:\n{order_info[12]}",
+        "PAYMENT_MENU_MSG": "Please proceed to payment via this link:",  # TODO
+        "PAID_ADM_MSG": lambda order_uuid, total: f"Confirm payment for order\n`{order_uuid}`.\n"\
+                                                  f"Total: € `{total}`",
+        "WAIT_FOR_CONFIRMATION_MSG": lambda order_uuid: f"Wait for payment confirmation from the Service\n"\
+                                                        f"Order № {order_uuid}.",
     },
     "ru_RU": {  # TODO Translate
         # Localization variables.
@@ -263,9 +290,12 @@ texts = {
         "CART_BTN": "🛒 My cart",
         "CANCEL_ORDER_BTN": "🚫 CANCEL ORDER",
         "ADD_DISH_BTN": "✅ Add to cart",
-        "PAY_BTN": "💳 Confirm order\n🛠IN DEVELOPMENT🛠",
+        "MAKE_ORDER_BTN": "💳 Confirm order",
         "ADD_MORE_BTN": "🛍 Continue shopping",
         "DELETE_ITEM_BTN": "📤 Delete item",
+        "PAY_BTN" : "Payment",
+        "PAID_BTN": "I have paid.",
+        "ADM_PAY_CONF_BTN": "Confirm payment",
         "IN_DEV": "I've told You, IT IS IN DEVELOPMENT!",
         # Bot messages.
         "WELCOME_BACK_MSG": lambda customer_name: f"Welcome back, {customer_name}!",
@@ -338,6 +368,17 @@ texts = {
                                              f"Dish(es): {orders[0][3]}\n"\
                                              f"Total: €{orders[0][4]}\n"\
                                              f"Date: {orders[0][5]}\n"\
-                                             f"Status: {orders[0][6]}"
+                                             f"Status: {orders[0][6]}"\
+                                             f"Order closed:{orders[0][7]}",  # TODO
+        "ORDER_CREATED_MSG": lambda order_info: f"Order created:\n`{order_info[0]}`\n"\
+                                                f"Restaurant:\n{order_info[3]}\n"\
+                                                f"Dishes:\n{order_info[7]}\n"\
+                                                f"Total:\n€ `{order_info[11]}`\n"\
+                                                f"Date:\n{order_info[12]}",
+        "PAYMENT_MENU_MSG": "Please proceed to payment via this link:",  # TODO
+        "PAID_ADM_MSG": lambda order_uuid, total: f"Confirm payment for order\n`{order_uuid}`.\n"\
+                                                  f"Total: € `{total}`",
+        "WAIT_FOR_CONFIRMATION_MSG": lambda order_uuid: f"Wait for payment confirmation from the Service\n"\
+                                                        f"Order № {order_uuid}.",
     }
 }

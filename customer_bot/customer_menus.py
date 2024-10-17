@@ -1,7 +1,7 @@
 import telebot.types as types
 
-from customer_db_tools import Interface as DBInterface
 from customer_translations import texts
+from customer_db_tools import Interface as DBInterface
 
 # Some common buttons here.
 main_menu_button = lambda lang_code: types.KeyboardButton(text=texts[lang_code]["MAIN_MENU_BTN"])
@@ -286,8 +286,8 @@ def cart_menu(lang_code: str) -> types.InlineKeyboardMarkup:
         "Cart" menu in required language.
 
     """
-    pay_button = types.InlineKeyboardButton(text=texts[lang_code]["PAY_BTN"],
-                                            callback_data=texts[lang_code]["PAY_BTN"])
+    pay_button = types.InlineKeyboardButton(text=texts[lang_code]["MAKE_ORDER_BTN"],
+                                            callback_data=texts[lang_code]["MAKE_ORDER_BTN"])
     add_more_button = types.InlineKeyboardButton(text=texts[lang_code]["ADD_MORE_BTN"],
                                                  callback_data=texts[lang_code]["ADD_MORE_BTN"])
     delete_item_button = types.InlineKeyboardButton(text=texts[lang_code]["DELETE_ITEM_BTN"],
@@ -336,4 +336,40 @@ def lang_sel_menu(lang_code: str) -> types.InlineKeyboardMarkup:
     en_button = types.InlineKeyboardButton(text=texts[lang_code]["SEL_LANG_EN_BTN"], callback_data="en_US")
     ru_button = types.InlineKeyboardButton(text=texts[lang_code]["SEL_LANG_RU_BTN"], callback_data="ru_RU")
     menu.add(de_button, en_button, ru_button)
+    return menu
+
+
+# Payment menu.
+def payment_menu(lang_code: str, order_uuid: str) -> types.InlineKeyboardMarkup:
+    """
+
+    Args:
+        lang_code:
+        order_uuid:
+
+    Returns:
+
+    """
+    menu = types.InlineKeyboardMarkup(row_width=1)
+    paid_button = types.InlineKeyboardButton(text=texts[lang_code]["PAID_BTN"],  # TODO
+                                             callback_data="paid " + order_uuid)
+    menu.add(paid_button, cancel_order_button(lang_code))
+    return menu
+
+
+# Admin payment confirmation menu.
+def adm_pay_conf_menu(lang_code: str, order_uuid: str) -> types.InlineKeyboardMarkup:
+    """
+
+    Args:
+        lang_code:
+        order_uuid:
+
+    Returns:
+
+    """
+    menu = types.InlineKeyboardMarkup(row_width=1)
+    payment_confirmed_button = types.InlineKeyboardButton(text=texts[lang_code]["ADM_PAY_CONF_BTN"],
+                                                          callback_data="confirmed " + order_uuid)
+    menu.add(payment_confirmed_button)
     return menu

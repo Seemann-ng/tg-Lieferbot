@@ -1,6 +1,7 @@
 import uuid
+import random
 import datetime
-from typing import Dict, List, Tuple, Any
+from typing import Any, Dict, List, Tuple
 
 import psycopg2
 import telebot.types as types
@@ -133,9 +134,8 @@ class Interface:
 
         """
         customer_id = self.data_to_read.from_user.id
-        curs.execute("SELECT order_uuid, restaurant_name, courier_name, dishes, total, order_date, order_status "
-                    "FROM orders "
-                    "WHERE orders.customer_id = %s",
+        curs.execute("SELECT order_uuid, restaurant_name, courier_name, dishes, total, order_open_date, "
+                     "order_status, order_close_date FROM orders WHERE orders.customer_id = %s",
                     (customer_id,))
         orders = curs.fetchall()
         return orders
@@ -289,9 +289,7 @@ class Interface:
         """
         callback_data = self.data_to_read.data
         customer_id = self.data_to_read.from_user.id
-        curs.execute("UPDATE cart "
-                    "SET " + column_name + " =%s "
-                    "WHERE cart.customer_id = %s",
+        curs.execute("UPDATE cart SET " + column_name + " = %s WHERE cart.customer_id = %s",
                     (callback_data, customer_id))
 
     @cursor
@@ -308,7 +306,7 @@ class Interface:
 
         """
         customer_id = self.data_to_read.from_user.id
-        curs.execute("SELECT " + column_name + " FROM cart WHERE cart.customer_id = %s", (customer_id,))
+        curs.execute("SELECT " + column_name + " FROM cart WHERE cart.customer_id = %s", (customer_id, ))
         value = curs.fetchone()
         return value[0] if value is not None else None
 
@@ -323,7 +321,7 @@ class Interface:
 
         """
         customer_id = self.data_to_read.from_user.id
-        curs.execute("UPDATE cart SET " + column_name + " =null WHERE cart.customer_id = %s", (customer_id,))
+        curs.execute("UPDATE cart SET " + column_name + " = null WHERE cart.customer_id = %s", (customer_id, ))
 
     @cursor
     @logger_decorator
@@ -394,6 +392,26 @@ class Interface:
         curs.execute("UPDATE customers SET lang_code = %s WHERE customers.customer_id = %s",
                      (lang_code, customer_id))
 
+    @staticmethod
+    @cursor
+    @logger_decorator
+    def get_restaurant_lang(rest_uuid: str, curs: psycopg2.extensions.cursor) -> str:
+        """
+
+        Args:
+            rest_uuid:
+            curs:
+
+        Returns:
+
+        """
+        curs.execute("SELECT lang_code FROM restaurants WHERE restaurants.restaurant_uuid = %s",
+                     (rest_uuid, ))
+        if rest_lang := curs.fetchone():
+            if rest_lang := rest_lang[0]:
+                return rest_lang
+        return DEF_LANG
+
     @cursor
     @logger_decorator
     def order_creation(self, curs: psycopg2.extensions.cursor) -> List[Any]:
@@ -410,6 +428,8 @@ class Interface:
                      (self.data_to_read.from_user.id,))
         order_data = curs.fetchone()
         rest_uuid = order_data[0]
+        curs.execute("SELECT restaurant_tg_id FROM restaurants WHERE restaurant_uuid = %s", (rest_uuid, ))
+        rest_id = curs.fetchone()[0]
         dishes_uuids = order_data[1]
         subtotal = order_data[2]
         service_fee = order_data[3]
@@ -429,12 +449,13 @@ class Interface:
             dishes += [current_dish]
         order_uuid = str(uuid.uuid4())
         order_creation_datetime = datetime.datetime.now()
-        curs.execute("INSERT INTO orders (order_uuid, restaurant_uuid, restaurant_name, "
+        curs.execute("INSERT INTO orders (order_uuid, restaurant_uuid, restaurant_id, restaurant_name, "
                      "customer_id, customer_name, delivery_location, dishes, dishes_subtotal, "
-                     "courier_fee, service_fee, total, order_date, order_status) "
-                     "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                     "courier_fee, service_fee, total, order_open_date, order_status, courier_id) "
+                     "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, -1)",
                      (order_uuid,
                       rest_uuid,
+                      rest_id,
                       rest_name,
                       self.data_to_read.from_user.id,
                       customer_name,
@@ -448,6 +469,7 @@ class Interface:
                       "Created"))
         order_info = [order_uuid,
                       rest_uuid,
+                      rest_id,
                       rest_name,
                       self.data_to_read.from_user.id,
                       customer_name,
@@ -459,4 +481,72 @@ class Interface:
                       total,
                       order_creation_datetime,
                       "Created"]
+        return order_info
+
+    @staticmethod
+    @cursor
+    @logger_decorator
+    def update_order(order_uuid: str, column: str, new_value: str, curs: psycopg2.extensions.cursor) -> None:
+        """
+
+        Args:
+            order_uuid:
+            column:
+            new_value:
+            curs:
+
+        Returns:
+
+        """
+        curs.execute("UPDATE orders SET " + column + " = %s WHERE order_uuid = %s",
+                     (new_value, order_uuid))
+
+    @cursor
+    @logger_decorator
+    def get_support_id(self, curs: psycopg2.extensions.cursor) -> int:
+        """
+
+        Args:
+            curs:
+
+        Returns:
+
+        """  # TODO
+        curs.execute("SELECT admin_id FROM admins")
+        if admin_ids := curs.fetchall():
+            return random.choice(admin_ids)[0]
+
+    @staticmethod
+    @cursor
+    @logger_decorator
+    def get_adm_lang(admin_id: int, curs: psycopg2.extensions.cursor) -> str:
+        """
+
+        Args:
+            admin_id:
+            curs:
+
+        Returns:
+
+        """
+        curs.execute("SELECT lang_code FROM admins WHERE admin_id = %s", (admin_id, ))
+        lang_code = curs.fetchone()[0]
+        return lang_code
+
+    @staticmethod
+    @cursor
+    @logger_decorator
+    def get_order_info(order_uuid: str, column: str, curs: psycopg2.extensions.cursor) -> str | int:
+        """
+
+        Args:
+            order_uuid:
+            column:
+            curs:
+
+        Returns:
+
+        """
+        curs.execute("SELECT " + column + " FROM orders WHERE order_uuid = %s", (order_uuid, ))
+        order_info = curs.fetchone()[0]
         return order_info

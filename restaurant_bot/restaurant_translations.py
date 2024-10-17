@@ -40,6 +40,29 @@ texts = {
         "EDIT_PRICE_MSG": lambda dish_uuid: f"Enter new price for the dish:\n"\
                                             f"Dish UUID: {dish_uuid}",
         "PRICE_SET_MSG": "New price has been set for the dish.",
+        "REST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Accepted order\n{order_uuid}",
+        "CUST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Order\n{order_uuid}\n"\
+                                                      f"Status update:\n"\
+                                                      f"Order received by the restaurant, looking for a courier.",
+        "LOOKING_FOR_COURIER_MSG": lambda order_uuid,
+                                          courier_fee,
+                                          customer_name,
+                                          customer_username,
+                                          customer_phone,
+                                          rest_name,
+                                          dishes,
+                                          rest_address: f"New incoming order:\n{order_uuid}\n"\
+                                                        f"Courier pay:\n€ {courier_fee}\n"\
+                                                        f"Customer's name:\n{customer_name}\n"\
+                                                        f"Customer's Telegram:\n @{customer_username}\n"\
+                                                        f"Customer's phone:\n{customer_phone}\n"\
+                                                        f"Restaurant:\n{rest_name}\n"\
+                                                        f"Dishes:\n{dishes}\n"\
+                                                        f"Restaurant address:\n{rest_address}\n"\
+                                                        f"Restaurant location:",
+        "COURIER_DELIVERY_LOC_MSG": "To be delivered here:",
+        "COURIER_ACCEPT_ORDER_MSG": "Accept order?",
+        "COURIER_ACCEPT_BTN": "Accept"
     },
     "de_DE": {
         "ASK_REGISTRATION_MSG": "This Telegram account isn't registered as a Restaurant account.\n"
@@ -82,6 +105,29 @@ texts = {
         "EDIT_PRICE_MSG": lambda dish_uuid: f"Enter new price for the dish:\n"\
                                             f"Dish UUID: {dish_uuid}",
         "PRICE_SET_MSG": "New price has been set for the dish.",
+        "REST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Accepted order\n{order_uuid}",
+        "CUST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Order\n{order_uuid}\n"\
+                                                      f"Status update:\n"\
+                                                      f"Order received by the restaurant, looking for a courier.",
+        "LOOKING_FOR_COURIER_MSG": lambda order_uuid,
+                                          courier_fee,
+                                          customer_name,
+                                          customer_username,
+                                          customer_phone,
+                                          rest_name,
+                                          dishes,
+                                          rest_address: f"New incoming order:\n{order_uuid}\n"\
+                                                        f"Courier pay:\n€ {courier_fee}\n"\
+                                                        f"Customer's name:\n{customer_name}\n"\
+                                                        f"Customer's Telegram:\n @{customer_username}\n"\
+                                                        f"Customer's phone:\n{customer_phone}\n"\
+                                                        f"Restaurant:\n{rest_name}\n"\
+                                                        f"Dishes:\n{dishes}\n"\
+                                                        f"Restaurant address:\n{rest_address}\n"\
+                                                        f"Restaurant location:",
+        "COURIER_DELIVERY_LOC_MSG": "To be delivered here:",
+        "COURIER_ACCEPT_ORDER_MSG": "Accept order?",
+        "COURIER_ACCEPT_BTN": "Accept"
     },
     "ru_RU": {
         "ASK_REGISTRATION_MSG": "This Telegram account isn't registered as a Restaurant account.\n"
@@ -124,5 +170,28 @@ texts = {
         "EDIT_PRICE_MSG": lambda dish_uuid: f"Enter new price for the dish:\n"\
                                             f"Dish UUID: {dish_uuid}",
         "PRICE_SET_MSG": "New price has been set for the dish.",
+        "REST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Accepted order\n{order_uuid}",
+        "CUST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Order\n{order_uuid}\n"\
+                                                      f"Status update:\n"\
+                                                      f"Order received by the restaurant, looking for a courier.",
+        "LOOKING_FOR_COURIER_MSG": lambda order_uuid,
+                                          courier_fee,
+                                          customer_name,
+                                          customer_username,
+                                          customer_phone,
+                                          rest_name,
+                                          dishes,
+                                          rest_address: f"New incoming order:\n{order_uuid}\n"\
+                                                        f"Courier pay:\n€ {courier_fee}\n"\
+                                                        f"Customer's name:\n{customer_name}\n"\
+                                                        f"Customer's Telegram:\n @{customer_username}\n"\
+                                                        f"Customer's phone:\n{customer_phone}\n"\
+                                                        f"Restaurant:\n{rest_name}\n"\
+                                                        f"Dishes:\n{dishes}\n"\
+                                                        f"Restaurant address:\n{rest_address}\n"\
+                                                        f"Restaurant location:",
+        "COURIER_DELIVERY_LOC_MSG": "To be delivered here:",
+        "COURIER_ACCEPT_ORDER_MSG": "Accept order?",
+        "COURIER_ACCEPT_BTN": "Accept"
     }
 }

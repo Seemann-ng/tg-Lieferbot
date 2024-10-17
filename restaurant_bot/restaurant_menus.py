@@ -1,7 +1,7 @@
 import telebot.types as types
 
-from restaurant_db_tools import Interface as DBInterface
 from restaurant_translations import texts
+from restaurant_db_tools import Interface as DBInterface
 
 back_button = lambda lang_code: types.InlineKeyboardButton(text=texts[lang_code]["GO_BACK_BTN"],
                                                            callback_data=texts[lang_code]["GO_BACK_BTN"])
@@ -60,4 +60,22 @@ def lang_sel_menu(lang_code: str) -> types.InlineKeyboardMarkup:
     en_button = types.InlineKeyboardButton(text=texts[lang_code]["SEL_LANG_EN_BTN"], callback_data="en_US")
     ru_button = types.InlineKeyboardButton(text=texts[lang_code]["SEL_LANG_RU_BTN"], callback_data="ru_RU")
     menu.add(de_button, en_button, ru_button)
+    return menu
+
+
+# Courier accept order menu.
+def courier_accept_menu(order_uuid: str, lang_code: str) -> types.InlineKeyboardMarkup:
+    """
+
+    Args:
+        order_uuid:
+        lang_code:
+
+    Returns:
+
+    """
+    menu = types.InlineKeyboardMarkup(row_width=1)
+    accept_button = types.InlineKeyboardButton(text=texts[lang_code]["COURIER_ACCEPT_BTN"],
+                                               callback_data="accept " + order_uuid)
+    menu.add(accept_button)
     return menu

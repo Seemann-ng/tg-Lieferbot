@@ -1,19 +1,11 @@
-import telebot as tb
 import telebot.types as types
-from environs import Env
 from telebot.apihelper import ApiTelegramException
 
 import customer_menus
-from customer_db_tools import Interface as DBInterface
 from customer_translations import texts
+from customer_db_tools import Interface as DBInterface
+from tools.bots_initialization import adm_bot, courier_bot, cus_bot, rest_bot
 from tools.logger_tool import logger, logger_decorator_callback, logger_decorator_msg
-
-env = Env()
-env.read_env()
-
-BOT_TOKEN = env.str("CUSTOMER_BOT_TOKEN")
-
-bot = tb.TeleBot(token=BOT_TOKEN)
 
 
 # Auxiliary functions.
@@ -29,9 +21,9 @@ def show_main_menu(message: types.Message) -> None:
     lang_code = msg.get_customer_lang()
     if msg.user_in_db():
         customer_id = msg.data_to_read.from_user.id
-        bot.send_message(customer_id,
-                         texts[lang_code]["MAIN_MENU_MSG"],
-                         reply_markup=customer_menus.main_menu(lang_code))
+        cus_bot.send_message(customer_id,
+                             texts[lang_code]["MAIN_MENU_MSG"],
+                             reply_markup=customer_menus.main_menu(lang_code))
     else:
         start(msg.data_to_read)
 
@@ -86,8 +78,8 @@ def clear_cart(call: types.CallbackQuery) -> None:
     callback_id = c_back.data_to_read.id
     customer_id = c_back.data_to_read.from_user.id
     message_id = c_back.data_to_read.message.id
-    bot.answer_callback_query(callback_id, texts[lang_code]["DELETING_CART_ALERT"], show_alert=True)
-    bot.delete_message(customer_id, message_id)
+    cus_bot.answer_callback_query(callback_id, texts[lang_code]["DELETING_CART_ALERT"], show_alert=True)
+    cus_bot.delete_message(customer_id, message_id)
     c_back.delete_cart()
     show_main_menu(callback_to_msg(c_back.data_to_read))
 
@@ -130,7 +122,7 @@ def prices_calc(call: types.CallbackQuery) -> None:
 
 
 # Sing in/sign up block.
-@bot.message_handler(commands=["start"])
+@cus_bot.message_handler(commands=["start"])
 @logger_decorator_msg
 def start(message: types.Message) -> None:
     """Commence interaction between Customer and the bot.
@@ -146,16 +138,16 @@ def start(message: types.Message) -> None:
     customer_id = msg.data_to_read.from_user.id
     msg.delete_cart()
     if customer_name:
-        bot.send_message(customer_id, texts[lang_code]["WELCOME_BACK_MSG"](customer_name))
+        cus_bot.send_message(customer_id, texts[lang_code]["WELCOME_BACK_MSG"](customer_name))
         show_main_menu(msg.data_to_read)
     else:
-        bot.send_message(customer_id, texts[lang_code]["FIRST_WELCOME_MSG"])
-        bot.send_message(customer_id,
-                         texts[lang_code]["ASK_AGREEMENT_MSG"],
-                         reply_markup=customer_menus.agreement_menu(lang_code))
+        cus_bot.send_message(customer_id, texts[lang_code]["FIRST_WELCOME_MSG"])
+        cus_bot.send_message(customer_id,
+                             texts[lang_code]["ASK_AGREEMENT_MSG"],
+                             reply_markup=customer_menus.agreement_menu(lang_code))
 
 
-@bot.message_handler(func=lambda message: message.text in [lang["SHOW_AGREEMENT_BTN"] for lang in texts.values()])
+@cus_bot.message_handler(func=lambda message: message.text in [lang["SHOW_AGREEMENT_BTN"] for lang in texts.values()])
 @logger_decorator_msg
 def show_agreement(message: types.Message) -> None:
     """Show Customer agreement.
@@ -167,10 +159,10 @@ def show_agreement(message: types.Message) -> None:
     msg = DBInterface(message)
     lang_code = msg.get_customer_lang()
     customer_id = msg.data_to_read.from_user.id
-    bot.send_message(customer_id, texts[lang_code]["AGREEMENT_TEXT"])
+    cus_bot.send_message(customer_id, texts[lang_code]["AGREEMENT_TEXT"])
 
 
-@bot.message_handler(func=lambda message: message.text in [lang["ACCEPT_AGREEMENT_BTN"] for lang in texts.values()])
+@cus_bot.message_handler(func=lambda message: message.text in [lang["ACCEPT_AGREEMENT_BTN"] for lang in texts.values()])
 @logger_decorator_msg
 def agreement_accepted(message: types.Message) -> None:
     """Commence Customer sign up sequence.
@@ -186,15 +178,16 @@ def agreement_accepted(message: types.Message) -> None:
     customer_id = msg.data_to_read.from_user.id
     if not user:
         msg.add_customer()
-    bot.send_message(customer_id, texts[lang_code]["AGREEMENT_ACCEPTED_MSG"])
-    bot.send_message(customer_id,
-                     texts[lang_code]["REG_NAME_MSG"],
-                     reply_markup=types.ForceReply(input_field_placeholder=texts[lang_code]["REG_NAME_PLACEHOLDER"]))
+    cus_bot.send_message(customer_id, texts[lang_code]["AGREEMENT_ACCEPTED_MSG"])
+    cus_bot.send_message(customer_id,
+                         texts[lang_code]["REG_NAME_MSG"],
+                         reply_markup=types.ForceReply(
+                             input_field_placeholder=texts[lang_code]["REG_NAME_PLACEHOLDER"]))
 
 
-@bot.message_handler(func=lambda message: message.reply_to_message\
-                                          and message.reply_to_message.text\
-                                          in [lang["REG_NAME_MSG"] for lang in texts.values()])
+@cus_bot.message_handler(func=lambda message: message.reply_to_message \
+                                              and message.reply_to_message.text \
+                                              in [lang["REG_NAME_MSG"] for lang in texts.values()])
 @logger_decorator_msg
 def reg_name(message: types.Message) -> None:
     """Add Customer's name to the DB.
@@ -209,14 +202,14 @@ def reg_name(message: types.Message) -> None:
     customer_id = msg.data_to_read.from_user.id
     new_name = msg.data_to_read.text
     msg.update_name()
-    bot.send_message(customer_id, texts[lang_code]["REG_NAME_RECEIVED_MSG"](new_name))
-    bot.send_message(customer_id,
-                     texts[lang_code]["REG_PHONE_METHOD_MSG"],
-                     reply_markup=customer_menus.reg_phone_menu(lang_code))
+    cus_bot.send_message(customer_id, texts[lang_code]["REG_NAME_RECEIVED_MSG"](new_name))
+    cus_bot.send_message(customer_id,
+                         texts[lang_code]["REG_PHONE_METHOD_MSG"],
+                         reply_markup=customer_menus.reg_phone_menu(lang_code))
 
 
-@bot.message_handler(content_types=["contact"])
-@bot.message_handler(func=lambda message: message.text in [lang["REG_PHONE_METHOD_MSG"] for lang in texts.values()])
+@cus_bot.message_handler(content_types=["contact"])
+@cus_bot.message_handler(func=lambda message: message.text in [lang["REG_PHONE_METHOD_MSG"] for lang in texts.values()])
 @logger_decorator_msg
 def contact(message: types.Message) -> None:
     """Add Customer's phone number imported via Telegram contact info into the DB.
@@ -233,13 +226,13 @@ def contact(message: types.Message) -> None:
         phone_number = "+" + phone_number
     customer_id = msg.data_to_read.from_user.id
     msg.update_phone_number(phone_number)
-    bot.send_message(customer_id, texts[lang_code]["PHONE_RECEIVED_MSG"](phone_number))
-    bot.send_message(customer_id,
-                     texts[lang_code]["REG_LOCATION_MSG"],
-                     reply_markup=customer_menus.reg_location_menu(lang_code))
+    cus_bot.send_message(customer_id, texts[lang_code]["PHONE_RECEIVED_MSG"](phone_number))
+    cus_bot.send_message(customer_id,
+                         texts[lang_code]["REG_LOCATION_MSG"],
+                         reply_markup=customer_menus.reg_location_menu(lang_code))
 
 
-@bot.message_handler(func=lambda message: message.text in [lang["REG_PHONE_MAN_BTN"] for lang in texts.values()])
+@cus_bot.message_handler(func=lambda message: message.text in [lang["REG_PHONE_MAN_BTN"] for lang in texts.values()])
 @logger_decorator_msg
 def reg_phone_str(message: types.Message) -> None:
     """Ask Customer to input phone number manually.
@@ -251,14 +244,15 @@ def reg_phone_str(message: types.Message) -> None:
     msg = DBInterface(message)
     lang_code = msg.get_customer_lang()
     customer_id = msg.data_to_read.from_user.id
-    bot.send_message(customer_id,
-                     texts[lang_code]["REG_PHONE_MSG"],
-                     reply_markup=types.ForceReply(input_field_placeholder=texts[lang_code]["REG_PHONE_PLACEHOLDER"]))
+    cus_bot.send_message(customer_id,
+                         texts[lang_code]["REG_PHONE_MSG"],
+                         reply_markup=types.ForceReply(
+                             input_field_placeholder=texts[lang_code]["REG_PHONE_PLACEHOLDER"]))
 
 
-@bot.message_handler(func=lambda message: message.reply_to_message\
-                                          and message.reply_to_message.text\
-                                          in [lang["REG_PHONE_MSG"] for lang in texts.values()])
+@cus_bot.message_handler(func=lambda message: message.reply_to_message \
+                                              and message.reply_to_message.text \
+                                              in [lang["REG_PHONE_MSG"] for lang in texts.values()])
 @logger_decorator_msg
 def reg_phone(message: types.Message) -> None:
     """Check if phone number was added to the DB if manual input was chosen.
@@ -273,21 +267,21 @@ def reg_phone(message: types.Message) -> None:
     lang_code = msg.get_customer_lang()
     customer_id = msg.data_to_read.from_user.id
     if phone_number := phone_from_msg(message):
-        bot.send_message(customer_id, texts[lang_code]["PHONE_RECEIVED_MSG"](phone_number))
-        bot.send_message(customer_id,
-                         texts[lang_code]["REG_LOCATION_MSG"],
-                         reply_markup=customer_menus.reg_location_menu(lang_code))
+        cus_bot.send_message(customer_id, texts[lang_code]["PHONE_RECEIVED_MSG"](phone_number))
+        cus_bot.send_message(customer_id,
+                             texts[lang_code]["REG_LOCATION_MSG"],
+                             reply_markup=customer_menus.reg_location_menu(lang_code))
     else:
-        bot.send_message(customer_id, texts[lang_code]["INVALID_PHONE_MSG"])
-        bot.send_message(customer_id,
-                         texts[lang_code]["REG_PHONE_MSG"],
-                         reply_markup=types.ForceReply(
-                             input_field_placeholder=texts[lang_code]["REG_PHONE_PLACEHOLDER"]
-                         ))
+        cus_bot.send_message(customer_id, texts[lang_code]["INVALID_PHONE_MSG"])
+        cus_bot.send_message(customer_id,
+                             texts[lang_code]["REG_PHONE_MSG"],
+                             reply_markup=types.ForceReply(
+                                 input_field_placeholder=texts[lang_code]["REG_PHONE_PLACEHOLDER"]
+                             ))
 
 
-@bot.message_handler(content_types=["location"])
-@bot.message_handler(func=lambda message: message.text in [lang["REG_LOCATION_BTN"] for lang in texts.values()])
+@cus_bot.message_handler(content_types=["location"])
+@cus_bot.message_handler(func=lambda message: message.text in [lang["REG_LOCATION_BTN"] for lang in texts.values()])
 @logger_decorator_msg
 def reg_location(message: types.Message) -> None:
     """Add location to the DB. Proceed to main menu.
@@ -302,13 +296,13 @@ def reg_location(message: types.Message) -> None:
     latitude = msg.data_to_read.location.latitude
     longitude = msg.data_to_read.location.longitude
     msg.update_customer_location()
-    bot.send_message(customer_id, texts[lang_code]["REG_LOCATION_RECEIVED_MSG"])
-    bot.send_location(customer_id, latitude, longitude)
+    cus_bot.send_message(customer_id, texts[lang_code]["REG_LOCATION_RECEIVED_MSG"])
+    cus_bot.send_location(customer_id, latitude, longitude)
     show_main_menu(msg.data_to_read)
 
 
 # Main menu block.
-@bot.message_handler(func=lambda message: message.text in [lang["OPTIONS_BTN"] for lang in texts.values()])
+@cus_bot.message_handler(func=lambda message: message.text in [lang["OPTIONS_BTN"] for lang in texts.values()])
 @logger_decorator_msg
 def options(message: types.Message) -> None:
     """Show options menu.
@@ -320,10 +314,12 @@ def options(message: types.Message) -> None:
     msg = DBInterface(message)
     lang_code = msg.get_customer_lang()
     customer_id = msg.data_to_read.from_user.id
-    bot.send_message(customer_id, texts[lang_code]["OPTIONS_MSG"], reply_markup=customer_menus.options_menu(lang_code))
+    cus_bot.send_message(customer_id,
+                         texts[lang_code]["OPTIONS_MSG"],
+                         reply_markup=customer_menus.options_menu(lang_code))
 
 
-@bot.message_handler(func=lambda message: message.text in [lang["MY_ORDERS_BTN"] for lang in texts.values()])
+@cus_bot.message_handler(func=lambda message: message.text in [lang["MY_ORDERS_BTN"] for lang in texts.values()])
 @logger_decorator_msg
 def my_orders(message: types.Message) -> None:
     """Send Customer their order history.
@@ -337,15 +333,15 @@ def my_orders(message: types.Message) -> None:
     customer_id = msg.data_to_read.from_user.id
     if orders := msg.show_my_orders():
         while orders:
-            bot.send_message(customer_id, texts[lang_code]["MY_ORDERS_MSG"](orders))
+            cus_bot.send_message(customer_id, texts[lang_code]["MY_ORDERS_MSG"](orders))
             orders.pop(0)
         show_main_menu(msg.data_to_read)
     else:
-        bot.send_message(customer_id, texts[lang_code]["NO_ORDERS_FOUND_MSG"])
+        cus_bot.send_message(customer_id, texts[lang_code]["NO_ORDERS_FOUND_MSG"])
         show_main_menu(msg.data_to_read)
 
 
-@bot.message_handler(func=lambda message: message.text in [lang["NEW_ORDER_BTN"] for lang in texts.values()])
+@cus_bot.message_handler(func=lambda message: message.text in [lang["NEW_ORDER_BTN"] for lang in texts.values()])
 @logger_decorator_msg
 def new_order(message: types.Message) -> None:
     """Commence order creation sequence.
@@ -360,20 +356,20 @@ def new_order(message: types.Message) -> None:
     lang_code = msg.get_customer_lang()
     customer_id = msg.data_to_read.from_user.id
     if location := msg.check_if_location():
-        bot.send_message(customer_id,
-                         texts[lang_code]["CONFIRM_LOCATION_MSG"],
-                         reply_markup=types.ReplyKeyboardRemove())
-        bot.send_location(customer_id,
-                          location["lat"],
-                          location["lon"],
-                          reply_markup=customer_menus.confirm_location_menu(lang_code))
+        cus_bot.send_message(customer_id,
+                             texts[lang_code]["CONFIRM_LOCATION_MSG"],
+                             reply_markup=types.ReplyKeyboardRemove())
+        cus_bot.send_location(customer_id,
+                              location["lat"],
+                              location["lon"],
+                              reply_markup=customer_menus.confirm_location_menu(lang_code))
     else:
-        bot.send_message(customer_id, texts[lang_code]["LOCATION_NOT_FOUND_MSG"])
+        cus_bot.send_message(customer_id, texts[lang_code]["LOCATION_NOT_FOUND_MSG"])
         show_main_menu(msg.data_to_read)
 
 
 # Options menu block.
-@bot.message_handler(func=lambda message: message.text in [lang["MAIN_MENU_BTN"] for lang in texts.values()])
+@cus_bot.message_handler(func=lambda message: message.text in [lang["MAIN_MENU_BTN"] for lang in texts.values()])
 @logger_decorator_msg
 def main_menu(message: types.Message) -> None:
     """Get back to main menu.
@@ -385,7 +381,7 @@ def main_menu(message: types.Message) -> None:
     show_main_menu(message)
 
 
-@bot.message_handler(func=lambda message: message.text in [lang["CONTACT_SUPPORT_BTN"] for lang in texts.values()])
+@cus_bot.message_handler(func=lambda message: message.text in [lang["CONTACT_SUPPORT_BTN"] for lang in texts.values()])
 @logger_decorator_msg
 def contact_support(message: types.Message) -> None:  # TODO Contact support.
     """Start communication with support.
@@ -397,11 +393,12 @@ def contact_support(message: types.Message) -> None:  # TODO Contact support.
     msg = DBInterface(message)
     lang_code = msg.get_customer_lang()
     customer_id = msg.data_to_read.from_user.id
-    bot.send_message(customer_id, texts[lang_code]["IN_DEV"])
+    cus_bot.send_message(customer_id, texts[lang_code]["IN_DEV"])
     show_main_menu(message)
 
 
-@bot.message_handler(func=lambda message: message.text in [lang["RESET_CONTACT_INFO_BTN"] for lang in texts.values()])
+@cus_bot.message_handler(func=lambda message: message.text \
+                                              in [lang["RESET_CONTACT_INFO_BTN"] for lang in texts.values()])
 @logger_decorator_msg
 def reset_contact_info(message: types.Message) -> None:
     """Ask Customer for contact info reset confirmation.
@@ -413,12 +410,12 @@ def reset_contact_info(message: types.Message) -> None:
     msg = DBInterface(message)
     lang_code = msg.get_customer_lang()
     customer_id = msg.data_to_read.from_user.id
-    bot.send_message(customer_id,
-                     texts[lang_code]["RESET_CONTACT_INFO_MSG"],
-                     reply_markup=customer_menus.reset_info_menu(lang_code))
+    cus_bot.send_message(customer_id,
+                         texts[lang_code]["RESET_CONTACT_INFO_MSG"],
+                         reply_markup=customer_menus.reset_info_menu(lang_code))
 
 
-@bot.message_handler(func=lambda message: message.text in [lang["DELETE_PROFILE_BTN"] for lang in texts.values()])
+@cus_bot.message_handler(func=lambda message: message.text in [lang["DELETE_PROFILE_BTN"] for lang in texts.values()])
 @logger_decorator_msg
 def delete_profile(message: types.Message) -> None:
     """Ask Customer for profile deletion confirmation.
@@ -430,13 +427,13 @@ def delete_profile(message: types.Message) -> None:
     msg = DBInterface(message)
     lang_code = msg.get_customer_lang()
     customer_id = msg.data_to_read.from_user.id
-    bot.send_message(customer_id,
-                     texts[lang_code]["DELETE_PROFILE_MSG"],
-                     reply_markup=customer_menus.confirm_delete_profile_menu(lang_code))
+    cus_bot.send_message(customer_id,
+                         texts[lang_code]["DELETE_PROFILE_MSG"],
+                         reply_markup=customer_menus.confirm_delete_profile_menu(lang_code))
 
 
 # Language change menu.
-@bot.message_handler(func=lambda message: message.text in [lang["CHANGE_LANG_BTN"] for lang in texts.values()])
+@cus_bot.message_handler(func=lambda message: message.text in [lang["CHANGE_LANG_BTN"] for lang in texts.values()])
 @logger_decorator_msg
 def change_lang_menu(message: types.Message) -> None:
     """Open language select menu.
@@ -448,14 +445,14 @@ def change_lang_menu(message: types.Message) -> None:
     msg = DBInterface(message)
     lang_code = msg.get_customer_lang()
     customer_id = msg.data_to_read.from_user.id
-    bot.send_message(customer_id, texts[lang_code]["LANG_SEL_MENU"], reply_markup=types.ReplyKeyboardRemove())
-    bot.send_message(customer_id,
-                     texts[lang_code]["CHANGE_LANG_MSG"],
-                     reply_markup=customer_menus.lang_sel_menu(lang_code))
+    cus_bot.send_message(customer_id, texts[lang_code]["LANG_SEL_MENU"], reply_markup=types.ReplyKeyboardRemove())
+    cus_bot.send_message(customer_id,
+                         texts[lang_code]["CHANGE_LANG_MSG"],
+                         reply_markup=customer_menus.lang_sel_menu(lang_code))
 
 
-@bot.callback_query_handler(func= lambda call: call.message.text\
-                                               in [lang["CHANGE_LANG_MSG"] for lang in texts.values()])
+@cus_bot.callback_query_handler(func=lambda call: call.message.text \
+                                                  in [lang["CHANGE_LANG_MSG"] for lang in texts.values()])
 @logger_decorator_callback
 def lang_set(call: types.CallbackQuery) -> None:
     """Change bot interface language.
@@ -468,13 +465,13 @@ def lang_set(call: types.CallbackQuery) -> None:
     customer_id = c_back.data_to_read.from_user.id
     message_id = c_back.data_to_read.message.id
     c_back.set_customer_lang()
-    bot.delete_message(customer_id, message_id - 1)
-    bot.delete_message(customer_id, message_id)
+    cus_bot.delete_message(customer_id, message_id - 1)
+    cus_bot.delete_message(customer_id, message_id)
     show_main_menu(callback_to_msg(c_back.data_to_read))
 
 
 # Contact Info reset block.
-@bot.message_handler(func=lambda message: message.text in [lang["CONFIRM_RESET_BTN"] for lang in texts.values()])
+@cus_bot.message_handler(func=lambda message: message.text in [lang["CONFIRM_RESET_BTN"] for lang in texts.values()])
 @logger_decorator_msg
 def confirm_reset(message: types.Message) -> None:
     """Commence contact info reset sequence.
@@ -487,13 +484,13 @@ def confirm_reset(message: types.Message) -> None:
     lang_code = msg.get_customer_lang()
     customer_id = msg.data_to_read.from_user.id
     msg.delete_customer()
-    bot.send_message(customer_id, texts[lang_code]["CONTACT_INFO_DELETED_MSG"])
+    cus_bot.send_message(customer_id, texts[lang_code]["CONTACT_INFO_DELETED_MSG"])
     agreement_accepted(message)
 
 
 # Profile deletion block.
-@bot.message_handler(func=lambda message: message.text\
-                                          in [lang["CONFIRM_DELETE_PROFILE_BTN"] for lang in texts.values()])
+@cus_bot.message_handler(func=lambda message: message.text \
+                                              in [lang["CONFIRM_DELETE_PROFILE_BTN"] for lang in texts.values()])
 @logger_decorator_msg
 def confirm_delete(message: types.Message) -> None:
     """Delete Customer's profile from DB.
@@ -506,11 +503,11 @@ def confirm_delete(message: types.Message) -> None:
     lang_code = msg.get_customer_lang()
     customer_id = msg.data_to_read.from_user.id
     msg.delete_customer()
-    bot.send_message(customer_id, texts[lang_code]["PROFILE_DELETED_MSG"], reply_markup=types.ReplyKeyboardRemove())
+    cus_bot.send_message(customer_id, texts[lang_code]["PROFILE_DELETED_MSG"], reply_markup=types.ReplyKeyboardRemove())
 
 
 # Creating order sequence block.
-@bot.callback_query_handler(func=lambda call: call.message.location)
+@cus_bot.callback_query_handler(func=lambda call: call.message.location)
 @logger_decorator_callback
 def check_location_confirmation(call: types.CallbackQuery) -> None:
     """Process Customer's response to location confirmation request.
@@ -526,20 +523,20 @@ def check_location_confirmation(call: types.CallbackQuery) -> None:
     customer_id = c_back.data_to_read.from_user.id
     message_id = c_back.data_to_read.message.id
     callback_data = c_back.data_to_read.data
-    bot.delete_message(customer_id, message_id)
-    bot.delete_message(customer_id, message_id - 1)
+    cus_bot.delete_message(customer_id, message_id)
+    cus_bot.delete_message(customer_id, message_id - 1)
     if callback_data == texts[lang_code]["WRONG_LOCATION_BTN"]:
-        bot.send_message(customer_id, texts[lang_code]["REQUEST_NEW_LOCATION_MSG"])
+        cus_bot.send_message(customer_id, texts[lang_code]["REQUEST_NEW_LOCATION_MSG"])
         show_main_menu(callback_to_msg(c_back.data_to_read))
     elif callback_data == texts[lang_code]["CONFIRM_LOCATION_BTN"]:
         c_back.new_cart()
-        bot.send_message(customer_id,
-                         texts[lang_code]["CHOOSE_REST_TYPE_MSG"],
-                         reply_markup=customer_menus.choose_rest_type_menu(lang_code))
+        cus_bot.send_message(customer_id,
+                             texts[lang_code]["CHOOSE_REST_TYPE_MSG"],
+                             reply_markup=customer_menus.choose_rest_type_menu(lang_code))
 
 
-@bot.callback_query_handler(func=lambda call: call.message.text\
-                                              in [lang["CHOOSE_REST_TYPE_MSG"] for lang in texts.values()])
+@cus_bot.callback_query_handler(func=lambda call: call.message.text \
+                                                  in [lang["CHOOSE_REST_TYPE_MSG"] for lang in texts.values()])
 @logger_decorator_callback
 def rest_type_chosen(call: types.CallbackQuery) -> None:
     """Process Customer's response to restaurant type selection.
@@ -558,19 +555,20 @@ def rest_type_chosen(call: types.CallbackQuery) -> None:
     customer_id = c_back.data_to_read.from_user.id
     message_id = c_back.data_to_read.message.id
     if callback_data == customer_menus.back_button(lang_code).callback_data:
-        bot.answer_callback_query(callback_id, texts[lang_code]["EXITING_ORDER_MENU_MSG"])
-        bot.delete_message(customer_id, message_id)
+        cus_bot.answer_callback_query(callback_id, texts[lang_code]["EXITING_ORDER_MENU_MSG"])
+        cus_bot.delete_message(customer_id, message_id)
         c_back.delete_cart()
         show_main_menu(callback_to_msg(c_back.data_to_read))
     else:
         c_back.add_to_cart("restaurant_type")
-        bot.edit_message_text(texts[lang_code]["REST_TYPE_SELECTED_MSG"](callback_data), customer_id, message_id)
-        bot.send_message(customer_id,
-                         texts[lang_code]["CHOOSE_REST_MSG"],
-                         reply_markup=customer_menus.choose_rest_menu(lang_code, c_back))
+        cus_bot.edit_message_text(texts[lang_code]["REST_TYPE_SELECTED_MSG"](callback_data), customer_id, message_id)
+        cus_bot.send_message(customer_id,
+                             texts[lang_code]["CHOOSE_REST_MSG"],
+                             reply_markup=customer_menus.choose_rest_menu(lang_code, c_back))
 
 
-@bot.callback_query_handler(func=lambda call: call.message.text in [lang["CHOOSE_REST_MSG"] for lang in texts.values()])
+@cus_bot.callback_query_handler(func=lambda call: call.message.text \
+                                                  in [lang["CHOOSE_REST_MSG"] for lang in texts.values()])
 @logger_decorator_callback
 def restaurant_chosen(call: types.CallbackQuery) -> None:
     """Process Customer's response to restaurant selection.
@@ -589,25 +587,25 @@ def restaurant_chosen(call: types.CallbackQuery) -> None:
     customer_id = c_back.data_to_read.from_user.id
     message_id = c_back.data_to_read.message.id
     try:
-        bot.delete_message(customer_id, message_id - 1)
+        cus_bot.delete_message(customer_id, message_id - 1)
     except ApiTelegramException:
         pass
     if callback_data == customer_menus.back_button(lang_code).callback_data:
-        bot.answer_callback_query(callback_id, texts[lang_code]["DELETING_CART_ALERT"], show_alert=True)
-        bot.delete_message(customer_id, message_id)
+        cus_bot.answer_callback_query(callback_id, texts[lang_code]["DELETING_CART_ALERT"], show_alert=True)
+        cus_bot.delete_message(customer_id, message_id)
         c_back.delete_cart()
         show_main_menu(callback_to_msg(c_back.data_to_read))
     else:
         c_back.add_to_cart("restaurant_uuid")
         restaurant = c_back.rest_name_by_uuid()
-        bot.edit_message_text(texts[lang_code]["REST_SELECTED_MSG"](restaurant), customer_id, message_id)
-        bot.send_message(customer_id,
-                         texts[lang_code]["CHOOSE_DISH_CATEGORY_MSG"],
-                         reply_markup=customer_menus.choose_dish_cat_menu(lang_code, c_back))
+        cus_bot.edit_message_text(texts[lang_code]["REST_SELECTED_MSG"](restaurant), customer_id, message_id)
+        cus_bot.send_message(customer_id,
+                             texts[lang_code]["CHOOSE_DISH_CATEGORY_MSG"],
+                             reply_markup=customer_menus.choose_dish_cat_menu(lang_code, c_back))
 
 
-@bot.callback_query_handler(func=lambda call: call.message.text\
-                                              in [lang["CHOOSE_DISH_CATEGORY_MSG"] for lang in texts.values()])
+@cus_bot.callback_query_handler(func=lambda call: call.message.text \
+                                                  in [lang["CHOOSE_DISH_CATEGORY_MSG"] for lang in texts.values()])
 @logger_decorator_callback
 def dish_category_chosen(call: types.CallbackQuery) -> None:
     """Process Customer's response to dish category selection.
@@ -625,7 +623,7 @@ def dish_category_chosen(call: types.CallbackQuery) -> None:
     customer_id = c_back.data_to_read.from_user.id
     message_id = c_back.data_to_read.message.id
     try:
-        bot.delete_message(customer_id, message_id - 1)
+        cus_bot.delete_message(customer_id, message_id - 1)
     except ApiTelegramException:
         pass
     if callback_data == customer_menus.back_button(lang_code).callback_data:
@@ -637,15 +635,16 @@ def dish_category_chosen(call: types.CallbackQuery) -> None:
     elif callback_data == customer_menus.cart_button(lang_code).callback_data:
         is_dish_added(c_back.data_to_read)
     else:
-        bot.edit_message_text(texts[lang_code]["DISH_CAT_SELECTED_MSG"](c_back.data_to_read.data),
-                              customer_id,
-                              message_id)
-        bot.send_message(customer_id,
-                         texts[lang_code]["CHOOSE_DISH_MSG"],
-                         reply_markup=customer_menus.choose_dish_menu(lang_code, c_back))
+        cus_bot.edit_message_text(texts[lang_code]["DISH_CAT_SELECTED_MSG"](c_back.data_to_read.data),
+                                  customer_id,
+                                  message_id)
+        cus_bot.send_message(customer_id,
+                             texts[lang_code]["CHOOSE_DISH_MSG"],
+                             reply_markup=customer_menus.choose_dish_menu(lang_code, c_back))
 
 
-@bot.callback_query_handler(func=lambda call: call.message.text in [lang["CHOOSE_DISH_MSG"] for lang in texts.values()])
+@cus_bot.callback_query_handler(func=lambda call: call.message.text \
+                                                  in [lang["CHOOSE_DISH_MSG"] for lang in texts.values()])
 @logger_decorator_callback
 def dish_chosen(call: types.CallbackQuery) -> None:
     """Process Customer's response to dish selection.
@@ -663,7 +662,7 @@ def dish_chosen(call: types.CallbackQuery) -> None:
     customer_id = c_back.data_to_read.from_user.id
     message_id = c_back.data_to_read.message.id
     try:
-        bot.delete_message(customer_id, message_id - 1)
+        cus_bot.delete_message(customer_id, message_id - 1)
     except ApiTelegramException:
         pass
     if callback_data == customer_menus.back_button(lang_code).callback_data:
@@ -675,16 +674,16 @@ def dish_chosen(call: types.CallbackQuery) -> None:
     elif callback_data == customer_menus.cart_button(lang_code).callback_data:
         is_dish_added(c_back.data_to_read)
     else:
-        bot.edit_message_text(texts[lang_code]["DISH_SELECTED_MSG"](lang_code, c_back.get_dish()),
-                              customer_id,
-                              message_id)
-        bot.send_message(customer_id,
-                         texts[lang_code]["ADD_DISH_MSG"],
-                         reply_markup=customer_menus.conf_sel_dish_menu(lang_code, c_back))
+        cus_bot.edit_message_text(texts[lang_code]["DISH_SELECTED_MSG"](lang_code, c_back.get_dish()),
+                                  customer_id,
+                                  message_id)
+        cus_bot.send_message(customer_id,
+                             texts[lang_code]["ADD_DISH_MSG"],
+                             reply_markup=customer_menus.conf_sel_dish_menu(lang_code, c_back))
 
 
-@bot.callback_query_handler(func=lambda call: call.message.text\
-                                              in [lang["ADD_DISH_MSG"] for lang in texts.values()])
+@cus_bot.callback_query_handler(func=lambda call: call.message.text \
+                                                  in [lang["ADD_DISH_MSG"] for lang in texts.values()])
 @logger_decorator_callback
 def is_dish_added(call: types.CallbackQuery) -> None:
     """Process Customer's response to selected dish confirmation.
@@ -701,7 +700,7 @@ def is_dish_added(call: types.CallbackQuery) -> None:
     customer_id = c_back.data_to_read.from_user.id
     message_id = c_back.data_to_read.message.id
     try:
-        bot.delete_message(customer_id, message_id - 1)
+        cus_bot.delete_message(customer_id, message_id - 1)
     except ApiTelegramException:
         pass
     if callback_data == customer_menus.back_button(lang_code).callback_data:
@@ -731,15 +730,16 @@ def is_dish_added(call: types.CallbackQuery) -> None:
         service_fee = c_back.get_from_cart("service_fee")
         total = c_back.get_from_cart("total")
         cart_text = texts[lang_code]["YOUR_CART_MSG"](lang_code, dishes_displayed,
-                                                     subtotal, courier_fee,
-                                                     service_fee, total)
-        bot.edit_message_text(cart_text, customer_id, message_id)
-        bot.send_message(customer_id,
-                         texts[lang_code]["CART_ACTIONS_MSG"],
-                         reply_markup=customer_menus.cart_menu(lang_code))
+                                                      subtotal, courier_fee,
+                                                      service_fee, total)
+        cus_bot.edit_message_text(cart_text, customer_id, message_id)
+        cus_bot.send_message(customer_id,
+                             texts[lang_code]["CART_ACTIONS_MSG"],
+                             reply_markup=customer_menus.cart_menu(lang_code))
 
 
-@bot.callback_query_handler(func=lambda call: call.message.text in [lang["CART_ACTIONS_MSG"] for lang in texts.values()])
+@cus_bot.callback_query_handler(func=lambda call: call.message.text \
+                                                  in [lang["CART_ACTIONS_MSG"] for lang in texts.values()])
 @logger_decorator_callback
 def cart_actions(call: types.CallbackQuery) -> None:
     """Process Customer's input from cart actions menu.
@@ -756,26 +756,28 @@ def cart_actions(call: types.CallbackQuery) -> None:
     lang_code = c_back.get_customer_lang()
     customer_id = c_back.data_to_read.from_user.id
     message_id = c_back.data_to_read.message.id
-    bot.delete_message(customer_id, message_id - 1)
+    cus_bot.delete_message(customer_id, message_id - 1)
     if c_back.data_to_read.data == customer_menus.cancel_order_button(lang_code).callback_data:
         clear_cart(c_back.data_to_read)
     elif c_back.data_to_read.data == texts[lang_code]["DELETE_ITEM_BTN"]:
-        bot.edit_message_text(texts[lang_code]["DELETE_ITEM_MSG"],
-                              customer_id,
-                              message_id,
-                              reply_markup=customer_menus.item_deletion_menu(lang_code, c_back))
+        cus_bot.edit_message_text(texts[lang_code]["DELETE_ITEM_MSG"],
+                                  customer_id,
+                                  message_id,
+                                  reply_markup=customer_menus.item_deletion_menu(lang_code, c_back))
     elif c_back.data_to_read.data == texts[lang_code]["ADD_MORE_BTN"]:
         c_back.data_to_read.data = c_back.get_from_cart("restaurant_uuid")
         c_back.data_to_read.message.text = texts[lang_code]["ADD_MORE_BTN"]
         restaurant_chosen(c_back.data_to_read)
-    elif c_back.data_to_read.data == texts[lang_code]["PAY_BTN"]:
+    elif c_back.data_to_read.data == texts[lang_code]["MAKE_ORDER_BTN"]:
         order_info = c_back.order_creation()
-        bot.edit_message_text(f"Order created: {order_info}", customer_id, message_id)
-        # bot.send_message(customer_id, texts[lang_code]["IN_DEV"])
-        # clear_cart(c_back.data_to_read)
+        cus_bot.edit_message_text(texts[lang_code]["ORDER_CREATED_MSG"](order_info), customer_id, message_id)
+        cus_bot.send_message(customer_id,
+                             texts[lang_code]["PAYMENT_MENU_MSG"],
+                             reply_markup=customer_menus.payment_menu(lang_code, order_info[0]))
 
 
-@bot.callback_query_handler(func=lambda call: call.message.text in [lang["DELETE_ITEM_MSG"] for lang in texts.values()])
+@cus_bot.callback_query_handler(func=lambda call: call.message.text \
+                                                  in [lang["DELETE_ITEM_MSG"] for lang in texts.values()])
 @logger_decorator_callback
 def item_deletion(call: types.CallbackQuery) -> None:
     """Delete selected item from Customer's cart.
@@ -797,35 +799,36 @@ def item_deletion(call: types.CallbackQuery) -> None:
     is_dish_added(c_back.data_to_read)
 
 
-# # Payment block. # TODO
-# @bot.callback_query_handler()
-# @logger_decorator_callback
-# def payment_confirmation(call: types.CallbackQuery) -> None:
-#     """"""
-#     pass
+# Payment block. # TODO
+@cus_bot.callback_query_handler(func=lambda call: "paid" in call.data)
+@logger_decorator_callback
+def order_paid(call: types.CallbackQuery) -> None:
+    """
 
+    Args:
+        call:
 
-# @bot.callback_query_handler(func=lambda call: call.data == )
-# @logger_decorator_callback
-# def order_paid(call: types.CallbackQuery) -> None:
-#     """
-#
-#     Args:
-#         call:
-#
-#     Returns:
-#
-#     """
-#     c_back = DBInterface(call)
-#     lang_code = c_back.get_customer_lang()
-#     customer_id = c_back.data_to_read.from_user.id
-#     message_id = c_back.data_to_read.message.id
+    Returns:
 
+    """  # TODO
+    c_back = DBInterface(call)
+    customer_id = c_back.data_to_read.from_user.id
+    message_id = c_back.data_to_read.message.id
+    lang_code = c_back.get_customer_lang()
+    admin_id = c_back.get_support_id()
+    adm_lang_code = c_back.get_adm_lang(admin_id)
+    order_uuid = c_back.data_to_read.data.split(maxsplit=1)[1]
+    total = c_back.get_order_info(order_uuid, "total")
+    adm_bot.send_message(admin_id,
+                         texts[adm_lang_code]["PAID_ADM_MSG"](order_uuid, total),
+                         reply_markup=customer_menus.adm_pay_conf_menu(adm_lang_code, order_uuid))
+    cus_bot.edit_message_text(texts[lang_code]["WAIT_FOR_CONFIRMATION_MSG"](order_uuid), customer_id, message_id)
+    c_back.delete_cart()
 
 
 def main():
     logger.info("The bot is running.")
-    bot.infinity_polling()
+    cus_bot.infinity_polling()
 
 
 if __name__ == "__main__":

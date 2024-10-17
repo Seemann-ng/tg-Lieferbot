@@ -1,5 +1,5 @@
-import functools
 import logging
+import functools
 
 import telebot.types as types
 
