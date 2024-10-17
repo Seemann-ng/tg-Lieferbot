@@ -252,14 +252,6 @@ class Interface:
         curs.execute("UPDATE orders SET order_status = 'Accepted by res-t. Looking for courier.' "
                      "WHERE order_uuid = %s",
                      (order_uuid, ))
-        curs.execute("SELECT account_balance FROM restaurants WHERE restaurant_tg_id = %s",
-                     (self.user_id, ))
-        current_balance = float(curs.fetchone()[0])
-        curs.execute("SELECT dishes_subtotal FROM orders WHERE order_uuid = %s", (order_uuid, ))
-        to_be_added = float(curs.fetchone()[0])
-        new_balance = round(current_balance + to_be_added, 2)
-        curs.execute("UPDATE restaurants SET account_balance = %s WHERE restaurant_tg_id = %s ",
-                     (new_balance, self.user_id))
 
     @staticmethod
     @cursor
@@ -378,7 +370,7 @@ class Interface:
 
     @cursor
     @logger_decorator
-    def get_customer_info(self, curs: psycopg2.extensions.cursor) -> Tuple[Any, ...]:
+    def get_customer_info(self, curs: psycopg2.extensions.cursor) -> Tuple[str, ...]:
         """
 
         Args:
@@ -399,3 +391,46 @@ class Interface:
         customer_phone_num = customer_info[1]
         customer_info = (customer_name, customer_username, customer_phone_num)
         return customer_info
+
+    @cursor
+    @logger_decorator
+    def get_courier(self, curs: psycopg2.extensions.cursor) -> Tuple[int, str]:
+        """
+
+        Args:
+            curs:
+
+        Returns:
+
+        """
+        order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
+        curs.execute("SELECT courier_id FROM orders WHERE order_uuid = %s", (order_uuid, ))
+        courier_id = curs.fetchone()[0]
+        curs.execute("SELECT lang_code FROM couriers WHERE courier_id = %s", (courier_id, ))
+        lang_code = curs.fetchone()[0]
+        courier = (courier_id, lang_code)
+        return courier
+
+    @cursor
+    @logger_decorator
+    def order_ready(self, curs: psycopg2.extensions.cursor) -> None:
+        """
+
+        Args:
+            curs:
+
+        Returns:
+
+        """
+        order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
+        curs.execute("UPDATE orders SET order_status = 'Order ready, handled to the courier' "
+                     "WHERE order_uuid = %s",
+                     (order_uuid,))
+        curs.execute("SELECT account_balance FROM restaurants WHERE restaurant_tg_id = %s",
+                     (self.user_id,))
+        current_balance = float(curs.fetchone()[0])
+        curs.execute("SELECT dishes_subtotal FROM orders WHERE order_uuid = %s", (order_uuid,))
+        to_be_added = float(curs.fetchone()[0])
+        new_balance = round(current_balance + to_be_added, 2)
+        curs.execute("UPDATE restaurants SET account_balance = %s WHERE restaurant_tg_id = %s ",
+                     (new_balance, self.user_id))

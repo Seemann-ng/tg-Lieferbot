@@ -28,6 +28,8 @@ texts = {
                                                        f"Courier's Telegram:\n@{courier_username}\n"\
                                                        f"Courier's phone:\n{courier_phone}",
         "ORDER_ALREADY_ACCEPTED_MSG": "Sorry, order is already accepted by another courier.",
+        "REST_ORDER_READY_MSG": lambda order_uuid: f"Please, press the button below when order\n`{order_uuid}`\n"\
+                                                   f"is ready and handled to the courier.",
         "REST_READY_BTN": "Order is ready"
     },
     "de_DE":{
@@ -59,6 +61,8 @@ texts = {
                                                        f"Courier's Telegram:\n@{courier_username}\n"\
                                                        f"Courier's phone:\n{courier_phone}",
         "ORDER_ALREADY_ACCEPTED_MSG": "Sorry, order is already accepted by another courier.",
+        "REST_ORDER_READY_MSG": lambda order_uuid: f"Please, press the button below when order\n`{order_uuid}`\n"\
+                                                   f"is ready and handled to the courier.",
         "REST_READY_BTN": "Order is ready"
     },
     "ru_RU":{
@@ -90,6 +94,8 @@ texts = {
                                                        f"Courier's Telegram:\n@{courier_username}\n"\
                                                        f"Courier's phone:\n{courier_phone}",
         "ORDER_ALREADY_ACCEPTED_MSG": "Sorry, order is already accepted by another courier.",
+        "REST_ORDER_READY_MSG": lambda order_uuid: f"Please, press the button below when order\n`{order_uuid}`\n"\
+                                                   f"is ready and handled to the courier.",
         "REST_READY_BTN": "Order is ready"
     }
 }

@@ -62,7 +62,13 @@ texts = {
                                                         f"Restaurant location:",
         "COURIER_DELIVERY_LOC_MSG": "To be delivered here:",
         "COURIER_ACCEPT_ORDER_MSG": "Accept order?",
-        "COURIER_ACCEPT_BTN": "Accept"
+        "COURIER_ACCEPT_BTN": "Accept",
+        "ORDER_READY_MSG": lambda order_uuid: f"Order\n`{order_uuid}`\nis ready and handled to the courier.",
+        "COUR_ORDER_IN_DELIVERY_MSG": lambda order_uuid: f"Please confirm receiving order\n{order_uuid}\n"\
+                                                         f"by pressing button below.",
+        "CUST_ORDER_IN_DELIVERY_MSG": lambda order_uuid: f"Order\n{order_uuid}\n"\
+                                                         f"Status update:\nOrder is ready and handled to the courier.",
+        "COUR_ORDER_IN_DELIVERY_BTN": "Order received"
     },
     "de_DE": {
         "ASK_REGISTRATION_MSG": "This Telegram account isn't registered as a Restaurant account.\n"
@@ -127,7 +133,13 @@ texts = {
                                                         f"Restaurant location:",
         "COURIER_DELIVERY_LOC_MSG": "To be delivered here:",
         "COURIER_ACCEPT_ORDER_MSG": "Accept order?",
-        "COURIER_ACCEPT_BTN": "Accept"
+        "COURIER_ACCEPT_BTN": "Accept",
+        "ORDER_READY_MSG": lambda order_uuid: f"Order\n`{order_uuid}`\nis ready and handled to the courier.",
+        "COUR_ORDER_IN_DELIVERY_MSG": lambda order_uuid: f"Please confirm receiving order\n{order_uuid}\n"\
+                                                         f"by pressing button below.",
+        "CUST_ORDER_IN_DELIVERY_MSG": lambda order_uuid: f"Order\n{order_uuid}\n"\
+                                                         f"Status update:\nOrder is ready and handled to the courier.",
+        "COUR_ORDER_IN_DELIVERY_BTN": "Order received"
     },
     "ru_RU": {
         "ASK_REGISTRATION_MSG": "This Telegram account isn't registered as a Restaurant account.\n"
@@ -192,6 +204,12 @@ texts = {
                                                         f"Restaurant location:",
         "COURIER_DELIVERY_LOC_MSG": "To be delivered here:",
         "COURIER_ACCEPT_ORDER_MSG": "Accept order?",
-        "COURIER_ACCEPT_BTN": "Accept"
+        "COURIER_ACCEPT_BTN": "Accept",
+        "ORDER_READY_MSG": lambda order_uuid: f"Order\n`{order_uuid}`\nis ready and handled to the courier.",
+        "COUR_ORDER_IN_DELIVERY_MSG": lambda order_uuid: f"Please confirm receiving order\n{order_uuid}\n"\
+                                                         f"by pressing button below.",
+        "CUST_ORDER_IN_DELIVERY_MSG": lambda order_uuid: f"Order\n{order_uuid}\n"\
+                                                         f"Status update:\nOrder is ready and handled to the courier.",
+        "COUR_ORDER_IN_DELIVERY_BTN": "Order received"
     }
 }

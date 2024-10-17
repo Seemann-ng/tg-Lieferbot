@@ -464,6 +464,36 @@ def order_accepted(call: types.CallbackQuery) -> None:
                                  reply_markup=restaurant_menus.courier_accept_menu(order_uuid, courier_lang))
 
 
+@rest_bot.callback_query_handler(func=lambda call: "ready" in call.data)
+@logger_decorator_callback
+def order_ready(call: types.CallbackQuery) -> None:
+    """
+
+    Args:
+        call:
+
+    Returns:
+
+    """
+    c_back = DBInterface(call)
+    message_id = c_back.data_to_read.message.id
+    order_uuid = c_back.data_to_read.data.split(maxsplit=1)[-1]
+    rest_id = c_back.user_id
+    rest_lang_code = c_back.get_rest_lang()
+    courier = c_back.get_courier()
+    courier_id = courier[0]
+    courier_lang = courier[1]
+    customer = c_back.get_customer()
+    customer_id = customer[0]
+    customer_lang = customer[1]
+    c_back.order_ready()
+    rest_bot.edit_message_text(texts[rest_lang_code]["ORDER_READY_MSG"](order_uuid), rest_id, message_id)
+    courier_bot.send_message(courier_id,
+                             texts[courier_lang]["COUR_ORDER_IN_DELIVERY_MSG"](order_uuid),
+                             reply_markup=restaurant_menus.courier_in_delivery_menu(order_uuid, courier_lang))
+    cus_bot.send_message(customer_id, texts[customer_lang]["CUST_ORDER_IN_DELIVERY_MSG"](order_uuid))
+
+
 def main():
     logger.info("The bot is running.")
     rest_bot.infinity_polling()

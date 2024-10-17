@@ -166,7 +166,9 @@ def accept_order(call: types.CallbackQuery) -> None:
                               texts[rest_lang]["COURIER_FOUND_MSG"](order_uuid,
                                                                     courier_name,
                                                                     courier_username,
-                                                                    courier_phone),
+                                                                    courier_phone))
+        rest_bot.send_message(rest_id,
+                              texts[rest_lang]["REST_ORDER_READY_MSG"](order_uuid),
                               reply_markup=courier_menus.rest_order_ready_menu(rest_lang, order_uuid))
     else:
         courier_bot.edit_message_text(texts[courier_lang]["ORDER_ALREADY_ACCEPTED_MSG"], courier_id, message_id)

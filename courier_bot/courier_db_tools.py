@@ -155,6 +155,8 @@ class Interface:
                      (courier_id, courier_name, order_uuid))
         curs.execute("SELECT courier_id FROM orders WHERE order_uuid = %s", (order_uuid, ))
         courier_id_db = curs.fetchone()[0]
+        if courier_id == courier_id_db:
+            curs.execute("UPDATE couriers SET is_occupied = true WHERE courier_id = %s ",(courier_id, ))
         return courier_id_db == courier_id
 
     @cursor
