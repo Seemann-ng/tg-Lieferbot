@@ -550,3 +550,27 @@ class Interface:
         curs.execute("SELECT " + column + " FROM orders WHERE order_uuid = %s", (order_uuid, ))
         order_info = curs.fetchone()[0]
         return order_info
+
+    @cursor
+    @logger_decorator
+    def close_order(self, curs: psycopg2.extensions.cursor) -> None:
+        """
+
+        Args:
+            curs:
+
+        Returns:
+
+        """
+        order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
+        curs.execute("UPDATE orders SET order_status = 'Order closed' WHERE order_uuid = %s",
+                     (order_uuid, ))
+        curs.execute("SELECT courier_id FROM orders WHERE order_uuid = %s", (order_uuid, ))
+        courier_id = curs.fetchone()[0]
+        curs.execute("SELECT account_balance FROM couriers WHERE courier_id = %s", (courier_id, ))
+        current_balance = curs.fetchone()[0]
+        curs.execute("SELECT courier_fee FROM orders WHERE order_uuid = %s", (order_uuid, ))
+        to_be_added = curs.fetchone()[0]
+        new_balance = round(current_balance + to_be_added, 2)
+        curs.execute("UPDATE couriers SET account_balance = %s, is_occupied = false WHERE courier_id = %s",
+                     (new_balance, courier_id))

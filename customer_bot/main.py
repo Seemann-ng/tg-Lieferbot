@@ -824,6 +824,28 @@ def order_paid(call: types.CallbackQuery) -> None:
                          reply_markup=customer_menus.adm_pay_conf_menu(adm_lang_code, order_uuid))
     cus_bot.edit_message_text(texts[lang_code]["WAIT_FOR_CONFIRMATION_MSG"](order_uuid), customer_id, message_id)
     c_back.delete_cart()
+    show_main_menu(callback_to_msg(c_back.data_to_read))
+
+
+@cus_bot.callback_query_handler(func=lambda call: "order_closed" in call.data)
+@logger_decorator_callback
+def order_closed(call: types.CallbackQuery) -> None:
+    """
+
+    Args:
+        call:
+
+    Returns:
+
+    """
+    c_back = DBInterface(call)
+    order_uuid = c_back.data_to_read.data.split(maxsplit=1)[-1]
+    customer_id = c_back.data_to_read.from_user.id
+    message_id = c_back.data_to_read.message.id
+    lang_code = c_back.get_customer_lang()
+    c_back.close_order()
+    cus_bot.edit_message_reply_markup(customer_id, message_id)
+    cus_bot.send_message(customer_id, texts[lang_code]["ORDER_CLOSED_MSG"](order_uuid))
 
 
 def main():

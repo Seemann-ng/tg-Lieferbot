@@ -128,6 +128,7 @@ texts = {
                                                   f"Total: € `{total}`",
         "WAIT_FOR_CONFIRMATION_MSG": lambda order_uuid: f"Wait for payment confirmation from the Service\n"\
                                                         f"Order № {order_uuid}.",
+        "ORDER_CLOSED_MSG": lambda order_uuid: f"Order closed:\n`{order_uuid}`"
     },
     "en_US": {
         # Localization variables.
@@ -254,6 +255,7 @@ texts = {
                                                   f"Total: € `{total}`",
         "WAIT_FOR_CONFIRMATION_MSG": lambda order_uuid: f"Wait for payment confirmation from the Service\n"\
                                                         f"Order № {order_uuid}.",
+        "ORDER_CLOSED_MSG": lambda order_uuid: f"Order closed:\n`{order_uuid}`"
     },
     "ru_RU": {  # TODO Translate
         # Localization variables.
@@ -380,5 +382,6 @@ texts = {
                                                   f"Total: € `{total}`",
         "WAIT_FOR_CONFIRMATION_MSG": lambda order_uuid: f"Wait for payment confirmation from the Service\n"\
                                                         f"Order № {order_uuid}.",
+        "ORDER_CLOSED_MSG": lambda order_uuid: f"Order closed:\n`{order_uuid}`"
     }
 }

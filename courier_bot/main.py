@@ -174,6 +174,60 @@ def accept_order(call: types.CallbackQuery) -> None:
         courier_bot.edit_message_text(texts[courier_lang]["ORDER_ALREADY_ACCEPTED_MSG"], courier_id, message_id)
 
 
+@courier_bot.callback_query_handler(func=lambda call: "in_delivery" in call.data)
+@logger_decorator_callback
+def in_delivery(call: types.CallbackQuery) -> None:
+    """
+
+    Args:
+        call:
+
+    Returns:
+
+    """
+    c_back = DBInterface(call)
+    order_uuid = c_back.data_to_read.data.split(maxsplit=1)[-1]
+    message_id = c_back.data_to_read.message.id
+    courier_id = c_back.courier_id
+    courier_lang = c_back.get_courier_lang()
+    customer_info = c_back.get_customer_info()
+    customer_id = customer_info[0]
+    customer_lang = customer_info[1]
+    c_back.order_in_delivery()
+    courier_bot.edit_message_reply_markup(courier_id, message_id)
+    courier_bot.send_message(courier_id,
+                             texts[courier_lang]["COUR_IN_DELIVERY_MSG"](order_uuid),
+                             reply_markup=courier_menus.order_in_delivery_menu(courier_lang, order_uuid))
+    cus_bot.send_message(customer_id, texts[customer_lang]["CUS_IN_DELIVERY_MSG"](order_uuid))
+
+
+@courier_bot.callback_query_handler(func=lambda call: "delivered" in call.data)
+@logger_decorator_callback
+def delivered(call: types.CallbackQuery) -> None:
+    """
+
+    Args:
+        call:
+
+    Returns:
+
+    """
+    c_back = DBInterface(call)
+    order_uuid = c_back.data_to_read.data.split(maxsplit=1)[-1]
+    message_id = c_back.data_to_read.message.id
+    courier_id = c_back.courier_id
+    courier_lang = c_back.get_courier_lang()
+    customer_info = c_back.get_customer_info()
+    customer_id = customer_info[0]
+    customer_lang = customer_info[1]
+    c_back.order_delivered()
+    courier_bot.edit_message_reply_markup(courier_id, message_id)
+    courier_bot.send_message(courier_id, texts[courier_lang]["COUR_DELIVERED_MSG"](order_uuid))
+    cus_bot.send_message(customer_id,
+                         texts[customer_lang]["CUS_DELIVERED_MSG"](order_uuid),
+                         reply_markup=courier_menus.cus_delivered_menu(customer_lang, order_uuid))
+
+
 def main():
     logger.info("Bot is running")
     courier_bot.infinity_polling()

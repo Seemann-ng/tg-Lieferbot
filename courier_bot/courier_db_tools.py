@@ -215,3 +215,33 @@ class Interface:
         lang_code = curs.fetchone()[0]
         rest_info = (restaurant_id, lang_code)
         return rest_info
+
+    @cursor
+    @logger_decorator
+    def order_in_delivery(self, curs: psycopg2.extensions.cursor) -> None:
+        """
+
+        Args:
+            curs:
+
+        Returns:
+
+        """
+        order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
+        curs.execute("UPDATE orders SET order_status = 'In delivery' WHERE order_uuid = %s",
+                     (order_uuid, ))
+
+    @cursor
+    @logger_decorator
+    def order_delivered(self, curs: psycopg2.extensions.cursor) -> None:
+        """
+
+        Args:
+            curs:
+
+        Returns:
+
+        """
+        order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
+        curs.execute("UPDATE orders SET order_status = 'Delivered' WHERE order_uuid = %s ",
+                     (order_uuid, ))
