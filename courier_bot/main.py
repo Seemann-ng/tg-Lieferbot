@@ -7,17 +7,17 @@ from tools.bots_initialization import adm_bot, courier_bot, cus_bot, rest_bot
 from tools.logger_tool import logger, logger_decorator_callback, logger_decorator_msg
 
 
-@courier_bot.message_handler(commands=['start'])
+@courier_bot.message_handler(commands=["start"])
 @logger_decorator_msg
 def start(message: types.Message) -> None:
-    """
+    """Start interaction with bot;
+    ask to send registration request to Admin,
+    if User is not in courier database.
 
     Args:
-        message:
+        message: /start command message.
 
-    Returns:
-
-    """  # TODO
+    """
     msg = DBInterface(message)
     lang_code = msg.get_courier_lang()
     user_id = msg.courier_id
@@ -32,14 +32,12 @@ def start(message: types.Message) -> None:
                                                   in [lang["ASK_REG_MSG"] for lang in texts.values()])
 @logger_decorator_msg
 def ask_registration(message: types.Message) -> None:
-    """
+    """Process Courier registration request to Admin.
 
     Args:
-        message:
+        message: Courier registration request message.
 
-    Returns:
-
-    """  # TODO
+    """
     msg = DBInterface(message)
     lang_code = msg.get_courier_lang()
     user_id = msg.courier_id
@@ -89,14 +87,12 @@ def lang_set(call: types.CallbackQuery) -> None:
 @courier_bot.message_handler(commands=["open_shift"])
 @logger_decorator_msg
 def open_shift_command(message: types.Message) -> None:
-    """
+    """Process request to open shift.
 
     Args:
-        message: 
+        message: /open_shift command message.
 
-    Returns:
-
-    """  # TODO
+    """
     msg = DBInterface(message)
     lang_code = msg.get_courier_lang()
     courier_id = msg.courier_id
@@ -107,14 +103,12 @@ def open_shift_command(message: types.Message) -> None:
 @courier_bot.message_handler(commands=["close_shift"])
 @logger_decorator_msg
 def close_shift_command(message: types.Message) -> None:
-    """
+    """Process request to close shift.
 
     Args:
-        message: 
+        message: /close_shift command message.
 
-    Returns:
-
-    """  # TODO
+    """
     msg = DBInterface(message)
     lang_code = msg.get_courier_lang()
     courier_id = msg.courier_id
@@ -128,12 +122,10 @@ def close_shift_command(message: types.Message) -> None:
 @courier_bot.callback_query_handler(func=lambda call: "accept" in call.data)
 @logger_decorator_callback
 def accept_order(call: types.CallbackQuery) -> None:
-    """
+    """Process request to accept order.
 
     Args:
-        call:
-
-    Returns:
+        call: Callback query with request to accept order and order UUID.
 
     """
     c_back = DBInterface(call)
@@ -177,12 +169,10 @@ def accept_order(call: types.CallbackQuery) -> None:
 @courier_bot.callback_query_handler(func=lambda call: "in_delivery" in call.data)
 @logger_decorator_callback
 def in_delivery(call: types.CallbackQuery) -> None:
-    """
+    """Process confirmation from Courier that order has been received in delivery.
 
     Args:
-        call:
-
-    Returns:
+        call: Callback query with confirmation and order UUID.
 
     """
     c_back = DBInterface(call)
@@ -204,12 +194,10 @@ def in_delivery(call: types.CallbackQuery) -> None:
 @courier_bot.callback_query_handler(func=lambda call: "delivered" in call.data)
 @logger_decorator_callback
 def delivered(call: types.CallbackQuery) -> None:
-    """
+    """Process confirmation from Courier that order has been delivered.
 
     Args:
-        call:
-
-    Returns:
+        call: Callback query with confirmation and order UUID.
 
     """
     c_back = DBInterface(call)

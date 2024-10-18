@@ -4,25 +4,23 @@ import admin_menus
 from admin_translations import texts
 from admin_db_tools import Interface as DBInterface
 from tools.logger_tool import logger, logger_decorator_callback
-from tools.bots_initialization import adm_bot, courier_bot, cus_bot, rest_bot
+from tools.bots_initialization import adm_bot, cus_bot, rest_bot
 
 
 @adm_bot.callback_query_handler(func=lambda call: "confirmed" in call.data)
 @logger_decorator_callback
 def payment_confirmation(call: types.CallbackQuery) -> None:
-    """
+    """Process payment confirmation by Admin.
 
     Args:
-        call:
-
-    Returns:
+        call: Callback query with order UUID in it.
 
     """
     c_back = DBInterface(call)
     lang_code = c_back.get_lang()
     admin_id = c_back.data_to_read.from_user.id
     message_id = c_back.data_to_read.message.id
-    order_uuid = c_back.data_to_read.data.split(maxsplit=1)[1]
+    order_uuid = c_back.data_to_read.data.split(maxsplit=1)[-1]
     dishes = c_back.get_from_orders("dishes")
     subtotal = c_back.get_from_orders("dishes_subtotal")
     restaurant_id = c_back.get_from_orders("restaurant_id")

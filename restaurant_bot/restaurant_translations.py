@@ -5,8 +5,8 @@ texts = {
                                 "(By replying You agree Your contact info i.e. Telegram ID and Username "
                                 "to be provided to Our Support Service.)",
         "WELCOME_MSG": "Welcome to %RESTAURANT_BOT_NAME%!",
-        "REG_REQUEST_MSG": lambda username, user_id, text: f"Incoming restaurant registration request\n"\
-                                                           f"from @{username} ({user_id}):\n"\
+        "REG_REQUEST_MSG": lambda username, user_id, text: f"Incoming restaurant registration request\n" \
+                                                           f"from @{username} (`{user_id}`):\n" \
                                                            f"{text}",
         "REG_REQUEST_SENT_MSG": "Your request has been sent to Our Support Service.",
         "LANG_SEL_MENU": "Bot language selection menu.",
@@ -31,18 +31,18 @@ texts = {
         "EDIT_DESC_BTN": "Description",
         "EDIT_CAT_BTN": "Category",
         "EDIT_PRICE_BTN": "Price",
-        "EDIT_CATEGORY_MSG": lambda dish_uuid: f"Enter new category for the dish:\n"\
+        "EDIT_CATEGORY_MSG": lambda dish_uuid: f"Enter new category for the dish:\n" \
                                                f"Dish UUID: {dish_uuid}",
         "CAT_SET_MSG": "New category has been set for the dish.",
-        "EDIT_DESCRIPTION_MSG": lambda dish_uuid: f"Enter new description for the dish:\n"\
+        "EDIT_DESCRIPTION_MSG": lambda dish_uuid: f"Enter new description for the dish:\n" \
                                                   f"Dish UUID: {dish_uuid}",
         "DESC_SET_MSG": "New description has been set for the dish.",
-        "EDIT_PRICE_MSG": lambda dish_uuid: f"Enter new price for the dish:\n"\
+        "EDIT_PRICE_MSG": lambda dish_uuid: f"Enter new price for the dish:\n" \
                                             f"Dish UUID: {dish_uuid}",
         "PRICE_SET_MSG": "New price has been set for the dish.",
-        "REST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Accepted order\n{order_uuid}",
-        "CUST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Order\n{order_uuid}\n"\
-                                                      f"Status update:\n"\
+        "REST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Accepted order\n`{order_uuid}`",
+        "CUST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Order\n`{order_uuid}`\n" \
+                                                      f"Status update:\n" \
                                                       f"Order received by the restaurant, looking for a courier.",
         "LOOKING_FOR_COURIER_MSG": lambda order_uuid,
                                           courier_fee,
@@ -51,22 +51,22 @@ texts = {
                                           customer_phone,
                                           rest_name,
                                           dishes,
-                                          rest_address: f"New incoming order:\n{order_uuid}\n"\
-                                                        f"Courier pay:\n€ {courier_fee}\n"\
-                                                        f"Customer's name:\n{customer_name}\n"\
-                                                        f"Customer's Telegram:\n @{customer_username}\n"\
-                                                        f"Customer's phone:\n{customer_phone}\n"\
-                                                        f"Restaurant:\n{rest_name}\n"\
-                                                        f"Dishes:\n{dishes}\n"\
-                                                        f"Restaurant address:\n{rest_address}\n"\
+                                          rest_address: f"New incoming order:\n`{order_uuid}`\n" \
+                                                        f"Courier pay:\n€`{courier_fee}`\n" \
+                                                        f"Customer's name:\n{customer_name}\n" \
+                                                        f"Customer's Telegram:\n @{customer_username}\n" \
+                                                        f"Customer's phone:\n{customer_phone}\n" \
+                                                        f"Restaurant:\n`{rest_name}`\n" \
+                                                        f"Dishes:\n{dishes}\n" \
+                                                        f"Restaurant address:\n`{rest_address}`\n" \
                                                         f"Restaurant location:",
         "COURIER_DELIVERY_LOC_MSG": "To be delivered here:",
         "COURIER_ACCEPT_ORDER_MSG": "Accept order?",
         "COURIER_ACCEPT_BTN": "Accept",
         "ORDER_READY_MSG": lambda order_uuid: f"Order\n`{order_uuid}`\nis ready and handled to the courier.",
-        "COUR_ORDER_IN_DELIVERY_MSG": lambda order_uuid: f"Please confirm receiving order\n{order_uuid}\n"\
+        "COUR_ORDER_IN_DELIVERY_MSG": lambda order_uuid: f"Please confirm receiving order\n`{order_uuid}`\n" \
                                                          f"by pressing button below.",
-        "CUST_ORDER_IN_DELIVERY_MSG": lambda order_uuid: f"Order\n{order_uuid}\n"\
+        "CUST_ORDER_IN_DELIVERY_MSG": lambda order_uuid: f"Order\n`{order_uuid}`\n" \
                                                          f"Status update:\nOrder is ready and handled to the courier.",
         "COUR_ORDER_IN_DELIVERY_BTN": "Order received"
     },
@@ -76,8 +76,8 @@ texts = {
                                 "(By replying You agree Your contact info i.e. Telegram ID and Username "
                                 "to be provided to Our Support service.)",
         "WELCOME_MSG": "Welcome to %RESTAURANT_BOT_NAME%!",
-        "REG_REQUEST_MSG": lambda username, user_id, text: f"Incoming restaurant registration request\n"\
-                                                           f"from @{username} ({user_id}):\n"\
+        "REG_REQUEST_MSG": lambda username, user_id, text: f"Incoming restaurant registration request\n" \
+                                                           f"from @{username} (`{user_id}`):\n" \
                                                            f"{text}",
         "REG_REQUEST_SENT_MSG": "Your request has been sent to Our Support Service.",
         "LANG_SEL_MENU": "Bot language selection menu.",
@@ -102,18 +102,18 @@ texts = {
         "EDIT_DESC_BTN": "Description",
         "EDIT_CAT_BTN": "Category",
         "EDIT_PRICE_BTN": "Price",
-        "EDIT_CATEGORY_MSG": lambda dish_uuid: f"Enter new category for the dish:\n"\
+        "EDIT_CATEGORY_MSG": lambda dish_uuid: f"Enter new category for the dish:\n" \
                                                f"Dish UUID: {dish_uuid}",
         "CAT_SET_MSG": "New category has been set for the dish.",
-        "EDIT_DESCRIPTION_MSG": lambda dish_uuid: f"Enter new description for the dish:\n"\
+        "EDIT_DESCRIPTION_MSG": lambda dish_uuid: f"Enter new description for the dish:\n" \
                                                   f"Dish UUID: {dish_uuid}",
         "DESC_SET_MSG": "New description has been set for the dish.",
-        "EDIT_PRICE_MSG": lambda dish_uuid: f"Enter new price for the dish:\n"\
+        "EDIT_PRICE_MSG": lambda dish_uuid: f"Enter new price for the dish:\n" \
                                             f"Dish UUID: {dish_uuid}",
         "PRICE_SET_MSG": "New price has been set for the dish.",
-        "REST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Accepted order\n{order_uuid}",
-        "CUST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Order\n{order_uuid}\n"\
-                                                      f"Status update:\n"\
+        "REST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Accepted order\n`{order_uuid}`",
+        "CUST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Order\n`{order_uuid}`\n" \
+                                                      f"Status update:\n" \
                                                       f"Order received by the restaurant, looking for a courier.",
         "LOOKING_FOR_COURIER_MSG": lambda order_uuid,
                                           courier_fee,
@@ -122,22 +122,22 @@ texts = {
                                           customer_phone,
                                           rest_name,
                                           dishes,
-                                          rest_address: f"New incoming order:\n{order_uuid}\n"\
-                                                        f"Courier pay:\n€ {courier_fee}\n"\
-                                                        f"Customer's name:\n{customer_name}\n"\
-                                                        f"Customer's Telegram:\n @{customer_username}\n"\
-                                                        f"Customer's phone:\n{customer_phone}\n"\
-                                                        f"Restaurant:\n{rest_name}\n"\
-                                                        f"Dishes:\n{dishes}\n"\
-                                                        f"Restaurant address:\n{rest_address}\n"\
+                                          rest_address: f"New incoming order:\n`{order_uuid}`\n" \
+                                                        f"Courier pay:\n€`{courier_fee}`\n" \
+                                                        f"Customer's name:\n{customer_name}\n" \
+                                                        f"Customer's Telegram:\n @{customer_username}\n" \
+                                                        f"Customer's phone:\n{customer_phone}\n" \
+                                                        f"Restaurant:\n`{rest_name}`\n" \
+                                                        f"Dishes:\n{dishes}\n" \
+                                                        f"Restaurant address:\n`{rest_address}`\n" \
                                                         f"Restaurant location:",
         "COURIER_DELIVERY_LOC_MSG": "To be delivered here:",
         "COURIER_ACCEPT_ORDER_MSG": "Accept order?",
         "COURIER_ACCEPT_BTN": "Accept",
         "ORDER_READY_MSG": lambda order_uuid: f"Order\n`{order_uuid}`\nis ready and handled to the courier.",
-        "COUR_ORDER_IN_DELIVERY_MSG": lambda order_uuid: f"Please confirm receiving order\n{order_uuid}\n"\
+        "COUR_ORDER_IN_DELIVERY_MSG": lambda order_uuid: f"Please confirm receiving order\n`{order_uuid}`\n" \
                                                          f"by pressing button below.",
-        "CUST_ORDER_IN_DELIVERY_MSG": lambda order_uuid: f"Order\n{order_uuid}\n"\
+        "CUST_ORDER_IN_DELIVERY_MSG": lambda order_uuid: f"Order\n`{order_uuid}`\n" \
                                                          f"Status update:\nOrder is ready and handled to the courier.",
         "COUR_ORDER_IN_DELIVERY_BTN": "Order received"
     },
@@ -147,8 +147,8 @@ texts = {
                                 "(By replying You agree Your contact info i.e. Telegram ID and Username "
                                 "to be provided to Our Support service.)",
         "WELCOME_MSG": "Welcome to %RESTAURANT_BOT_NAME%!",
-        "REG_REQUEST_MSG": lambda username, user_id, text: f"Incoming restaurant registration request\n"\
-                                                           f"from @{username} ({user_id}):\n"\
+        "REG_REQUEST_MSG": lambda username, user_id, text: f"Incoming restaurant registration request\n" \
+                                                           f"from @{username} (`{user_id}`):\n" \
                                                            f"{text}",
         "REG_REQUEST_SENT_MSG": "Your request has been sent to Our Support Service.",
         "LANG_SEL_MENU": "Bot language selection menu.",
@@ -173,18 +173,18 @@ texts = {
         "EDIT_DESC_BTN": "Description",
         "EDIT_CAT_BTN": "Category",
         "EDIT_PRICE_BTN": "Price",
-        "EDIT_CATEGORY_MSG": lambda dish_uuid: f"Enter new category for the dish:\n"\
+        "EDIT_CATEGORY_MSG": lambda dish_uuid: f"Enter new category for the dish:\n" \
                                                f"Dish UUID: {dish_uuid}",
         "CAT_SET_MSG": "New category has been set for the dish.",
-        "EDIT_DESCRIPTION_MSG": lambda dish_uuid: f"Enter new description for the dish:\n"\
+        "EDIT_DESCRIPTION_MSG": lambda dish_uuid: f"Enter new description for the dish:\n" \
                                                   f"Dish UUID: {dish_uuid}",
         "DESC_SET_MSG": "New description has been set for the dish.",
-        "EDIT_PRICE_MSG": lambda dish_uuid: f"Enter new price for the dish:\n"\
+        "EDIT_PRICE_MSG": lambda dish_uuid: f"Enter new price for the dish:\n" \
                                             f"Dish UUID: {dish_uuid}",
         "PRICE_SET_MSG": "New price has been set for the dish.",
-        "REST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Accepted order\n{order_uuid}",
-        "CUST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Order\n{order_uuid}\n"\
-                                                      f"Status update:\n"\
+        "REST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Accepted order\n`{order_uuid}`",
+        "CUST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"Order\n`{order_uuid}`\n" \
+                                                      f"Status update:\n" \
                                                       f"Order received by the restaurant, looking for a courier.",
         "LOOKING_FOR_COURIER_MSG": lambda order_uuid,
                                           courier_fee,
@@ -193,22 +193,22 @@ texts = {
                                           customer_phone,
                                           rest_name,
                                           dishes,
-                                          rest_address: f"New incoming order:\n{order_uuid}\n"\
-                                                        f"Courier pay:\n€ {courier_fee}\n"\
-                                                        f"Customer's name:\n{customer_name}\n"\
-                                                        f"Customer's Telegram:\n @{customer_username}\n"\
-                                                        f"Customer's phone:\n{customer_phone}\n"\
-                                                        f"Restaurant:\n{rest_name}\n"\
-                                                        f"Dishes:\n{dishes}\n"\
-                                                        f"Restaurant address:\n{rest_address}\n"\
+                                          rest_address: f"New incoming order:\n`{order_uuid}`\n" \
+                                                        f"Courier pay:\n€`{courier_fee}`\n" \
+                                                        f"Customer's name:\n{customer_name}\n" \
+                                                        f"Customer's Telegram:\n @{customer_username}\n" \
+                                                        f"Customer's phone:\n{customer_phone}\n" \
+                                                        f"Restaurant:\n`{rest_name}`\n" \
+                                                        f"Dishes:\n{dishes}\n" \
+                                                        f"Restaurant address:\n`{rest_address}`\n" \
                                                         f"Restaurant location:",
         "COURIER_DELIVERY_LOC_MSG": "To be delivered here:",
         "COURIER_ACCEPT_ORDER_MSG": "Accept order?",
         "COURIER_ACCEPT_BTN": "Accept",
         "ORDER_READY_MSG": lambda order_uuid: f"Order\n`{order_uuid}`\nis ready and handled to the courier.",
-        "COUR_ORDER_IN_DELIVERY_MSG": lambda order_uuid: f"Please confirm receiving order\n{order_uuid}\n"\
+        "COUR_ORDER_IN_DELIVERY_MSG": lambda order_uuid: f"Please confirm receiving order\n`{order_uuid}`\n" \
                                                          f"by pressing button below.",
-        "CUST_ORDER_IN_DELIVERY_MSG": lambda order_uuid: f"Order\n{order_uuid}\n"\
+        "CUST_ORDER_IN_DELIVERY_MSG": lambda order_uuid: f"Order\n`{order_uuid}`\n" \
                                                          f"Status update:\nOrder is ready and handled to the courier.",
         "COUR_ORDER_IN_DELIVERY_BTN": "Order received"
     }

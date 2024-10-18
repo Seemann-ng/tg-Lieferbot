@@ -474,7 +474,7 @@ def order_ready(call: types.CallbackQuery) -> None:
 
     Returns:
 
-    """
+    """  # TODO
     c_back = DBInterface(call)
     message_id = c_back.data_to_read.message.id
     order_uuid = c_back.data_to_read.data.split(maxsplit=1)[-1]

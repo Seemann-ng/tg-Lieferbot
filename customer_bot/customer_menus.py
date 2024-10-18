@@ -341,31 +341,35 @@ def lang_sel_menu(lang_code: str) -> types.InlineKeyboardMarkup:
 
 # Payment menu.
 def payment_menu(lang_code: str, order_uuid: str) -> types.InlineKeyboardMarkup:
-    """
+    """Compose "Payment" menu in Customer's chosen language.'
 
     Args:
-        lang_code:
-        order_uuid:
+        lang_code: Customer's language code.
+        order_uuid: Order UUID.
 
     Returns:
+        "Payment" menu in required language.
 
     """
     menu = types.InlineKeyboardMarkup(row_width=1)
-    paid_button = types.InlineKeyboardButton(text=texts[lang_code]["PAID_BTN"],  # TODO
+    paid_button = types.InlineKeyboardButton(text=texts[lang_code]["PAID_BTN"],
                                              callback_data="paid " + order_uuid)
-    menu.add(paid_button, cancel_order_button(lang_code))
+    cancel_button = types.InlineKeyboardButton(text=texts[lang_code]["CANCEL_ORDER_BTN"],
+                                               callback_data="cancel " + order_uuid)
+    menu.add(paid_button, cancel_button)
     return menu
 
 
 # Admin payment confirmation menu.
 def adm_pay_conf_menu(lang_code: str, order_uuid: str) -> types.InlineKeyboardMarkup:
-    """
+    """Compose Admins's "Payment Confirmation" menu in Admin's chosen language."
 
     Args:
-        lang_code:
-        order_uuid:
+        lang_code: Admin's language code.
+        order_uuid: Order UUID.
 
     Returns:
+        Admins's "Payment Confirmation" menu in required language.
 
     """
     menu = types.InlineKeyboardMarkup(row_width=1)

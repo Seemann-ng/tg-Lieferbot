@@ -247,7 +247,7 @@ class Interface:
 
         Returns:
 
-        """
+        """  # TODO
         order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
         curs.execute("UPDATE orders SET order_status = 'Accepted by res-t. Looking for courier.' "
                      "WHERE order_uuid = %s",
@@ -264,7 +264,7 @@ class Interface:
 
         Returns:
 
-        """
+        """  # TODO
         curs.execute("SELECT courier_id, lang_code FROM couriers WHERE courier_status = true AND is_occupied = false")
         couriers = curs.fetchall()
         return couriers if couriers else []
@@ -279,7 +279,7 @@ class Interface:
 
         Returns:
 
-        """
+        """  # TODO
         order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
         curs.execute("SELECT customer_id FROM orders WHERE order_uuid = %s", (order_uuid, ))
         customer_id = curs.fetchone()[0]
@@ -298,7 +298,7 @@ class Interface:
 
         Returns:
 
-        """
+        """  # TODO
         rest_id = self.user_id
         curs.execute("SELECT address, location FROM restaurants WHERE restaurant_tg_id = %s", (rest_id, ))
         location = curs.fetchone()
@@ -314,7 +314,7 @@ class Interface:
 
         Returns:
 
-        """
+        """  # TODO
         order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
         curs.execute("SELECT delivery_location FROM orders WHERE order_uuid = %s", (order_uuid, ))
         delivery_location = curs.fetchone()
@@ -330,7 +330,7 @@ class Interface:
 
         Returns:
 
-        """
+        """  # TODO
         order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
         curs.execute("SELECT dishes FROM orders WHERE order_uuid = %s", (order_uuid, ))
         dishes = curs.fetchone()[0]
@@ -346,7 +346,7 @@ class Interface:
 
         Returns:
 
-        """
+        """  # TODO
         curs.execute("SELECT restaurant_name FROM restaurants WHERE restaurant_tg_id = %s",
                      (self.user_id, ))
         rest_name = curs.fetchone()[0]
@@ -362,7 +362,7 @@ class Interface:
 
         Returns:
 
-        """
+        """  # TODO
         order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
         curs.execute("SELECT courier_fee FROM orders WHERE order_uuid = %s", (order_uuid, ))
         courier_fee = curs.fetchone()[0]
@@ -378,7 +378,7 @@ class Interface:
 
         Returns:
 
-        """
+        """  # TODO
         order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
         curs.execute("SELECT customer_name, customer_id FROM orders WHERE order_uuid = %s", (order_uuid, ))
         customer_info = curs.fetchone()
@@ -402,7 +402,7 @@ class Interface:
 
         Returns:
 
-        """
+        """  # TODO
         order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
         curs.execute("SELECT courier_id FROM orders WHERE order_uuid = %s", (order_uuid, ))
         courier_id = curs.fetchone()[0]
@@ -421,7 +421,7 @@ class Interface:
 
         Returns:
 
-        """
+        """  # TODO
         order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
         curs.execute("UPDATE orders SET order_status = 'Order ready, handled to the courier' "
                      "WHERE order_uuid = %s",

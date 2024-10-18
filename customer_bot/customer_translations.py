@@ -4,7 +4,7 @@ env = Env()
 env.read_env()
 
 texts = {
-    "de_DE": {
+    "de_DE": {  # TODO Translate
         # Localization variables.
         "MAX_PHONE_LENGTH": 11,
         "COURIER_FEE_BASE": env.float("COURIER_FEE_BASE", default=1.15),
@@ -78,57 +78,59 @@ texts = {
         "REQUEST_NEW_LOCATION_MSG": "Bitte setzen Sie Ihre Kontaktinformationen zurück.",
         "CONFIRM_LOCATION_MSG": "Ist diese Lieferadresse richtig?",
         "CHOOSE_REST_TYPE_MSG": "Bitte wählen Sie einen Restauranttyp.",
-        "REST_TYPE_SELECTED_MSG": lambda rest_type: f"Ausgewählter Restauranttyp:\n"\
+        "REST_TYPE_SELECTED_MSG": lambda rest_type: f"Ausgewählter Restauranttyp:\n" \
                                                     f"{rest_type}",
         "CHOOSE_REST_MSG": "Bitte wählen Sie ein Restaurant.",
-        "REST_SELECTED_MSG": lambda restaurant: f"Ausgewähltes Restaurant:\n"\
-                                                       f"{restaurant}",
+        "REST_SELECTED_MSG": lambda restaurant: f"Ausgewähltes Restaurant:\n" \
+                                                f"{restaurant}",
         "CHOOSE_DISH_CATEGORY_MSG": "Bitte wählen Sie eine Gerichtskategorie.",
-        "DISH_CAT_SELECTED_MSG": lambda dish_cat: f"Ausgewählte Gerichtskategorie:\n"\
+        "DISH_CAT_SELECTED_MSG": lambda dish_cat: f"Ausgewählte Gerichtskategorie:\n" \
                                                   f"{dish_cat}",
         "CHOOSE_DISH_MSG": "Bitte wählen Sie Ihr Gericht",
-        "DISH_SELECTED_MSG": lambda lang_code, dish: f"Ausgewähltes Gericht:\n"\
-                                                f"{dish[0]}\n"\
-                                                f"Beschreibung:\n"\
-                                                f"{dish[1]}\n"\
-                                                f"Preis:\n"\
-                                                f"€{dish[2]}",
+        "DISH_SELECTED_MSG": lambda dish: f"Ausgewähltes Gericht:\n" \
+                                          f"{dish[0]}\n" \
+                                          f"Beschreibung:\n" \
+                                          f"{dish[1]}\n" \
+                                          f"Preis:\n" \
+                                          f"€{dish[2]}",
         "ADD_DISH_MSG": "Gericht in den Warenkorb legen?",
-        "YOUR_CART_MSG": lambda lang_code, dishes,
-                                subtotal, courier_fee,
-                                service_fee, total: f"🛒 Ihr Einkaufskorb:\n"\
-                                                    f"{dishes}\n"\
-                                                    f"Zwischensummen:\n"\
-                                                    f"€{subtotal}\n"\
-                                                    f"Kuriergebühr:\n"\
-                                                    f"€{courier_fee}\n"\
-                                                    f"Servicegebühr:\n"\
-                                                    f"€{service_fee}\n"\
-                                                    f"----\n"\
-                                                    f"Insgesamt:\n"\
-                                                    f"€{total}",
+        "YOUR_CART_MSG": lambda dishes,
+                                subtotal,
+                                courier_fee,
+                                service_fee,
+                                total: f"🛒 Ihr Einkaufskorb:\n" \
+                                       f"{dishes}\n" \
+                                       f"Zwischensummen:\n" \
+                                       f"€{subtotal}\n" \
+                                       f"Kuriergebühr:\n" \
+                                       f"€{courier_fee}\n" \
+                                       f"Servicegebühr:\n" \
+                                       f"€{service_fee}\n" \
+                                       f"----\n" \
+                                       f"Insgesamt:\n" \
+                                       f"€{total}",
         "CART_ACTIONS_MSG": "Aktionen:",
         "DELETE_ITEM_MSG": "Zu löschende Element auswählen",
-        "MY_ORDERS_MSG": lambda orders: "Sie haben noch keine Bestellungen." if not orders\
-                                        else f"Bestellnummer: {orders[0][0][-6:]}\n"\
-                                             f"von: {orders[0][1]}\n"\
-                                             f"Kurier: {orders[0][2]}\n"\
-                                             f"Gericht(e): {orders[0][3]}\n"\
-                                             f"Gesamtkosten: €{orders[0][4]}\n"\
-                                             f"Datum: {orders[0][5]}\n"\
-                                             f"Status: {orders[0][6]}\n"\
-                                             f"Order closed:{orders[0][7]}",  # TODO
-        "ORDER_CREATED_MSG": lambda order_info: f"Order created:\n`{order_info[0]}`\n"\
-                                                f"Restaurant:\n{order_info[3]}\n"\
-                                                f"Dishes:\n{order_info[7]}\n"\
-                                                f"Total:\n€ `{order_info[11]}`\n"\
+        "MY_ORDERS_MSG": lambda orders: f"Bestellnummer:\n`{orders[0][0]}\n`" \
+                                        f"von: {orders[0][1]}\n" \
+                                        f"Kurier: {orders[0][2]}\n" \
+                                        f"Gericht(e): {orders[0][3]}\n" \
+                                        f"Gesamtkosten: €`{orders[0][4]}`\n" \
+                                        f"Datum: {orders[0][5]}\n" \
+                                        f"Status: {orders[0][6]}\n" \
+                                        f"Order closed:{orders[0][7]}",
+        "ORDER_CREATED_MSG": lambda order_info: f"Order created:\n`{order_info[0]}`\n" \
+                                                f"Restaurant:\n{order_info[3]}\n" \
+                                                f"Dishes:\n{order_info[7]}\n" \
+                                                f"Total:\n€`{order_info[11]}`\n" \
                                                 f"Date:\n{order_info[12]}",
         "PAYMENT_MENU_MSG": "Please proceed to payment via this link:",  # TODO
-        "PAID_ADM_MSG": lambda order_uuid, total: f"Confirm payment for order\n`{order_uuid}`.\n"\
+        "PAID_ADM_MSG": lambda order_uuid, total: f"Confirm payment for order\n`{order_uuid}`.\n" \
                                                   f"Total: € `{total}`",
-        "WAIT_FOR_CONFIRMATION_MSG": lambda order_uuid: f"Wait for payment confirmation from the Service\n"\
-                                                        f"Order № {order_uuid}.",
-        "ORDER_CLOSED_MSG": lambda order_uuid: f"Order closed:\n`{order_uuid}`"
+        "WAIT_FOR_CONFIRMATION_MSG": lambda order_uuid: f"Wait for payment confirmation from the Service\n" \
+                                                        f"Order\n`{order_uuid}`.",
+        "ORDER_CLOSED_MSG": lambda order_uuid: f"Order closed:\n`{order_uuid}`",
+        "CANCEL_MSG": lambda order_uuid: f"Order cancelled\n`{order_uuid}`"
     },
     "en_US": {
         # Localization variables.
@@ -168,7 +170,7 @@ texts = {
         "MAKE_ORDER_BTN": "💳 Confirm order",
         "ADD_MORE_BTN": "🛍 Continue shopping",
         "DELETE_ITEM_BTN": "📤 Delete item",
-        "PAY_BTN" : "Payment",
+        "PAY_BTN": "Payment",
         "PAID_BTN": "I have paid.",
         "ADM_PAY_CONF_BTN": "Confirm payment",
         "IN_DEV": "I've told You, IT IS IN DEVELOPMENT!",
@@ -205,57 +207,59 @@ texts = {
         "REQUEST_NEW_LOCATION_MSG": "Please, reset Your contact information.",
         "CONFIRM_LOCATION_MSG": "Is this delivery address right?",
         "CHOOSE_REST_TYPE_MSG": "Please, choose a restaurant type.",
-        "REST_TYPE_SELECTED_MSG": lambda rest_type: f"Selected restaurant type:\n"\
+        "REST_TYPE_SELECTED_MSG": lambda rest_type: f"Selected restaurant type:\n" \
                                                     f"{rest_type}",
         "CHOOSE_REST_MSG": "Please, choose a restaurant.",
-        "REST_SELECTED_MSG": lambda restaurant: f"Selected restaurant:\n"\
+        "REST_SELECTED_MSG": lambda restaurant: f"Selected restaurant:\n" \
                                                 f"{restaurant}",
         "CHOOSE_DISH_CATEGORY_MSG": "Please, choose a dish category.",
-        "DISH_CAT_SELECTED_MSG": lambda dish_cat: f"Selected dish category:\n"\
+        "DISH_CAT_SELECTED_MSG": lambda dish_cat: f"Selected dish category:\n" \
                                                   f"{dish_cat}",
         "CHOOSE_DISH_MSG": "Please, choose Your dish",
-        "DISH_SELECTED_MSG": lambda lang_code, dish: f"Selected dish:\n"\
-                                                     f"{dish[0]}\n"\
-                                                     f"Description:\n"\
-                                                     f"{dish[1]}\n"\
-                                                     f"Price:\n"\
-                                                     f"€{dish[2]}",
+        "DISH_SELECTED_MSG": lambda dish: f"Selected dish:\n" \
+                                          f"{dish[0]}\n" \
+                                          f"Description:\n" \
+                                          f"{dish[1]}\n" \
+                                          f"Price:\n" \
+                                          f"€{dish[2]}",
         "ADD_DISH_MSG": "Add dish to the cart?",
-        "YOUR_CART_MSG": lambda lang_code, dishes,
-                                subtotal, courier_fee,
-                                service_fee, total: f"🛒 Your cart:\n"\
-                                                    f"{dishes}\n"\
-                                                    f"Subtotal:\n"\
-                                                    f"€{subtotal}\n"\
-                                                    f"Courier fee:\n"\
-                                                    f"€{courier_fee}\n"\
-                                                    f"Service fee:\n"\
-                                                    f"€{service_fee}\n"\
-                                                    f"----\n"\
-                                                    f"Total:\n"\
-                                                    f"€{total}",
+        "YOUR_CART_MSG": lambda dishes,
+                                subtotal,
+                                courier_fee,
+                                service_fee,
+                                total: f"🛒 Your cart:\n" \
+                                       f"{dishes}\n" \
+                                       f"Subtotal:\n" \
+                                       f"€{subtotal}\n" \
+                                       f"Courier fee:\n" \
+                                       f"€{courier_fee}\n" \
+                                       f"Service fee:\n" \
+                                       f"€{service_fee}\n" \
+                                       f"----\n" \
+                                       f"Total:\n" \
+                                       f"€{total}",
         "CART_ACTIONS_MSG": "Actions:",
         "DELETE_ITEM_MSG": "Choose item to delete",
-        "MY_ORDERS_MSG": lambda orders: "You have no orders yet." if not orders\
-                                        else f"Order Number: {orders[0][0][-6:]}\n"\
-                                             f"from: {orders[0][1]}\n"\
-                                             f"Courier: {orders[0][2]}\n"\
-                                             f"Dish(es): {orders[0][3]}\n"\
-                                             f"Total: €{orders[0][4]}\n"\
-                                             f"Date: {orders[0][5]}\n"\
-                                             f"Status: {orders[0][6]}"\
-                                             f"Order closed:{orders[0][7]}",  # TODO
-        "ORDER_CREATED_MSG": lambda order_info: f"Order created:\n`{order_info[0]}`\n"\
-                                                f"Restaurant:\n{order_info[3]}\n"\
-                                                f"Dishes:\n{order_info[7]}\n"\
-                                                f"Total:\n€ `{order_info[11]}`\n"\
+        "MY_ORDERS_MSG": lambda orders: f"Order Number:\n`{orders[0][0]}`\n" \
+                                        f"from: {orders[0][1]}\n" \
+                                        f"Courier: {orders[0][2]}\n" \
+                                        f"Dish(es): {orders[0][3]}\n" \
+                                        f"Total: €{orders[0][4]}\n" \
+                                        f"Date: {orders[0][5]}\n" \
+                                        f"Status: {orders[0][6]}\n" \
+                                        f"Order closed:{orders[0][7]}",
+        "ORDER_CREATED_MSG": lambda order_info: f"Order created:\n`{order_info[0]}`\n" \
+                                                f"Restaurant:\n{order_info[3]}\n" \
+                                                f"Dishes:\n{order_info[7]}\n" \
+                                                f"Total:\n€`{order_info[11]}`\n" \
                                                 f"Date:\n{order_info[12]}",
         "PAYMENT_MENU_MSG": "Please proceed to payment via this link:",  # TODO
-        "PAID_ADM_MSG": lambda order_uuid, total: f"Confirm payment for order\n`{order_uuid}`.\n"\
-                                                  f"Total: € `{total}`",
-        "WAIT_FOR_CONFIRMATION_MSG": lambda order_uuid: f"Wait for payment confirmation from the Service\n"\
-                                                        f"Order № {order_uuid}.",
-        "ORDER_CLOSED_MSG": lambda order_uuid: f"Order closed:\n`{order_uuid}`"
+        "PAID_ADM_MSG": lambda order_uuid, total: f"Confirm payment for order\n`{order_uuid}`.\n" \
+                                                  f"Total: €`{total}`",
+        "WAIT_FOR_CONFIRMATION_MSG": lambda order_uuid: f"Wait for payment confirmation from the Service\n" \
+                                                        f"Order №\n`{order_uuid}`.",
+        "ORDER_CLOSED_MSG": lambda order_uuid: f"Order closed:\n`{order_uuid}`",
+        "CANCEL_MSG": lambda order_uuid: f"Order cancelled\n`{order_uuid}`"
     },
     "ru_RU": {  # TODO Translate
         # Localization variables.
@@ -295,7 +299,7 @@ texts = {
         "MAKE_ORDER_BTN": "💳 Confirm order",
         "ADD_MORE_BTN": "🛍 Continue shopping",
         "DELETE_ITEM_BTN": "📤 Delete item",
-        "PAY_BTN" : "Payment",
+        "PAY_BTN": "Payment",
         "PAID_BTN": "I have paid.",
         "ADM_PAY_CONF_BTN": "Confirm payment",
         "IN_DEV": "I've told You, IT IS IN DEVELOPMENT!",
@@ -332,56 +336,58 @@ texts = {
         "REQUEST_NEW_LOCATION_MSG": "Please, reset Your contact information.",
         "CONFIRM_LOCATION_MSG": "Is this delivery address right?",
         "CHOOSE_REST_TYPE_MSG": "Please, choose a restaurant type.",
-        "REST_TYPE_SELECTED_MSG": lambda rest_type: f"Selected restaurant type:\n"\
+        "REST_TYPE_SELECTED_MSG": lambda rest_type: f"Selected restaurant type:\n" \
                                                     f"{rest_type}",
         "CHOOSE_REST_MSG": "Please, choose a restaurant.",
-        "REST_SELECTED_MSG": lambda restaurant: f"Selected restaurant:\n"\
+        "REST_SELECTED_MSG": lambda restaurant: f"Selected restaurant:\n" \
                                                 f"{restaurant}",
         "CHOOSE_DISH_CATEGORY_MSG": "Please, choose a dish category.",
-        "DISH_CAT_SELECTED_MSG": lambda dish_cat: f"Selected dish category:\n"\
+        "DISH_CAT_SELECTED_MSG": lambda dish_cat: f"Selected dish category:\n" \
                                                   f"{dish_cat}",
         "CHOOSE_DISH_MSG": "Please, choose Your dish",
-        "DISH_SELECTED_MSG": lambda lang_code, dish: f"Selected dish:\n"\
-                                                     f"{dish[0]}\n"\
-                                                     f"Description:\n"\
-                                                     f"{dish[1]}\n"\
-                                                     f"Price:\n"\
-                                                     f"€{dish[2]}",
+        "DISH_SELECTED_MSG": lambda dish: f"Selected dish:\n" \
+                                          f"{dish[0]}\n" \
+                                          f"Description:\n" \
+                                          f"{dish[1]}\n" \
+                                          f"Price:\n" \
+                                          f"€{dish[2]}",
         "ADD_DISH_MSG": "Add dish to the cart?",
-        "YOUR_CART_MSG": lambda lang_code, dishes,
-                                subtotal, courier_fee,
-                                service_fee, total: f"🛒 Your cart:\n"\
-                                                    f"{dishes}\n"\
-                                                    f"Subtotal:\n"\
-                                                    f"€{subtotal}\n"\
-                                                    f"Courier fee:\n"\
-                                                    f"€{courier_fee}\n"\
-                                                    f"Service fee:\n"\
-                                                    f"€{service_fee}\n"\
-                                                    f"----\n"\
-                                                    f"Total:\n"\
-                                                    f"€{total}",
+        "YOUR_CART_MSG": lambda dishes,
+                                subtotal,
+                                courier_fee,
+                                service_fee,
+                                total: f"🛒 Your cart:\n" \
+                                       f"{dishes}\n" \
+                                       f"Subtotal:\n" \
+                                       f"€{subtotal}\n" \
+                                       f"Courier fee:\n" \
+                                       f"€{courier_fee}\n" \
+                                       f"Service fee:\n" \
+                                       f"€{service_fee}\n" \
+                                       f"----\n" \
+                                       f"Total:\n" \
+                                       f"€{total}",
         "CART_ACTIONS_MSG": "Actions:",
         "DELETE_ITEM_MSG": "Choose item to delete",
-        "MY_ORDERS_MSG": lambda orders: "You have no orders yet." if not orders\
-                                        else f"Order Number: {orders[0][0][-6:]}\n"\
-                                             f"from: {orders[0][1]}\n"\
-                                             f"Courier: {orders[0][2]}\n"\
-                                             f"Dish(es): {orders[0][3]}\n"\
-                                             f"Total: €{orders[0][4]}\n"\
-                                             f"Date: {orders[0][5]}\n"\
-                                             f"Status: {orders[0][6]}"\
-                                             f"Order closed:{orders[0][7]}",  # TODO
-        "ORDER_CREATED_MSG": lambda order_info: f"Order created:\n`{order_info[0]}`\n"\
-                                                f"Restaurant:\n{order_info[3]}\n"\
-                                                f"Dishes:\n{order_info[7]}\n"\
-                                                f"Total:\n€ `{order_info[11]}`\n"\
+        "MY_ORDERS_MSG": lambda orders: f"Order Number:\n`{orders[0][0]}`\n" \
+                                        f"from: {orders[0][1]}\n" \
+                                        f"Courier: {orders[0][2]}\n" \
+                                        f"Dish(es): {orders[0][3]}\n" \
+                                        f"Total: €`{orders[0][4]}`\n" \
+                                        f"Date: {orders[0][5]}\n" \
+                                        f"Status: {orders[0][6]}\n" \
+                                        f"Order :{orders[0][7]}",
+        "ORDER_CREATED_MSG": lambda order_info: f"Order created:\n`{order_info[0]}`\n" \
+                                                f"Restaurant:\n{order_info[3]}\n" \
+                                                f"Dishes:\n{order_info[7]}\n" \
+                                                f"Total:\n€`{order_info[11]}`\n" \
                                                 f"Date:\n{order_info[12]}",
         "PAYMENT_MENU_MSG": "Please proceed to payment via this link:",  # TODO
-        "PAID_ADM_MSG": lambda order_uuid, total: f"Confirm payment for order\n`{order_uuid}`.\n"\
+        "PAID_ADM_MSG": lambda order_uuid, total: f"Confirm payment for order\n`{order_uuid}`.\n" \
                                                   f"Total: € `{total}`",
-        "WAIT_FOR_CONFIRMATION_MSG": lambda order_uuid: f"Wait for payment confirmation from the Service\n"\
-                                                        f"Order № {order_uuid}.",
-        "ORDER_CLOSED_MSG": lambda order_uuid: f"Order closed:\n`{order_uuid}`"
+        "WAIT_FOR_CONFIRMATION_MSG": lambda order_uuid: f"Wait for payment confirmation from the Service\n" \
+                                                        f"Order №\n`{order_uuid}`.",
+        "ORDER_CLOSED_MSG": lambda order_uuid: f"Order closed:\n`{order_uuid}`",
+        "CANCEL_MSG": lambda order_uuid: f"Order cancelled\n`{order_uuid}`"
     }
 }

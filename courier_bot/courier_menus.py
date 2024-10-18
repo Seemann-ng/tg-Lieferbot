@@ -2,6 +2,8 @@ import telebot.types as types
 
 from courier_translations import texts
 
+
+# Language selection menu.
 def lang_sel_menu(lang_code: str) -> types.InlineKeyboardMarkup:
     """Compose "Language selection" menu in chosen language.
 
@@ -22,13 +24,14 @@ def lang_sel_menu(lang_code: str) -> types.InlineKeyboardMarkup:
 
 # Restaurant order ready menu.
 def rest_order_ready_menu(rest_lang: str, order_uuid: str) -> types.InlineKeyboardMarkup:
-    """
+    """Compose "Order Ready" menu for Restaurant in required language.
 
     Args:
-        rest_lang:
-        order_uuid:
+        rest_lang: Restaurant language code.
+        order_uuid: Order UUID.
 
     Returns:
+        "Order Ready" menu in required language.
 
     """
     menu = types.InlineKeyboardMarkup(row_width=1)
@@ -40,13 +43,14 @@ def rest_order_ready_menu(rest_lang: str, order_uuid: str) -> types.InlineKeyboa
 
 # Courier order in delivery menu.
 def order_in_delivery_menu(courier_lang: str, order_uuid: str) -> types.InlineKeyboardMarkup:
-    """
+    """Compose "Order In Delivery" menu for Courier in required language.
 
     Args:
-        courier_lang:
-        order_uuid:
+        courier_lang: Courier language code.
+        order_uuid: Order UUID.
 
     Returns:
+        "Order In Delivery" menu in required language.
 
     """
     menu = types.InlineKeyboardMarkup(row_width=1)
@@ -58,13 +62,14 @@ def order_in_delivery_menu(courier_lang: str, order_uuid: str) -> types.InlineKe
 
 # Customer order delivered menu.
 def cus_delivered_menu(customer_lang: str, order_uuid: str) -> types.InlineKeyboardMarkup:
-    """
+    """Compose "Order delivered" menu for Customer in required language."
 
     Args:
-        customer_lang:
-        order_uuid:
+        customer_lang: Customer language code.
+        order_uuid: Order UUID.
 
     Returns:
+        "Order delivered" menu in required language.
 
     """
     menu = types.InlineKeyboardMarkup(row_width=1)

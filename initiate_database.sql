@@ -94,27 +94,3 @@ CREATE TABLE cart
 
 
 CREATE EXTENSION "pgcrypto";
-
--- CREATE TRIGGER order_status_change_trigger
---     AFTER INSERT OR UPDATE OF order_status
---     ON orders
---     FOR EACH ROW
--- EXECUTE PROCEDURE notify_order_status_change();
---
---
--- CREATE OR REPLACE FUNCTION notify_order_status_change()
---     RETURNS TRIGGER AS
--- $$
--- DECLARE
---     payload JSON;
--- BEGIN
---     payload := json_build_object(
---         'order_uuid', NEW.order_uuid,
---         'new_status', NEW.order_status,
---         'rest_uuid', NEW.restaurant_uuid,
---         'customer_id', NEW.customer_id,
---         'courier_id', NEW.courier_id
---     );
---     PERFORM pg_notify('order_status_channel', payload);
--- END;
--- $$ LANGUAGE plpgsql;

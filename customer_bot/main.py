@@ -4,7 +4,7 @@ from telebot.apihelper import ApiTelegramException
 import customer_menus
 from customer_translations import texts
 from customer_db_tools import Interface as DBInterface
-from tools.bots_initialization import adm_bot, courier_bot, cus_bot, rest_bot
+from tools.bots_initialization import adm_bot, cus_bot
 from tools.logger_tool import logger, logger_decorator_callback, logger_decorator_msg
 
 
@@ -247,7 +247,8 @@ def reg_phone_str(message: types.Message) -> None:
     cus_bot.send_message(customer_id,
                          texts[lang_code]["REG_PHONE_MSG"],
                          reply_markup=types.ForceReply(
-                             input_field_placeholder=texts[lang_code]["REG_PHONE_PLACEHOLDER"]))
+                             input_field_placeholder=texts[lang_code]["REG_PHONE_PLACEHOLDER"]
+                         ))
 
 
 @cus_bot.message_handler(func=lambda message: message.reply_to_message \
@@ -674,7 +675,7 @@ def dish_chosen(call: types.CallbackQuery) -> None:
     elif callback_data == customer_menus.cart_button(lang_code).callback_data:
         is_dish_added(c_back.data_to_read)
     else:
-        cus_bot.edit_message_text(texts[lang_code]["DISH_SELECTED_MSG"](lang_code, c_back.get_dish()),
+        cus_bot.edit_message_text(texts[lang_code]["DISH_SELECTED_MSG"](c_back.get_dish()),
                                   customer_id,
                                   message_id)
         cus_bot.send_message(customer_id,
@@ -729,9 +730,11 @@ def is_dish_added(call: types.CallbackQuery) -> None:
         courier_fee = c_back.get_from_cart("courier_fee")
         service_fee = c_back.get_from_cart("service_fee")
         total = c_back.get_from_cart("total")
-        cart_text = texts[lang_code]["YOUR_CART_MSG"](lang_code, dishes_displayed,
-                                                      subtotal, courier_fee,
-                                                      service_fee, total)
+        cart_text = texts[lang_code]["YOUR_CART_MSG"](dishes_displayed,
+                                                      subtotal,
+                                                      courier_fee,
+                                                      service_fee,
+                                                      total)
         cus_bot.edit_message_text(cart_text, customer_id, message_id)
         cus_bot.send_message(customer_id,
                              texts[lang_code]["CART_ACTIONS_MSG"],
@@ -799,18 +802,17 @@ def item_deletion(call: types.CallbackQuery) -> None:
     is_dish_added(c_back.data_to_read)
 
 
-# Payment block. # TODO
+# Payment block.
 @cus_bot.callback_query_handler(func=lambda call: "paid" in call.data)
 @logger_decorator_callback
 def order_paid(call: types.CallbackQuery) -> None:
-    """
+    """Process "paid" button,
+    Send payment confirmation request to Admin.
 
     Args:
-        call:
+        call: Callback query from "paid" button with order UUID in it.
 
-    Returns:
-
-    """  # TODO
+    """
     c_back = DBInterface(call)
     customer_id = c_back.data_to_read.from_user.id
     message_id = c_back.data_to_read.message.id
@@ -830,12 +832,10 @@ def order_paid(call: types.CallbackQuery) -> None:
 @cus_bot.callback_query_handler(func=lambda call: "order_closed" in call.data)
 @logger_decorator_callback
 def order_closed(call: types.CallbackQuery) -> None:
-    """
+    """Process confirmation of order receiving from Customer.
 
     Args:
-        call:
-
-    Returns:
+        call: Callback query from "Order received" button with order UUID in it.
 
     """
     c_back = DBInterface(call)
@@ -846,6 +846,26 @@ def order_closed(call: types.CallbackQuery) -> None:
     c_back.close_order()
     cus_bot.edit_message_reply_markup(customer_id, message_id)
     cus_bot.send_message(customer_id, texts[lang_code]["ORDER_CLOSED_MSG"](order_uuid))
+
+
+@cus_bot.callback_query_handler(func=lambda call: "cancel" in call.data)
+@logger_decorator_callback
+def cancel(call: types.CallbackQuery) -> None:
+    """Process order cancellation button after order is already created.
+
+    Args:
+        call: Callback query from "Cancel order" button with order UUID in it.
+
+    """
+    c_back = DBInterface(call)
+    order_uuid = c_back.data_to_read.data.split(maxsplit=1)[-1]
+    customer_id = c_back.data_to_read.from_user.id
+    message_id = c_back.data_to_read.message.id
+    lang_code = c_back.get_customer_lang()
+    c_back.delete_cart()
+    c_back.delete_order()
+    cus_bot.edit_message_text(texts[lang_code]["CANCEL_MSG"](order_uuid), customer_id, message_id)
+    show_main_menu(callback_to_msg(c_back.data_to_read))
 
 
 def main():

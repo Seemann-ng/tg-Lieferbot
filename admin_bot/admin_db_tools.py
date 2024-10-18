@@ -19,51 +19,56 @@ class Interface:
     @cursor
     @logger_decorator
     def get_lang(self, curs: psycopg2.extensions.cursor) -> str:
-        """
+        """Get Admin's lang code from the DB.
 
         Args:
-            curs:
+            curs: Cursor object form psycopg2 module.
 
         Returns:
+            Admin's lang code.
 
         """
-        curs.execute("SELECT lang_code FROM admins WHERE admin_id = %s",
-                     (self.data_to_read.from_user.id, ))
-        lang_code = curs.fetchone()[0]
-        return lang_code
+        admin_id = self.data_to_read.from_user.id
+        curs.execute("SELECT lang_code FROM admins WHERE admin_id = %s", (admin_id,))
+        if lang_code := curs.fetchone():
+            if lang_code := lang_code[0]:
+                return lang_code
+        return DEF_LANG
 
     @cursor
     @logger_decorator
     def get_from_orders(self, column: str, curs: psycopg2.extensions.cursor) -> str | int:
-        """
+        """Get data about order from orders table in the DB.
 
         Args:
-            column:
-            curs:
+            column: Column name.
+            curs: Cursor object form psycopg2 module.
 
         Returns:
+            Required data.
 
         """
-        curs.execute("SELECT " + column + " FROM orders WHERE orders.order_uuid = %s",
-                     (self.data_to_read.data.split(maxsplit=1)[1], ))
+        order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
+        curs.execute("SELECT " + column + " FROM orders WHERE order_uuid = %s", (order_uuid,))
         order_info = curs.fetchone()[0]
         return order_info
 
     @cursor
     @logger_decorator
     def get_rest_lang(self, curs: psycopg2.extensions.cursor) -> str:
-        """
+        """Get lang code of the Restaurant mentioned in the order from the DB.
 
         Args:
-            curs:
+            curs: Cursor object form psycopg2 module.
 
         Returns:
+            Restaurant's lang code.
 
         """
-        curs.execute("SELECT restaurant_uuid FROM orders WHERE order_uuid = %s",
-                     (self.data_to_read.data.split(maxsplit=1)[1], ))
+        order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
+        curs.execute("SELECT restaurant_uuid FROM orders WHERE order_uuid = %s", (order_uuid,))
         restaurant_uuid = curs.fetchone()[0]
-        curs.execute("SELECT lang_code FROM restaurants WHERE restaurant_uuid = %s", (restaurant_uuid, ))
+        curs.execute("SELECT lang_code FROM restaurants WHERE restaurant_uuid = %s", (restaurant_uuid,))
         if lang_code := curs.fetchone():
             if lang_code := lang_code[0]:
                 return lang_code
@@ -72,33 +77,32 @@ class Interface:
     @cursor
     @logger_decorator
     def update_order(self, column: str, new_value: str, curs: psycopg2.extensions.cursor) -> None:
-        """
+        """Update order data in the DB.
 
         Args:
-            column:
-            new_value:
-            curs:
-
-        Returns:
+            column: Required column name.
+            new_value: Required new value.
+            curs: Cursor object form psycopg2 module.
 
         """
-        curs.execute("UPDATE orders SET " + column + " = %s WHERE orders.order_uuid = %s",
-                     (new_value, self.data_to_read.data.split(maxsplit=1)[1]))
+        order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
+        curs.execute("UPDATE orders SET " + column + " = %s WHERE order_uuid = %s", (new_value, order_uuid))
 
     @staticmethod
     @cursor
     @logger_decorator
     def get_customer_lang(customer_id: str, curs: psycopg2.extensions.cursor) -> str:
-        """
+        """Get Customer lang code from the DB.
 
         Args:
-            customer_id:
-            curs:
+            customer_id: Required Customer id.
+            curs: Cursor object form psycopg2 module.
 
         Returns:
+            Customer's lang code.
 
         """
-        curs.execute("SELECT lang_code FROM customers WHERE customer_id = %s", (customer_id, ))
+        curs.execute("SELECT lang_code FROM customers WHERE customer_id = %s", (customer_id,))
         if lang_code := curs.fetchone():
             if lang_code := lang_code[0]:
                 return lang_code

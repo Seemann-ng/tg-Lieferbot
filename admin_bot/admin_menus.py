@@ -5,13 +5,14 @@ from admin_translations import texts
 
 # Restaurant accept order menu.
 def rest_accept_order_menu(lang_code: str, order_uuid: str) -> types.InlineKeyboardMarkup:
-    """
+    """Compose "Accept order" menu for a Restaurant in Restaurant's language.
 
     Args:
-        lang_code:
-        order_uuid:
+        lang_code: Restaurant's language.
+        order_uuid: Order UUID.
 
     Returns:
+        "Accept order" menu in required language.
 
     """
     menu = types.InlineKeyboardMarkup(row_width=1)

@@ -73,7 +73,7 @@ def courier_accept_menu(order_uuid: str, lang_code: str) -> types.InlineKeyboard
 
     Returns:
 
-    """
+    """  # TODO
     menu = types.InlineKeyboardMarkup(row_width=1)
     accept_button = types.InlineKeyboardButton(text=texts[lang_code]["COURIER_ACCEPT_BTN"],
                                                callback_data="accept " + order_uuid)
@@ -91,7 +91,7 @@ def courier_in_delivery_menu(order_uuid: str, courier_lang: str) -> types.Inline
 
     Returns:
 
-    """
+    """  # TODO
     menu = types.InlineKeyboardMarkup(row_width=1)
     order_handled_button = types.InlineKeyboardButton(text=texts[courier_lang]["COUR_ORDER_IN_DELIVERY_BTN"],
                                                       callback_data="in_delivery " + order_uuid)
