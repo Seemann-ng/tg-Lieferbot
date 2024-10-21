@@ -14,8 +14,8 @@ env.read_env()
 pp_mode = env.str("PP_MODE", default="sandbox")
 pp_username = env.str("PP_USERNAME")
 pp_password = env.str("PP_PASSWORD")
-brand_name = env.str("BRAND_NAME")
-return_link = env.str("RETURN_LINK")
+brand_name = env.str("BRAND_NAME", default="Shop")
+return_link = env.str("RETURN_LINK", default="https://google.com/")
 
 @cursor
 @logger_decorator

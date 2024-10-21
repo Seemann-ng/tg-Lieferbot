@@ -7,10 +7,10 @@ texts = {
     "de_DE": {  # TODO Translate
         # Localization variables.
         "MAX_PHONE_LENGTH": 11,
-        "COURIER_FEE_BASE": env.float("COURIER_FEE_BASE", default=1.15),
-        "COURIER_FEE_RATE": env.float("COURIER_FEE_RATE", default=0.05),
-        "SERVICE_FEE_BASE": env.float("SERVICE_FEE_BASE", default=0.75),
-        "SERVICE_FEE_RATE": env.float("SERVICE_FEE_RATE", default=0.03),
+        "COURIER_FEE_BASE": env.float("COURIER_FEE_BASE", default=2.25),
+        "COURIER_FEE_RATE": env.float("COURIER_FEE_RATE", default=0.08),
+        "SERVICE_FEE_BASE": env.float("SERVICE_FEE_BASE", default=1.75),
+        "SERVICE_FEE_RATE": env.float("SERVICE_FEE_RATE", default=0.05),
         "AGREEMENT_MENU_PLACEHOLDER": "📑 Vereinbarung",
         # Menu buttons.
         "SHOW_AGREEMENT_BTN": "🔍📑 Kundenvereinbarung anzeigen",

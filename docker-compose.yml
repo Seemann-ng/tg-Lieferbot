@@ -13,7 +13,7 @@ services:
       - ./pgdata:/var/lib/postgresql/data
       - ./initiate_database.sql:/docker-entrypoint-initdb.d/initiate_database.sql
     ports:
-      - ${DB_EXT_PORT}:5432
+      - ${DB_EXT_PORT?:5432}:5432
 
   customer_bot:
     build:
