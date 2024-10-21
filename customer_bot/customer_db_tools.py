@@ -126,8 +126,7 @@ class Interface:
         """
         customer_id = self.data_to_read.from_user.id
         curs.execute("SELECT order_uuid, restaurant_name, courier_name, dishes, total, order_open_date, "
-                     "order_status, order_close_date FROM orders "
-                     "WHERE customer_id = %s AND order_close_date IS NOT NULL",
+                     "order_status, order_close_date FROM orders WHERE customer_id = %s",
                      (customer_id,))
         orders = curs.fetchall()
         return orders if orders else []

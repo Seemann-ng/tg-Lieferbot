@@ -208,7 +208,8 @@ def edit_dish_command(message: types.Message) -> None:
                           reply_markup=restaurant_menus.edit_dish_menu(lang_code, msg))
 
 
-@rest_bot.callback_query_handler(func=lambda call: call.message.text in [lang["EDIT_DISH_MSG"] for lang in texts.values()])
+@rest_bot.callback_query_handler(func=lambda call: call.message.text \
+                                                   in [lang["EDIT_DISH_MSG"] for lang in texts.values()])
 @logger_decorator_callback
 def edit_dish_param(call: types.CallbackQuery) -> None:
     """
@@ -226,7 +227,9 @@ def edit_dish_param(call: types.CallbackQuery) -> None:
     if c_back.data_to_read.data == restaurant_menus.back_button(lang_code).callback_data:
         rest_bot.delete_message(user_id, message_id)
     else:
-        rest_bot.edit_message_text(texts[lang_code]["EDIT_DISH_CHOSEN_MSG"](c_back.get_dish_name()), user_id, message_id)
+        rest_bot.edit_message_text(texts[lang_code]["EDIT_DISH_CHOSEN_MSG"](c_back.get_dish_name()),
+                                   user_id,
+                                   message_id)
         rest_bot.send_message(user_id,
                               texts[lang_code]["EDIT_DISH_PARAM_MSG"],
                               reply_markup=restaurant_menus.edit_dish_param_menu(lang_code, c_back))
@@ -256,17 +259,21 @@ def req_new_dish_param(call: types.CallbackQuery) -> None:
     if c_back.data_to_read.data == restaurant_menus.back_button(lang_code):
         rest_bot.delete_message(user_id, message_id)
     elif param_to_edit == "cat":
-        rest_bot.send_message(user_id, texts[lang_code]["EDIT_CATEGORY_MSG"](dish_uuid), reply_markup=types.ForceReply())
+        rest_bot.send_message(user_id,
+                              texts[lang_code]["EDIT_CATEGORY_MSG"](dish_uuid),
+                              reply_markup=types.ForceReply())
     elif param_to_edit == "des":
-        rest_bot.send_message(user_id, texts[lang_code]["EDIT_DESCRIPTION_MSG"](dish_uuid), reply_markup=types.ForceReply())
+        rest_bot.send_message(user_id,
+                              texts[lang_code]["EDIT_DESCRIPTION_MSG"](dish_uuid),
+                              reply_markup=types.ForceReply())
     elif param_to_edit == "prc":
         rest_bot.send_message(user_id, texts[lang_code]["EDIT_PRICE_MSG"](dish_uuid), reply_markup=types.ForceReply())
 
 
 @rest_bot.message_handler(func=lambda message: message.reply_to_message \
                                                and message.reply_to_message.text \
-                                               in [lang["EDIT_CATEGORY_MSG"](message.reply_to_message.text.split()[-1])\
-                                              for lang in texts.values()])
+                                               in [lang["EDIT_CATEGORY_MSG"](message.reply_to_message.text.split()[-1]) \
+                                                   for lang in texts.values()])
 @logger_decorator_msg
 def set_new_category(message: types.Message) -> None:
     """
@@ -288,7 +295,7 @@ def set_new_category(message: types.Message) -> None:
 @rest_bot.message_handler(func=lambda message: message.reply_to_message \
                                                and message.reply_to_message.text \
                                                in [lang["EDIT_DESCRIPTION_MSG"](message.reply_to_message.text.split()[-1]) \
-                                              for lang in texts.values()])
+                                                   for lang in texts.values()])
 @logger_decorator_msg
 def set_new_description(message: types.Message) -> None:
     """
@@ -310,7 +317,7 @@ def set_new_description(message: types.Message) -> None:
 @rest_bot.message_handler(func=lambda message: message.reply_to_message \
                                                and message.reply_to_message.text \
                                                in [lang["EDIT_PRICE_MSG"](message.reply_to_message.text.split()[-1]) \
-                                              for lang in texts.values()])
+                                                   for lang in texts.values()])
 @logger_decorator_msg
 def set_new_price(message: types.Message) -> None:
     """

@@ -2,9 +2,10 @@ import telebot.types as types
 from telebot.apihelper import ApiTelegramException
 
 import customer_menus
+import paypal_tools.pp_tools as paypal
 from customer_translations import texts
 from customer_db_tools import Interface as DBInterface
-from tools.bots_initialization import adm_bot, cus_bot
+from tools.bots_initialization import cus_bot, rest_bot
 from tools.logger_tool import logger, logger_decorator_callback, logger_decorator_msg
 
 
@@ -749,7 +750,9 @@ def cart_actions(call: types.CallbackQuery) -> None:
     Clear cart if corresponding button is clicked.
     Call item deletion menu on request.
     Return Customer to dish category selection menu on request.
-    Proceed to payment menu on request.
+    Generate payment URL and proceed to payment menu on request
+    if payment URL has been generated successfully
+    otherwise send "payment URL generation failed" message to Customer.
 
     Args:
         call: Callback query with Customer's input from cart actions menu.
@@ -773,10 +776,16 @@ def cart_actions(call: types.CallbackQuery) -> None:
         restaurant_chosen(c_back.data_to_read)
     elif c_back.data_to_read.data == texts[lang_code]["MAKE_ORDER_BTN"]:
         order_info = c_back.order_creation()
-        cus_bot.edit_message_text(texts[lang_code]["ORDER_CREATED_MSG"](order_info), customer_id, message_id)
-        cus_bot.send_message(customer_id,
-                             texts[lang_code]["PAYMENT_MENU_MSG"],
-                             reply_markup=customer_menus.payment_menu(lang_code, order_info[0]))
+        if paypal_order_info := paypal.pp_order_creation(order_info[0]):
+            payment_url = paypal_order_info["URL"]
+            pp_order_id = paypal_order_info["order_id"]
+            c_back.update_order(order_info[0], "paypal_order_id", pp_order_id)
+            cus_bot.edit_message_text(texts[lang_code]["ORDER_CREATED_MSG"](order_info), customer_id, message_id)
+            cus_bot.send_message(customer_id,
+                                 texts[lang_code]["PAYMENT_MENU_MSG"](payment_url),
+                                 reply_markup=customer_menus.payment_menu(lang_code, order_info[0]))
+        else:
+            cus_bot.send_message(customer_id, texts[lang_code]["PAYPAL_ORDER_CREATION_FAIL_MSG"])
 
 
 @cus_bot.callback_query_handler(func=lambda call: call.message.text \
@@ -807,7 +816,7 @@ def item_deletion(call: types.CallbackQuery) -> None:
 @logger_decorator_callback
 def order_paid(call: types.CallbackQuery) -> None:
     """Process "paid" button,
-    Send payment confirmation request to Admin.
+    Send payment confirmation request to Admin.  # TODO
 
     Args:
         call: Callback query from "paid" button with order UUID in it.
@@ -817,16 +826,25 @@ def order_paid(call: types.CallbackQuery) -> None:
     customer_id = c_back.data_to_read.from_user.id
     message_id = c_back.data_to_read.message.id
     lang_code = c_back.get_customer_lang()
-    admin_id = c_back.get_support_id()
-    adm_lang_code = c_back.get_adm_lang(admin_id)
     order_uuid = c_back.data_to_read.data.split(maxsplit=1)[1]
-    total = c_back.get_order_info(order_uuid, "total")
-    adm_bot.send_message(admin_id,
-                         texts[adm_lang_code]["PAID_ADM_MSG"](order_uuid, total),
-                         reply_markup=customer_menus.adm_pay_conf_menu(adm_lang_code, order_uuid))
-    cus_bot.edit_message_text(texts[lang_code]["WAIT_FOR_CONFIRMATION_MSG"](order_uuid), customer_id, message_id)
-    c_back.delete_cart()
-    show_main_menu(callback_to_msg(c_back.data_to_read))
+    restaurant_id = c_back.get_order_info(order_uuid, "restaurant_id")
+    restaurant_uuid = c_back.get_order_info(order_uuid, "restaurant_uuid")
+    dishes = c_back.get_order_info(order_uuid, "dishes")
+    subtotal = c_back.get_order_info(order_uuid, "dishes_subtotal")
+    rest_lang_code = c_back.get_restaurant_lang(restaurant_uuid)
+    payment_captured = paypal.pp_capture_order(order_uuid)
+    if payment_captured:
+        c_back.update_order(order_uuid, "order_status", "Payment confirmed")
+        rest_bot.send_message(restaurant_id,
+                              texts[rest_lang_code]["REST_NEW_ORDER_MSG"](order_uuid, dishes, subtotal),
+                              reply_markup=customer_menus.rest_accept_order_menu(rest_lang_code, order_uuid))
+        cus_bot.edit_message_text(texts[lang_code]["CUS_PAYMENT_CONFIRMED_MSG"](order_uuid),
+                                  customer_id,
+                                  message_id)
+        c_back.delete_cart()
+        show_main_menu(callback_to_msg(c_back.data_to_read))
+    else:
+        cus_bot.send_message(customer_id, texts[lang_code]["WAIT_FOR_CONFIRMATION_MSG"](order_uuid))    #
 
 
 @cus_bot.callback_query_handler(func=lambda call: "order_closed" in call.data)

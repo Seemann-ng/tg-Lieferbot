@@ -360,20 +360,20 @@ def payment_menu(lang_code: str, order_uuid: str) -> types.InlineKeyboardMarkup:
     return menu
 
 
-# Admin payment confirmation menu.
-def adm_pay_conf_menu(lang_code: str, order_uuid: str) -> types.InlineKeyboardMarkup:
-    """Compose Admins's "Payment Confirmation" menu in Admin's chosen language."
+# Restaurant accept order menu.
+def rest_accept_order_menu(lang_code: str, order_uuid: str) -> types.InlineKeyboardMarkup:
+    """Compose "Accept order" menu for a Restaurant in Restaurant's language.
 
     Args:
-        lang_code: Admin's language code.
+        lang_code: Restaurant's language.
         order_uuid: Order UUID.
 
     Returns:
-        Admins's "Payment Confirmation" menu in required language.
+        "Accept order" menu in required language.
 
     """
     menu = types.InlineKeyboardMarkup(row_width=1)
-    payment_confirmed_button = types.InlineKeyboardButton(text=texts[lang_code]["ADM_PAY_CONF_BTN"],
-                                                          callback_data="confirmed " + order_uuid)
-    menu.add(payment_confirmed_button)
+    accept_button = types.InlineKeyboardButton(text=texts[lang_code]["REST_ACCEPT_ORDER_BTN"],
+                                               callback_data="accepted " + order_uuid)
+    menu.add(accept_button)
     return menu

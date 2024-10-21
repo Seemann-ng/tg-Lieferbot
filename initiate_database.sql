@@ -76,7 +76,8 @@ CREATE TABLE orders
     total             NUMERIC(10, 2),
     order_open_date   TIMESTAMP,
     order_close_date  TIMESTAMP,
-    order_status      VARCHAR
+    order_status      VARCHAR,
+    paypal_order_id   VARCHAR
 );
 
 

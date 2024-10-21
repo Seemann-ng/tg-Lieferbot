@@ -27,6 +27,11 @@ services:
       - COURIER_BOT_TOKEN=${COURIER_BOT_TOKEN}
       - ADMIN_BOT_TOKEN=${ADMIN_BOT_TOKEN}
       - DEF_LANG=${DEF_LANG}
+      - PP_USERNAME=${PP_USERNAME}
+      - PP_PASSWORD=${PP_PASSWORD}
+      - PP_MODE=${PP_MODE?:sandbox}
+      - BRAND_NAME=${BRAND_NAME}
+      - RETURN_LINK=${RETURN_LINK?:https://google.com}
     container_name: liefer_bot_customer
     restart: always
 

@@ -43,7 +43,6 @@ texts = {
         "ADD_MORE_BTN": "🛍 Weiter einkaufen",
         "DELETE_ITEM_BTN": "📤 Artikel löschen",
         "PAID_BTN": "I have paid",
-        "ADM_PAY_CONF_BTN": "Confirm payment",
         "IN_DEV": "Ich habe dir gesagt, ES IST IN ENTWICKLUNG!",
         # Bot messages.
         "WELCOME_BACK_MSG": lambda customer_name: f"Willkommen zurück, {customer_name}!",
@@ -124,13 +123,22 @@ texts = {
                                                 f"Dishes:\n{order_info[7]}\n" \
                                                 f"Total:\n€`{order_info[11]}`\n" \
                                                 f"Date:\n{order_info[12]}",
-        "PAYMENT_MENU_MSG": "Please proceed to payment via this link:",  # TODO
-        "PAID_ADM_MSG": lambda order_uuid, total: f"Confirm payment for order\n`{order_uuid}`.\n" \
-                                                  f"Total: € `{total}`",
-        "WAIT_FOR_CONFIRMATION_MSG": lambda order_uuid: f"Wait for payment confirmation from the Service\n" \
+        "PAYMENT_MENU_MSG": lambda url: f"Please proceed to payment via this link: {url}",
+        "PAYPAL_ORDER_CREATION_FAIL_MSG": "Something went wrong while generating payment link, please, try again later.",
+        "CUS_PAYMENT_CONFIRMED_MSG": lambda order_uuid: f"Payment for order\n" \
+                                                        f"`{order_uuid}`\n" \
+                                                        f"confirmed",
+        "REST_ACCEPT_ORDER_BTN": "Accept order",
+        "WAIT_FOR_CONFIRMATION_MSG": lambda order_uuid: f"Payment confirmation from the Service has not been obtained\n" \
                                                         f"Order\n`{order_uuid}`.",
         "ORDER_CLOSED_MSG": lambda order_uuid: f"Order closed:\n`{order_uuid}`",
-        "CANCEL_MSG": lambda order_uuid: f"Order cancelled\n`{order_uuid}`"
+        "CANCEL_MSG": lambda order_uuid: f"Order cancelled\n`{order_uuid}`",
+        "REST_NEW_ORDER_MSG": lambda order_uuid, dishes, subtotal: f"New incoming order\n" \
+                                                                   f"`{order_uuid}`\n" \
+                                                                   f"Dishes:\n" \
+                                                                   f"{dishes}\n" \
+                                                                   f"To be paid:\n" \
+                                                                   f"`{subtotal}`",
     },
     "en_US": {
         # Localization variables.
@@ -172,7 +180,6 @@ texts = {
         "DELETE_ITEM_BTN": "📤 Delete item",
         "PAY_BTN": "Payment",
         "PAID_BTN": "I have paid.",
-        "ADM_PAY_CONF_BTN": "Confirm payment",
         "IN_DEV": "I've told You, IT IS IN DEVELOPMENT!",
         # Bot messages.
         "WELCOME_BACK_MSG": lambda customer_name: f"Welcome back, {customer_name}!",
@@ -253,13 +260,22 @@ texts = {
                                                 f"Dishes:\n{order_info[7]}\n" \
                                                 f"Total:\n€`{order_info[11]}`\n" \
                                                 f"Date:\n{order_info[12]}",
-        "PAYMENT_MENU_MSG": "Please proceed to payment via this link:",  # TODO
-        "PAID_ADM_MSG": lambda order_uuid, total: f"Confirm payment for order\n`{order_uuid}`.\n" \
-                                                  f"Total: €`{total}`",
-        "WAIT_FOR_CONFIRMATION_MSG": lambda order_uuid: f"Wait for payment confirmation from the Service\n" \
+        "PAYMENT_MENU_MSG": lambda url: f"Please proceed to payment via this link: {url}",
+        "PAYPAL_ORDER_CREATION_FAIL_MSG": "Something went wrong while generating payment link, please, try again later.",
+        "CUS_PAYMENT_CONFIRMED_MSG": lambda order_uuid: f"Payment for order\n" \
+                                                        f"`{order_uuid}`\n" \
+                                                        f"confirmed",
+        "REST_ACCEPT_ORDER_BTN": "Accept order",
+        "WAIT_FOR_CONFIRMATION_MSG": lambda order_uuid: f"Payment confirmation from the Service has not been obtained\n" \
                                                         f"Order №\n`{order_uuid}`.",
         "ORDER_CLOSED_MSG": lambda order_uuid: f"Order closed:\n`{order_uuid}`",
-        "CANCEL_MSG": lambda order_uuid: f"Order cancelled\n`{order_uuid}`"
+        "CANCEL_MSG": lambda order_uuid: f"Order cancelled\n`{order_uuid}`",
+        "REST_NEW_ORDER_MSG": lambda order_uuid, dishes, subtotal: f"New incoming order\n" \
+                                                                   f"`{order_uuid}`\n" \
+                                                                   f"Dishes:\n" \
+                                                                   f"{dishes}\n" \
+                                                                   f"To be paid:\n" \
+                                                                   f"`{subtotal}`",
     },
     "ru_RU": {  # TODO Translate
         # Localization variables.
@@ -301,7 +317,6 @@ texts = {
         "DELETE_ITEM_BTN": "📤 Delete item",
         "PAY_BTN": "Payment",
         "PAID_BTN": "I have paid.",
-        "ADM_PAY_CONF_BTN": "Confirm payment",
         "IN_DEV": "I've told You, IT IS IN DEVELOPMENT!",
         # Bot messages.
         "WELCOME_BACK_MSG": lambda customer_name: f"Welcome back, {customer_name}!",
@@ -382,12 +397,21 @@ texts = {
                                                 f"Dishes:\n{order_info[7]}\n" \
                                                 f"Total:\n€`{order_info[11]}`\n" \
                                                 f"Date:\n{order_info[12]}",
-        "PAYMENT_MENU_MSG": "Please proceed to payment via this link:",  # TODO
-        "PAID_ADM_MSG": lambda order_uuid, total: f"Confirm payment for order\n`{order_uuid}`.\n" \
-                                                  f"Total: € `{total}`",
-        "WAIT_FOR_CONFIRMATION_MSG": lambda order_uuid: f"Wait for payment confirmation from the Service\n" \
+        "PAYMENT_MENU_MSG": lambda url: f"Please proceed to payment via this link: {url}",
+        "PAYPAL_ORDER_CREATION_FAIL_MSG": "Something went wrong while generating payment link, please, try again later.",
+        "CUS_PAYMENT_CONFIRMED_MSG": lambda order_uuid: f"Payment for order\n" \
+                                                        f"`{order_uuid}`\n" \
+                                                        f"confirmed",
+        "REST_ACCEPT_ORDER_BTN": "Accept order",
+        "WAIT_FOR_CONFIRMATION_MSG": lambda order_uuid: f"Payment confirmation from the Service has not been obtained\n" \
                                                         f"Order №\n`{order_uuid}`.",
         "ORDER_CLOSED_MSG": lambda order_uuid: f"Order closed:\n`{order_uuid}`",
-        "CANCEL_MSG": lambda order_uuid: f"Order cancelled\n`{order_uuid}`"
+        "CANCEL_MSG": lambda order_uuid: f"Order cancelled\n`{order_uuid}`",
+        "REST_NEW_ORDER_MSG": lambda order_uuid, dishes, subtotal: f"New incoming order\n" \
+                                                                   f"`{order_uuid}`\n" \
+                                                                   f"Dishes:\n" \
+                                                                   f"{dishes}\n" \
+                                                                   f"To be paid:\n" \
+                                                                   f"`{subtotal}`",
     }
 }
