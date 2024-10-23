@@ -479,37 +479,24 @@ class Interface:
 
     @cursor
     @logger_decorator
-    def get_support_id(self, curs: psycopg2.extensions.cursor) -> int:
-        """Get random Admin Telegram ID from database.
+    def get_support(self, curs: psycopg2.extensions.cursor) -> Tuple[int, str]:
+        """Get random Admin Telegram ID and their language code from database.
 
         Args:
             curs: Cursor object from psycopg2 module.
 
         Returns:
-            Admin Telegram ID.
+            Array containing random Admin Telegram ID and their language code.
 
         """
         curs.execute("SELECT admin_id FROM admins")
         if admin_ids := curs.fetchall():
-            return random.choice(admin_ids)[0]
+            admin_id = random.choice(admin_ids)[0]
+            curs.execute("SELECT lang_code FROM admins WHERE admin_id = %s", (admin_id,))
+            if admin_lang_code := curs.fetchone()[0]:
+                return admin_id, admin_lang_code
+            return admin_id, DEF_LANG
 
-    @staticmethod
-    @cursor
-    @logger_decorator
-    def get_adm_lang(admin_id: int, curs: psycopg2.extensions.cursor) -> str:
-        """Get Admin language code.
-
-        Args:
-            admin_id: Admin Telegram ID.
-            curs: Cursor object from psycopg2 module.
-
-        Returns:
-            Admin language code.
-
-        """
-        curs.execute("SELECT lang_code FROM admins WHERE admin_id = %s", (admin_id,))
-        lang_code = curs.fetchone()[0]
-        return lang_code
 
     @staticmethod
     @cursor

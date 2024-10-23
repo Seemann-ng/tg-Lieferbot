@@ -5,7 +5,7 @@ import customer_menus
 import paypal_tools.pp_tools as paypal
 from customer_translations import texts
 from customer_db_tools import Interface as DBInterface
-from tools.bots_initialization import cus_bot, rest_bot
+from tools.bots_initialization import adm_bot, cus_bot, rest_bot
 from tools.logger_tool import logger, logger_decorator_callback, logger_decorator_msg
 
 
@@ -385,8 +385,8 @@ def main_menu(message: types.Message) -> None:
 
 @cus_bot.message_handler(func=lambda message: message.text in [lang["CONTACT_SUPPORT_BTN"] for lang in texts.values()])
 @logger_decorator_msg
-def contact_support(message: types.Message) -> None:  # TODO Contact support.
-    """Start communication with support.
+def contact_support(message: types.Message) -> None:
+    """Start support request sequence.
 
     Args:
         message: Message from Customer with corresponding request.
@@ -395,8 +395,32 @@ def contact_support(message: types.Message) -> None:  # TODO Contact support.
     msg = DBInterface(message)
     lang_code = msg.get_customer_lang()
     customer_id = msg.data_to_read.from_user.id
-    cus_bot.send_message(customer_id, texts[lang_code]["IN_DEV"])
-    show_main_menu(message)
+    cus_bot.send_message(customer_id, texts[lang_code]["CUS_SUPPORT_MSG"], reply_markup=types.ForceReply())
+
+
+@cus_bot.message_handler(func=lambda message: message.reply_to_message \
+                                              and message.reply_to_message.text \
+                                              in [lang["CUS_SUPPORT_MSG"] for lang in texts.values()])
+@logger_decorator_msg
+def message_to_support(message: types.Message) -> None:
+    """Forward message from Customer to Support.
+
+    Args:
+        message: Message from Customer to Support.
+
+    """
+    msg = DBInterface(message)
+    lang_code = msg.get_customer_lang()
+    customer_id = msg.data_to_read.from_user.id
+    customer_username = msg.data_to_read.from_user.username
+    request_text = message.text
+    support = msg.get_support()
+    support_id = support[0]
+    support_lang_code = support[1]
+    adm_bot.send_message(support_id, texts[support_lang_code]["SUPPORT_FR_CUS_MSG"](customer_username,
+                                                                                    customer_id,
+                                                                                    request_text))
+    cus_bot.send_message(customer_id, texts[lang_code]["SUPPORT_SENT_MSG"])
 
 
 @cus_bot.message_handler(func=lambda message: message.text \
@@ -816,7 +840,9 @@ def item_deletion(call: types.CallbackQuery) -> None:
 @logger_decorator_callback
 def order_paid(call: types.CallbackQuery) -> None:
     """Process "paid" button,
-    Send payment confirmation request to Admin.  # TODO
+    Send payment capture request to PayPal
+    and send order to the Restaurant
+    if payment was captured.
 
     Args:
         call: Callback query from "paid" button with order UUID in it.
