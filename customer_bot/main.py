@@ -552,8 +552,9 @@ def check_location_confirmation(call: types.CallbackQuery) -> None:
     cus_bot.delete_message(customer_id, message_id)
     cus_bot.delete_message(customer_id, message_id - 1)
     if callback_data == texts[lang_code]["WRONG_LOCATION_BTN"]:
-        cus_bot.send_message(customer_id, texts[lang_code]["REQUEST_NEW_LOCATION_MSG"])
-        show_main_menu(callback_to_msg(c_back.data_to_read))
+        cus_bot.send_message(customer_id,
+                             texts[lang_code]["REG_LOCATION_MSG"],
+                             reply_markup=customer_menus.reg_location_menu(lang_code))
     elif callback_data == texts[lang_code]["CONFIRM_LOCATION_BTN"]:
         c_back.new_cart()
         cus_bot.send_message(customer_id,

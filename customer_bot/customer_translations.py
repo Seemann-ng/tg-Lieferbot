@@ -80,7 +80,6 @@ texts = {
         "GOING_BACK_MSG": "Zurück...",
         "LOCATION_NOT_FOUND_MSG": "Kontaktinformationen wurden nicht gefunden.\n"
                                   "Bitte setzen Sie Ihre Kontaktinformationen zurück.",
-        "REQUEST_NEW_LOCATION_MSG": "Bitte setzen Sie Ihre Kontaktinformationen zurück.",
         "CONFIRM_LOCATION_MSG": "Ist diese Lieferadresse richtig?",
         "CHOOSE_REST_TYPE_MSG": "Bitte wählen Sie einen Restauranttyp.",
         "REST_TYPE_SELECTED_MSG": lambda rest_type: f"Ausgewählter Restauranttyp:\n" \
@@ -223,7 +222,6 @@ texts = {
         "GOING_BACK_MSG": "Going back...",
         "LOCATION_NOT_FOUND_MSG": "Contact information wasn't found.\n"
                                   "Please, reset Your contact information.",
-        "REQUEST_NEW_LOCATION_MSG": "Please, reset Your contact information.",
         "CONFIRM_LOCATION_MSG": "Is this delivery address right?",
         "CHOOSE_REST_TYPE_MSG": "Please, choose a restaurant type.",
         "REST_TYPE_SELECTED_MSG": lambda rest_type: f"Selected restaurant type:\n" \
@@ -366,7 +364,6 @@ texts = {
         "GOING_BACK_MSG": "Going back...",
         "LOCATION_NOT_FOUND_MSG": "Contact information wasn't found.\n"
                                   "Please, reset Your contact information.",
-        "REQUEST_NEW_LOCATION_MSG": "Please, reset Your contact information.",
         "CONFIRM_LOCATION_MSG": "Is this delivery address right?",
         "CHOOSE_REST_TYPE_MSG": "Please, choose a restaurant type.",
         "REST_TYPE_SELECTED_MSG": lambda rest_type: f"Selected restaurant type:\n" \
