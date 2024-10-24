@@ -380,16 +380,18 @@ class Interface:
 
         """  # TODO
         order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
-        curs.execute("SELECT customer_name, customer_id FROM orders WHERE order_uuid = %s", (order_uuid, ))
+        curs.execute("SELECT customer_name, customer_id, order_comment FROM orders WHERE order_uuid = %s",
+                     (order_uuid,))
         customer_info = curs.fetchone()
         customer_name = customer_info[0]
         customer_id = customer_info[1]
+        order_comment = customer_info[2]
         curs.execute("SELECT customer_username, customer_phone_num FROM customers WHERE customer_id = %s",
-                     (customer_id, ))
+                     (customer_id,))
         customer_info = curs.fetchone()
         customer_username = customer_info[0]
         customer_phone_num = customer_info[1]
-        customer_info = (customer_name, customer_username, customer_phone_num)
+        customer_info = (customer_name, customer_username, customer_phone_num, order_comment)
         return customer_info
 
     @cursor

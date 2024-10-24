@@ -74,6 +74,7 @@ CREATE TABLE orders
     courier_fee       NUMERIC(10, 2),
     service_fee       NUMERIC(10, 2),
     total             NUMERIC(10, 2),
+    order_comment     VARCHAR,
     order_open_date   TIMESTAMP,
     order_close_date  TIMESTAMP,
     order_status      VARCHAR,
@@ -90,7 +91,8 @@ CREATE TABLE cart
     subtotal        NUMERIC(10, 2),
     service_fee     NUMERIC(10, 2),
     courier_fee     NUMERIC(10, 2),
-    total           NUMERIC(10, 2)
+    total           NUMERIC(10, 2),
+    order_comment   VARCHAR
 );
 
 

@@ -49,6 +49,7 @@ texts = {
                                           customer_name,
                                           customer_username,
                                           customer_phone,
+                                          comment,
                                           rest_name,
                                           dishes,
                                           rest_address: f"New incoming order:\n`{order_uuid}`\n" \
@@ -56,6 +57,7 @@ texts = {
                                                         f"Customer's name:\n{customer_name}\n" \
                                                         f"Customer's Telegram:\n @{customer_username}\n" \
                                                         f"Customer's phone:\n{customer_phone}\n" \
+                                                        f"Order comments:\n{comment}\n" \
                                                         f"Restaurant:\n`{rest_name}`\n" \
                                                         f"Dishes:\n{dishes}\n" \
                                                         f"Restaurant address:\n`{rest_address}`\n" \
@@ -120,6 +122,7 @@ texts = {
                                           customer_name,
                                           customer_username,
                                           customer_phone,
+                                          comment,
                                           rest_name,
                                           dishes,
                                           rest_address: f"New incoming order:\n`{order_uuid}`\n" \
@@ -127,6 +130,7 @@ texts = {
                                                         f"Customer's name:\n{customer_name}\n" \
                                                         f"Customer's Telegram:\n @{customer_username}\n" \
                                                         f"Customer's phone:\n{customer_phone}\n" \
+                                                        f"Order comments:\n{comment}\n" \
                                                         f"Restaurant:\n`{rest_name}`\n" \
                                                         f"Dishes:\n{dishes}\n" \
                                                         f"Restaurant address:\n`{rest_address}`\n" \
@@ -191,6 +195,7 @@ texts = {
                                           customer_name,
                                           customer_username,
                                           customer_phone,
+                                          comment,
                                           rest_name,
                                           dishes,
                                           rest_address: f"New incoming order:\n`{order_uuid}`\n" \
@@ -198,6 +203,7 @@ texts = {
                                                         f"Customer's name:\n{customer_name}\n" \
                                                         f"Customer's Telegram:\n @{customer_username}\n" \
                                                         f"Customer's phone:\n{customer_phone}\n" \
+                                                        f"Order comments:\n{comment}\n" \
                                                         f"Restaurant:\n`{rest_name}`\n" \
                                                         f"Dishes:\n{dishes}\n" \
                                                         f"Restaurant address:\n`{rest_address}`\n" \

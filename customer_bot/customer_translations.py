@@ -40,6 +40,7 @@ texts = {
         "CANCEL_ORDER_BTN": "🚫 BESTELLUNG STORNIEREN",
         "ADD_DISH_BTN": "✅ In den Einkaufskorb",
         "MAKE_ORDER_BTN": "💳 Bestellung bestätigen",
+        "ADD_COMMENT_BTN": "Add order comment",
         "ADD_MORE_BTN": "🛍 Weiter einkaufen",
         "DELETE_ITEM_BTN": "📤 Artikel löschen",
         "PAID_BTN": "I have paid",
@@ -123,11 +124,15 @@ texts = {
                                         f"Datum: {orders[0][5]}\n" \
                                         f"Status: {orders[0][6]}\n" \
                                         f"Order closed:{orders[0][7]}",
+        "ADD_COMMENT_MSG": "Add comment for Your order:",
+        "COMMENT_ADDED_MSG": "Your comment was added.",
+        "TO_CART_MSG": "Proceed to cart?",
         "ORDER_CREATED_MSG": lambda order_info: f"Order created:\n`{order_info[0]}`\n" \
                                                 f"Restaurant:\n{order_info[3]}\n" \
                                                 f"Dishes:\n{order_info[7]}\n" \
                                                 f"Total:\n€`{order_info[11]}`\n" \
-                                                f"Date:\n{order_info[12]}",
+                                                f"Date:\n{order_info[12]}\n" \
+                                                f"Comments:\n{order_info[14]}",
         "PAYMENT_MENU_MSG": lambda url: f"Please proceed to payment via this link: {url}",
         "PAYPAL_ORDER_CREATION_FAIL_MSG": "Something went wrong while generating payment link, please, try again later.",
         "CUS_PAYMENT_CONFIRMED_MSG": lambda order_uuid: f"Payment for order\n" \
@@ -138,12 +143,14 @@ texts = {
                                                         f"Order\n`{order_uuid}`.",
         "ORDER_CLOSED_MSG": lambda order_uuid: f"Order closed:\n`{order_uuid}`",
         "CANCEL_MSG": lambda order_uuid: f"Order cancelled\n`{order_uuid}`",
-        "REST_NEW_ORDER_MSG": lambda order_uuid, dishes, subtotal: f"New incoming order\n" \
-                                                                   f"`{order_uuid}`\n" \
-                                                                   f"Dishes:\n" \
-                                                                   f"{dishes}\n" \
-                                                                   f"To be paid:\n" \
-                                                                   f"`{subtotal}`",
+        "REST_NEW_ORDER_MSG": lambda order_uuid, dishes, subtotal, comment: f"New incoming order\n" \
+                                                                            f"`{order_uuid}`\n" \
+                                                                            f"Dishes:\n" \
+                                                                            f"{dishes}\n" \
+                                                                            f"To be paid:\n" \
+                                                                            f"`{subtotal}`\n" \
+                                                                            f"Comments:\n" \
+                                                                            f"{comment}"
     },
     "en_US": {
         # Localization variables.
@@ -181,6 +188,7 @@ texts = {
         "CANCEL_ORDER_BTN": "🚫 CANCEL ORDER",
         "ADD_DISH_BTN": "✅ Add to cart",
         "MAKE_ORDER_BTN": "💳 Confirm order",
+        "ADD_COMMENT_BTN": "Add order comment",
         "ADD_MORE_BTN": "🛍 Continue shopping",
         "DELETE_ITEM_BTN": "📤 Delete item",
         "PAY_BTN": "Payment",
@@ -265,11 +273,15 @@ texts = {
                                         f"Date: {orders[0][5]}\n" \
                                         f"Status: {orders[0][6]}\n" \
                                         f"Order closed:{orders[0][7]}",
+        "ADD_COMMENT_MSG": "Add comment for Your order:",
+        "COMMENT_ADDED_MSG": "Your comment was added.",
+        "TO_CART_MSG": "Proceed to cart?",
         "ORDER_CREATED_MSG": lambda order_info: f"Order created:\n`{order_info[0]}`\n" \
                                                 f"Restaurant:\n{order_info[3]}\n" \
                                                 f"Dishes:\n{order_info[7]}\n" \
                                                 f"Total:\n€`{order_info[11]}`\n" \
-                                                f"Date:\n{order_info[12]}",
+                                                f"Date:\n{order_info[12]}\n" \
+                                                f"Comments:\n{order_info[14]}",
         "PAYMENT_MENU_MSG": lambda url: f"Please proceed to payment via this link: {url}",
         "PAYPAL_ORDER_CREATION_FAIL_MSG": "Something went wrong while generating payment link, please, try again later.",
         "CUS_PAYMENT_CONFIRMED_MSG": lambda order_uuid: f"Payment for order\n" \
@@ -280,12 +292,14 @@ texts = {
                                                         f"Order №\n`{order_uuid}`.",
         "ORDER_CLOSED_MSG": lambda order_uuid: f"Order closed:\n`{order_uuid}`",
         "CANCEL_MSG": lambda order_uuid: f"Order cancelled\n`{order_uuid}`",
-        "REST_NEW_ORDER_MSG": lambda order_uuid, dishes, subtotal: f"New incoming order\n" \
-                                                                   f"`{order_uuid}`\n" \
-                                                                   f"Dishes:\n" \
-                                                                   f"{dishes}\n" \
-                                                                   f"To be paid:\n" \
-                                                                   f"`{subtotal}`",
+        "REST_NEW_ORDER_MSG": lambda order_uuid, dishes, subtotal, comment: f"New incoming order\n" \
+                                                                            f"`{order_uuid}`\n" \
+                                                                            f"Dishes:\n" \
+                                                                            f"{dishes}\n" \
+                                                                            f"To be paid:\n" \
+                                                                            f"`{subtotal}`\n" \
+                                                                            f"Comments:\n" \
+                                                                            f"{comment}"
     },
     "ru_RU": {  # TODO Translate
         # Localization variables.
@@ -323,6 +337,7 @@ texts = {
         "CANCEL_ORDER_BTN": "🚫 CANCEL ORDER",
         "ADD_DISH_BTN": "✅ Add to cart",
         "MAKE_ORDER_BTN": "💳 Confirm order",
+        "ADD_COMMENT_BTN": "Add order comment",
         "ADD_MORE_BTN": "🛍 Continue shopping",
         "DELETE_ITEM_BTN": "📤 Delete item",
         "PAY_BTN": "Payment",
@@ -407,11 +422,15 @@ texts = {
                                         f"Date: {orders[0][5]}\n" \
                                         f"Status: {orders[0][6]}\n" \
                                         f"Order :{orders[0][7]}",
+        "ADD_COMMENT_MSG": "Add comment for Your order:",
+        "COMMENT_ADDED_MSG": "Your comment was added.",
+        "TO_CART_MSG": "Proceed to cart?",
         "ORDER_CREATED_MSG": lambda order_info: f"Order created:\n`{order_info[0]}`\n" \
                                                 f"Restaurant:\n{order_info[3]}\n" \
                                                 f"Dishes:\n{order_info[7]}\n" \
                                                 f"Total:\n€`{order_info[11]}`\n" \
-                                                f"Date:\n{order_info[12]}",
+                                                f"Date:\n{order_info[12]}\n" \
+                                                f"Comments:\n{order_info[14]}",
         "PAYMENT_MENU_MSG": lambda url: f"Please proceed to payment via this link: {url}",
         "PAYPAL_ORDER_CREATION_FAIL_MSG": "Something went wrong while generating payment link, please, try again later.",
         "CUS_PAYMENT_CONFIRMED_MSG": lambda order_uuid: f"Payment for order\n" \
@@ -422,11 +441,13 @@ texts = {
                                                         f"Order №\n`{order_uuid}`.",
         "ORDER_CLOSED_MSG": lambda order_uuid: f"Order closed:\n`{order_uuid}`",
         "CANCEL_MSG": lambda order_uuid: f"Order cancelled\n`{order_uuid}`",
-        "REST_NEW_ORDER_MSG": lambda order_uuid, dishes, subtotal: f"New incoming order\n" \
-                                                                   f"`{order_uuid}`\n" \
-                                                                   f"Dishes:\n" \
-                                                                   f"{dishes}\n" \
-                                                                   f"To be paid:\n" \
-                                                                   f"`{subtotal}`",
+        "REST_NEW_ORDER_MSG": lambda order_uuid, dishes, subtotal, comment: f"New incoming order\n" \
+                                                                            f"`{order_uuid}`\n" \
+                                                                            f"Dishes:\n" \
+                                                                            f"{dishes}\n" \
+                                                                            f"To be paid:\n" \
+                                                                            f"`{subtotal}`\n" \
+                                                                            f"Comments:\n" \
+                                                                            f"{comment}",
     }
 }

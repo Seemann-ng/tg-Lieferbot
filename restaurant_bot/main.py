@@ -439,6 +439,7 @@ def order_accepted(call: types.CallbackQuery) -> None:
     customer_name = customer_info[0]
     customer_username = customer_info[1]
     customer_phone = customer_info[2]
+    order_comment = customer_info[3]
     c_back.order_accepted()
     courier_fee = c_back.get_courier_fee()
     rest_location = c_back.get_rest_location()
@@ -460,6 +461,7 @@ def order_accepted(call: types.CallbackQuery) -> None:
                                                                                 customer_name,
                                                                                 customer_username,
                                                                                 customer_phone,
+                                                                                order_comment,
                                                                                 rest_name,
                                                                                 dishes,
                                                                                 rest_address))

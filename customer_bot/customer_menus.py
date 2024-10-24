@@ -288,12 +288,31 @@ def cart_menu(lang_code: str) -> types.InlineKeyboardMarkup:
     """
     pay_button = types.InlineKeyboardButton(text=texts[lang_code]["MAKE_ORDER_BTN"],
                                             callback_data=texts[lang_code]["MAKE_ORDER_BTN"])
+    add_comment_button = types.InlineKeyboardButton(text=texts[lang_code]["ADD_COMMENT_BTN"],
+                                                    callback_data=texts[lang_code]["ADD_COMMENT_BTN"])
     add_more_button = types.InlineKeyboardButton(text=texts[lang_code]["ADD_MORE_BTN"],
                                                  callback_data=texts[lang_code]["ADD_MORE_BTN"])
     delete_item_button = types.InlineKeyboardButton(text=texts[lang_code]["DELETE_ITEM_BTN"],
                                                     callback_data=texts[lang_code]["DELETE_ITEM_BTN"])
     menu = types.InlineKeyboardMarkup(row_width=1)
-    menu.add(pay_button, add_more_button, delete_item_button, cancel_order_button(lang_code))
+    menu.add(pay_button, add_comment_button, add_more_button,
+             delete_item_button, cancel_order_button(lang_code))
+    return menu
+
+
+# Comment added menu.
+def comment_menu(lang_code: str) -> types.InlineKeyboardMarkup:
+    """Compose "Comment added" menu in Customer's chosen language.
+
+    Args:
+        lang_code: Language code of the chosen language.
+
+    Returns:
+        "Comment added" menu in required language.
+
+    """
+    menu = types.InlineKeyboardMarkup(row_width=1)
+    menu.add(cart_button(lang_code))
     return menu
 
 

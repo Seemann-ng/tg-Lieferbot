@@ -799,6 +799,9 @@ def cart_actions(call: types.CallbackQuery) -> None:
         c_back.data_to_read.data = c_back.get_from_cart("restaurant_uuid")
         c_back.data_to_read.message.text = texts[lang_code]["ADD_MORE_BTN"]
         restaurant_chosen(c_back.data_to_read)
+    elif c_back.data_to_read.data == texts[lang_code]["ADD_COMMENT_BTN"]:
+        cus_bot.delete_message(customer_id, message_id)
+        cus_bot.send_message(customer_id, texts[lang_code]["ADD_COMMENT_MSG"], reply_markup=types.ForceReply())
     elif c_back.data_to_read.data == texts[lang_code]["MAKE_ORDER_BTN"]:
         order_info = c_back.order_creation()
         if paypal_order_info := paypal.pp_order_creation(order_info[0]):
@@ -811,6 +814,42 @@ def cart_actions(call: types.CallbackQuery) -> None:
                                  reply_markup=customer_menus.payment_menu(lang_code, order_info[0]))
         else:
             cus_bot.send_message(customer_id, texts[lang_code]["PAYPAL_ORDER_CREATION_FAIL_MSG"])
+
+
+@cus_bot.message_handler(func=lambda message: message.reply_to_message \
+                                              and message.reply_to_message.text \
+                                              in [lang["ADD_COMMENT_MSG"] for lang in texts.values()])
+@logger_decorator_msg
+def add_comment_menu(message: types.Message) -> None:
+    """Add comment for order.
+
+    Args:
+        message: Message with comment.
+
+    """
+    msg = DBInterface(message)
+    lang_code = msg.get_customer_lang()
+    customer_id = msg.data_to_read.from_user.id
+    customer_message_id = msg.data_to_read.id
+    bot_message_id = msg.data_to_read.reply_to_message.id
+    msg.data_to_read.data = msg.data_to_read.text
+    msg.add_to_cart("order_comment")
+    cus_bot.delete_message(customer_id, customer_message_id)
+    cus_bot.delete_message(customer_id, bot_message_id)
+    cus_bot.send_message(customer_id, texts[lang_code]["COMMENT_ADDED_MSG"])
+    cus_bot.send_message(customer_id, texts[lang_code]["TO_CART_MSG"], reply_markup=customer_menus.comment_menu(lang_code))
+
+
+@cus_bot.callback_query_handler(func=lambda call: call.data in [lang["CART_BTN"] for lang in texts.values()])
+@logger_decorator_callback
+def return_to_cart_after_comment(call: types.CallbackQuery) -> None:
+    """Return Customer to cart menu after comment addition.
+
+    Args:
+        call: Callback query from Customer.
+
+    """
+    dish_chosen(call)
 
 
 @cus_bot.callback_query_handler(func=lambda call: call.message.text \
@@ -858,12 +897,16 @@ def order_paid(call: types.CallbackQuery) -> None:
     restaurant_uuid = c_back.get_order_info(order_uuid, "restaurant_uuid")
     dishes = c_back.get_order_info(order_uuid, "dishes")
     subtotal = c_back.get_order_info(order_uuid, "dishes_subtotal")
+    order_comments = c_back.get_order_info(order_uuid, "order_comment")
     rest_lang_code = c_back.get_restaurant_lang(restaurant_uuid)
     payment_captured = paypal.pp_capture_order(order_uuid)
     if payment_captured:
         c_back.update_order(order_uuid, "order_status", "Payment confirmed")
         rest_bot.send_message(restaurant_id,
-                              texts[rest_lang_code]["REST_NEW_ORDER_MSG"](order_uuid, dishes, subtotal),
+                              texts[rest_lang_code]["REST_NEW_ORDER_MSG"](order_uuid,
+                                                                          dishes,
+                                                                          subtotal,
+                                                                          order_comments),
                               reply_markup=customer_menus.rest_accept_order_menu(rest_lang_code, order_uuid))
         cus_bot.edit_message_text(texts[lang_code]["CUS_PAYMENT_CONFIRMED_MSG"](order_uuid),
                                   customer_id,
@@ -871,7 +914,7 @@ def order_paid(call: types.CallbackQuery) -> None:
         c_back.delete_cart()
         show_main_menu(callback_to_msg(c_back.data_to_read))
     else:
-        cus_bot.send_message(customer_id, texts[lang_code]["WAIT_FOR_CONFIRMATION_MSG"](order_uuid))    #
+        cus_bot.send_message(customer_id, texts[lang_code]["WAIT_FOR_CONFIRMATION_MSG"](order_uuid))
 
 
 @cus_bot.callback_query_handler(func=lambda call: "order_closed" in call.data)
