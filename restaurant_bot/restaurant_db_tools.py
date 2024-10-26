@@ -253,10 +253,9 @@ class Interface:
                      "WHERE order_uuid = %s",
                      (order_uuid, ))
 
-    @staticmethod
     @cursor
     @logger_decorator
-    def get_available_couriers(curs: psycopg2.extensions.cursor) -> List[Tuple[Any, ...]]:
+    def get_available_couriers(self, curs: psycopg2.extensions.cursor) -> List[Tuple[Any, ...]]:
         """
 
         Args:
@@ -265,8 +264,20 @@ class Interface:
         Returns:
 
         """  # TODO
-        curs.execute("SELECT courier_id, lang_code FROM couriers WHERE courier_status = true AND is_occupied = false")
+        curs.execute("SELECT courier_id, lang_code, courier_type FROM couriers WHERE courier_status = true AND is_occupied = false")
         couriers = curs.fetchall()
+        curs.execute(
+            "SELECT delivery_distance FROM orders WHERE order_uuid = %s",
+            (self.data_to_read.data.split(maxsplit=1)[-1],)
+        )
+        delivery_distances = float(curs.fetchone()[0])
+        for courier in couriers:
+            if courier[2] == "0" and delivery_distances >= 3:
+                couriers.remove(courier)
+            if courier[2] == "1" and delivery_distances >= 7:
+                couriers.remove(courier)
+            if courier[2] == "2" and delivery_distances >= 15:
+                couriers.remove(courier)
         return couriers if couriers else []
 
     @cursor

@@ -470,8 +470,8 @@ class Interface:
         order_creation_datetime = datetime.datetime.now()
         curs.execute("INSERT INTO orders (order_uuid, restaurant_uuid, restaurant_id, restaurant_name, "
                      "customer_id, customer_name, delivery_location, dishes, dishes_subtotal, "
-                     "courier_fee, service_fee, total, order_open_date, order_status, order_comment) "
-                     "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                     "courier_fee, service_fee, total, order_open_date, order_status, order_comment, delivery_distance) "
+                     "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                      (order_uuid,
                       rest_uuid,
                       rest_id,
@@ -486,7 +486,8 @@ class Interface:
                       total,
                       order_creation_datetime,
                       "Created",
-                      order_comment))
+                      order_comment,
+                      self.get_delivery_distance()))
         order_info = [order_uuid,
                       rest_uuid,
                       rest_id,
