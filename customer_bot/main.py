@@ -442,7 +442,12 @@ def my_orders(message: types.Message) -> None:
         while orders:
             cus_bot.send_message(
                 msg.data_to_read.from_user.id,
-                texts[msg.get_customer_lang()]["MY_ORDERS_MSG"](orders)
+                texts[msg.get_customer_lang()]["MY_ORDERS_MSG"](
+                    orders,
+                    texts[msg.get_customer_lang()]["STATUS_CODES"][
+                        orders[0][6]
+                    ]
+                )
             )
             orders.pop(0)
         show_main_menu(msg.data_to_read)

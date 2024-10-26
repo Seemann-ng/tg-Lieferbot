@@ -113,14 +113,26 @@ texts = {
         "CART_ACTIONS_MSG": "Aktionen:",
         "DELETE_ITEM_MSG": "Zu löschende Element auswählen",
         "MY_ORDERS_MSG": lambda
-            orders: f"Bestellnummer:\n`{orders[0][0]}\n`" \
+            orders,
+            status: f"Bestellnummer:\n`{orders[0][0]}\n`" \
                     f"von: {orders[0][1]}\n" \
                     f"Kurier: {orders[0][2]}\n" \
                     f"Gericht(e): {orders[0][3]}\n" \
                     f"Gesamtkosten: €`{orders[0][4]}`\n" \
                     f"Datum: {orders[0][5]}\n" \
-                    f"Status: {orders[0][6]}\n" \
+                    f"Status: {status}\n" \
                     f"Order closed:{orders[0][7]}",
+        "STATUS_CODES": {
+            "-1": "Cancelled",
+            "0": "Closed",
+            "1": "Created",
+            "2": "Paid",
+            "3": "Accepted by the Restaurant, looking for a Courier",
+            "4": "Preparing, Courier found",
+            "5": "Ready, handled over to a Courier",
+            "6": "In delivery",
+            "7": "Delivered"
+        },
         "ADD_COMMENT_MSG": "Add comment for Your order:",
         "COMMENT_ADDED_MSG": "Your comment was added.",
         "TO_CART_MSG": "Proceed to cart?",
@@ -271,14 +283,26 @@ texts = {
         "CART_ACTIONS_MSG": "Actions:",
         "DELETE_ITEM_MSG": "Choose item to delete",
         "MY_ORDERS_MSG": lambda
-            orders: f"Order Number:\n`{orders[0][0]}`\n" \
+            orders,
+            status: f"Order Number:\n`{orders[0][0]}`\n" \
                     f"from: {orders[0][1]}\n" \
                     f"Courier: {orders[0][2]}\n" \
                     f"Dish(es): {orders[0][3]}\n" \
                     f"Total: €{orders[0][4]}\n" \
                     f"Date: {orders[0][5]}\n" \
-                    f"Status: {orders[0][6]}\n" \
+                    f"Status: {status}\n" \
                     f"Order closed:{orders[0][7]}",
+        "STATUS_CODES": {
+            "-1": "Cancelled",
+            "0": "Closed",
+            "1": "Created",
+            "2": "Paid",
+            "3": "Accepted by the Restaurant, looking for a Courier",
+            "4": "Preparing, Courier found",
+            "5": "Ready, handled over to a Courier",
+            "6": "In delivery",
+            "7": "Delivered"
+        },
         "ADD_COMMENT_MSG": "Add comment for Your order:",
         "COMMENT_ADDED_MSG": "Your comment was added.",
         "TO_CART_MSG": "Proceed to cart?",
@@ -429,14 +453,26 @@ texts = {
         "CART_ACTIONS_MSG": "Actions:",
         "DELETE_ITEM_MSG": "Choose item to delete",
         "MY_ORDERS_MSG": lambda
-            orders: f"Order Number:\n`{orders[0][0]}`\n" \
+            orders,
+            status: f"Order Number:\n`{orders[0][0]}`\n" \
                     f"from: {orders[0][1]}\n" \
                     f"Courier: {orders[0][2]}\n" \
                     f"Dish(es): {orders[0][3]}\n" \
                     f"Total: €`{orders[0][4]}`\n" \
                     f"Date: {orders[0][5]}\n" \
-                    f"Status: {orders[0][6]}\n" \
+                    f"Status: {status}\n" \
                     f"Order :{orders[0][7]}",
+        "STATUS_CODES": {
+            "-1": "Cancelled",
+            "0": "Closed",
+            "1": "Created",
+            "2": "Paid",
+            "3": "Accepted by the Restaurant, looking for a Courier",
+            "4": "Preparing, Courier found",
+            "5": "Ready, handled over to a Courier",
+            "6": "In delivery",
+            "7": "Delivered"
+        },
         "ADD_COMMENT_MSG": "Add comment for Your order:",
         "COMMENT_ADDED_MSG": "Your comment was added.",
         "TO_CART_MSG": "Proceed to cart?",
