@@ -928,6 +928,7 @@ def order_paid(call: types.CallbackQuery) -> None:
         cus_bot.edit_message_text(texts[lang_code]["CUS_PAYMENT_CONFIRMED_MSG"](order_uuid),
                                   customer_id,
                                   message_id)
+        paypal.pp_rest_payout(order_uuid)
         c_back.delete_cart()
         show_main_menu(callback_to_msg(c_back.data_to_read))
     else:

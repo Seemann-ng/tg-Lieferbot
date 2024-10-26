@@ -17,6 +17,7 @@ pp_password = env.str("PP_PASSWORD")
 brand_name = env.str("BRAND_NAME", default="Shop")
 return_link = env.str("RETURN_LINK", default="https://google.com/")
 
+
 @cursor
 @logger_decorator
 def pp_order_creation(order_uuid: str, curs: psycopg2.extensions.cursor) -> Dict[str, str]:
@@ -68,6 +69,7 @@ def pp_order_creation(order_uuid: str, curs: psycopg2.extensions.cursor) -> Dict
         logger.error(f"Failed to create paypal order: {response.text}")
         return {}
 
+
 @cursor
 @logger_decorator
 def pp_capture_order(order_uuid: str, curs: psycopg2.extensions.cursor) -> bool:
@@ -89,3 +91,49 @@ def pp_capture_order(order_uuid: str, curs: psycopg2.extensions.cursor) -> bool:
     data = {}
     response = requests.post(url, json=data, auth=(pp_username, pp_password))
     return response.status_code == 201
+
+
+@cursor
+@logger_decorator
+def pp_rest_payout(order_uuid: str, curs: psycopg2.extensions.cursor) -> None:
+    """
+
+    Args:
+        order_uuid:
+        curs:
+
+    Returns:
+
+    """  # TODO
+    curs.execute(
+        "SELECT restaurant_uuid, dishes_subtotal FROM orders WHERE order_uuid = %s",
+        (order_uuid,)
+    )
+    payment_info = curs.fetchone()
+    rest_uuid = payment_info[0]
+    to_be_paid = str(payment_info[1])
+    curs.execute(
+        "SELECT paypal_id FROM restaurants WHERE restaurant_uuid = %s",
+        (rest_uuid,)
+    )
+    rest_pp_id = curs.fetchone()[0]
+    if pp_mode == "deployment":
+        url = f"https://api-m.paypal.com/v1/payments/payouts"
+    else:
+        url = f"https://api-m.sandbox.paypal.com/v1/payments/payouts"
+    data = {
+        "items": [
+            {
+                "receiver": rest_pp_id,
+                "amount": {
+                    "currency": "EUR",
+                    "value": to_be_paid
+                },
+                "purpose": "GOODS"
+            }
+        ],
+        "sender_batch_header": {
+            "recipient_type": "PAYPAL_ID"
+        }
+    }
+    response = requests.post(url, json=data, auth=(pp_username, pp_password))
