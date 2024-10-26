@@ -1239,7 +1239,7 @@ def order_paid(call: types.CallbackQuery) -> None:
         c_back.update_order(
             c_back.data_to_read.data.split(maxsplit=1)[1],
             "order_status",
-            "Payment confirmed"
+            "2"
         )
         rest_bot.send_message(
             c_back.get_order_info(
