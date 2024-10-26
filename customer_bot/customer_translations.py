@@ -1,16 +1,6 @@
-from environs import Env
-
-env = Env()
-env.read_env()
-
 texts = {
     "de_DE": {  # TODO Translate
         # Localization variables.
-        "MAX_PHONE_LENGTH": 11,
-        "COURIER_FEE_BASE": env.float("COURIER_FEE_BASE", default=2.25),
-        "COURIER_FEE_RATE": env.float("COURIER_FEE_RATE", default=0.08),
-        "SERVICE_FEE_BASE": env.float("SERVICE_FEE_BASE", default=1.75),
-        "SERVICE_FEE_RATE": env.float("SERVICE_FEE_RATE", default=0.05),
         "AGREEMENT_MENU_PLACEHOLDER": "📑 Vereinbarung",
         # Menu buttons.
         "SHOW_AGREEMENT_BTN": "🔍📑 Kundenvereinbarung anzeigen",
@@ -154,11 +144,6 @@ texts = {
     },
     "en_US": {
         # Localization variables.
-        "MAX_PHONE_LENGTH": 11,
-        "COURIER_FEE_BASE": env.float("COURIER_FEE_BASE", default=2.25),
-        "COURIER_FEE_RATE": env.float("COURIER_FEE_RATE", default=0.08),
-        "SERVICE_FEE_BASE": env.float("SERVICE_FEE_BASE", default=1.75),
-        "SERVICE_FEE_RATE": env.float("SERVICE_FEE_RATE", default=0.05),
         "AGREEMENT_MENU_PLACEHOLDER": "📑 Agreement",
         # Menu buttons.
         "SHOW_AGREEMENT_BTN": "🔍📑 Show Customer Agreement",
@@ -303,11 +288,6 @@ texts = {
     },
     "ru_RU": {  # TODO Translate
         # Localization variables.
-        "MAX_PHONE_LENGTH": 11,
-        "COURIER_FEE_BASE": env.float("COURIER_FEE_BASE", default=2.25),
-        "COURIER_FEE_RATE": env.float("COURIER_FEE_RATE", default=0.08),
-        "SERVICE_FEE_BASE": env.float("SERVICE_FEE_BASE", default=1.75),
-        "SERVICE_FEE_RATE": env.float("SERVICE_FEE_RATE", default=0.05),
         "AGREEMENT_MENU_PLACEHOLDER": "📑 Agreement",
         # Menu buttons.
         "SHOW_AGREEMENT_BTN": "🔍📑 Show Customer Agreement",

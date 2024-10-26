@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Tuple
 import psycopg2
 import telebot.types as types
 from environs import Env
+from geopy.distance import geodesic
 
 from tools.cursor_tool import cursor
 from tools.logger_tool import logger, logger_decorator
@@ -287,6 +288,43 @@ class Interface:
         curs.execute("SELECT " + column_name + " FROM cart WHERE customer_id = %s", (customer_id,))
         value = curs.fetchone()
         return value[0] if value else ""
+
+    @cursor
+    @logger_decorator
+    def get_delivery_distance(self, curs: psycopg2.extensions.cursor) -> float:
+        """Calculate delivery distance based on data in database.
+
+        Args:
+            curs: Cursor object from psycopg2 module.
+
+        Returns:
+            Delivery distance in kilometers with two digits precision.
+
+        """
+        customer_location_dict = self.check_if_location()
+        customer_location = (
+            float(customer_location_dict["lat"]),
+            float(customer_location_dict["lon"])
+        )
+        curs.execute(
+            "SELECT restaurant_uuid FROM cart WHERE customer_id = %s",
+            (self.data_to_read.from_user.id,)
+        )
+        rest_uuid = curs.fetchone()
+        curs.execute(
+            "SELECT location FROM restaurants WHERE restaurant_uuid = %s",
+            (rest_uuid,)
+        )
+        rest_location_list = curs.fetchone()[0]
+        rest_location = (
+            float(rest_location_list[0]),
+            float(rest_location_list[1])
+        )
+        delivery_distance = round(
+            float(geodesic(rest_location, customer_location).km),
+            2
+        )
+        return delivery_distance
 
     @cursor
     @logger_decorator

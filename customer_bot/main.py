@@ -1,4 +1,5 @@
 import telebot.types as types
+from environs import Env
 from telebot.apihelper import ApiTelegramException
 
 import customer_menus
@@ -7,6 +8,19 @@ from customer_translations import texts
 from customer_db_tools import Interface as DBInterface
 from tools.bots_initialization import adm_bot, cus_bot, rest_bot
 from tools.logger_tool import logger, logger_decorator_callback, logger_decorator_msg
+
+env = Env()
+env.read_env()
+
+COURIER_FEE_BASE = env.float("COURIER_FEE_BASE", default=2.25)
+COURIER_FEE_RATE = env.float("COURIER_FEE_RATE", default=0.08)
+COURIER_FEE_DISTANCE_RATE = env.float(
+    "COURIER_FEE_DISTANCE_RATE",
+    default=0.25
+)
+SERVICE_FEE_BASE = env.float("SERVICE_FEE_BASE", default=1.75)
+SERVICE_FEE_RATE = env.float("SERVICE_FEE_RATE", default=0.05)
+MAX_PHONE_LENGTH = 11
 
 
 # Auxiliary functions.
@@ -41,9 +55,8 @@ def phone_from_msg(message: types.Message) -> str | None:
 
     """
     msg = DBInterface(message)
-    lang_code = msg.get_customer_lang()
     phone_number = "".join([symbol for symbol in str(msg.data_to_read.text) if symbol.isdigit()])
-    if len(phone_number) not in range(2, texts[lang_code]["MAX_PHONE_LENGTH"] + 1):
+    if len(phone_number) not in range(2, MAX_PHONE_LENGTH + 1):
         return None
     phone_number = "+" + phone_number
     msg.update_phone_number(phone_number)
@@ -94,7 +107,6 @@ def prices_calc(call: types.CallbackQuery) -> None:
 
     """
     c_back = DBInterface(call)
-    lang_code = c_back.get_customer_lang()
     dishes_uuids = c_back.get_from_cart("dishes_uuids")
     subtotal = 0
     for dish in dishes_uuids:
@@ -104,11 +116,16 @@ def prices_calc(call: types.CallbackQuery) -> None:
     c_back.data_to_read.data = subtotal
     c_back.add_to_cart("subtotal")
     if subtotal > 0:
-        courier_fee = round(texts[lang_code]["COURIER_FEE_BASE"]
-                            + float(subtotal)*texts[lang_code]["COURIER_FEE_RATE"],
-                            2)
-        service_fee = round(texts[lang_code]["SERVICE_FEE_BASE"]
-                            + float(subtotal)*texts[lang_code]["SERVICE_FEE_RATE"],
+        courier_fee = round(
+            (
+                    COURIER_FEE_BASE
+                    + float(subtotal)*COURIER_FEE_RATE
+                    + c_back.get_delivery_distance()*COURIER_FEE_DISTANCE_RATE
+            ),
+            2
+        )
+        service_fee = round(SERVICE_FEE_BASE
+                            + float(subtotal)*SERVICE_FEE_RATE,
                             2)
     else:
         courier_fee = round(0, 2)
