@@ -84,6 +84,57 @@ def lang_set(call: types.CallbackQuery) -> None:
     courier_bot.send_message(courier_id, texts[c_back.data_to_read.data]["LANG_SELECTED_MSG"])
 
 
+@courier_bot.message_handler(commands=["balance"])
+@logger_decorator_msg
+def balance_command(message: types.Message) -> None:
+    """Display Courier's salary balance.
+
+    Args:
+        message: /balance command message.
+
+    """
+    msg = DBInterface(message)
+    courier_bot.send_message(
+        msg.courier_id,
+        texts[msg.get_courier_lang()]["BALANCE_MSG"](msg.get_salary_balance())
+    )
+
+
+@courier_bot.message_handler(commands=["change_transport"])
+@logger_decorator_msg
+def select_transport_command(message: types.Message) -> None:
+    """Display transport choice menu.
+
+    Args:
+        message: /change_transport command message.
+
+    """
+    msg = DBInterface(message)
+    courier_bot.send_message(
+        msg.courier_id,
+        texts[msg.get_courier_lang()]["CHANGE_TRANSPORT_MENU"],
+        reply_markup=courier_menus.transport_menu(msg.get_courier_lang())
+    )
+
+
+@courier_bot.callback_query_handler(func=lambda call: "type" in call.data)
+@logger_decorator_callback
+def change_transport(call: types.CallbackQuery) -> None:
+    """Process Courier transport choice menu input.
+
+    Args:
+        call: Callback query with selected transport type info.
+
+    """
+    callback = DBInterface(call)
+    callback.set_courier_type()
+    courier_bot.edit_message_text(
+        texts[callback.get_courier_lang()]["TRANSPORT_SELECTED_MSG"],
+        callback.courier_id,
+        callback.data_to_read.message.id
+    )
+
+
 @courier_bot.message_handler(commands=["open_shift"])
 @logger_decorator_msg
 def open_shift_command(message: types.Message) -> None:

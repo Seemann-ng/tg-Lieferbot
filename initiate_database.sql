@@ -2,7 +2,7 @@ CREATE TABLE admins
 (
     admin_username VARCHAR,
     admin_id       INT,
-    lang_code      VARCHAR
+    lang_code      VARCHAR DEFAULT 'en_US'
 );
 
 
@@ -11,13 +11,13 @@ CREATE TABLE couriers
     courier_id         INT,
     courier_username   VARCHAR,
     courier_legal_name VARCHAR,
-    courier_type       VARCHAR,
-    courier_status     BOOLEAN,
-    is_occupied        BOOLEAN,
-    courier_rating     NUMERIC(3, 2),
+    courier_type       VARCHAR       DEFAULT '0',
+    courier_status     BOOLEAN       DEFAULT FALSE,
+    is_occupied        BOOLEAN       DEFAULT FALSE,
+    courier_rating     NUMERIC(3, 2) DEFAULT 5.00,
     courier_phone_num  VARCHAR,
-    lang_code          VARCHAR,
-    account_balance    NUMERIC(9, 2)
+    lang_code          VARCHAR       DEFAULT 'en_US',
+    account_balance    NUMERIC(9, 2) DEFAULT 0.00
 );
 
 
@@ -27,8 +27,8 @@ CREATE TABLE customers
     customer_username  VARCHAR,
     customer_name      VARCHAR,
     customer_location  NUMERIC(9, 6)[],
-    customer_phone_num VARCHAR,
-    lang_code          VARCHAR
+    customer_phone_num VARCHAR DEFAULT '',
+    lang_code          VARCHAR DEFAULT 'en_US'
 );
 
 
@@ -39,10 +39,10 @@ CREATE TABLE restaurants
     restaurant_name    VARCHAR,
     restaurant_type    VARCHAR,
     restaurant_is_open BOOLEAN,
-    lang_code          VARCHAR,
+    lang_code          VARCHAR       DEFAULT 'en_US',
     address            VARCHAR,
     location           NUMERIC(9, 6)[],
-    account_balance    NUMERIC(9, 2)
+    account_balance    NUMERIC(9, 2) DEFAULT 0.00
 );
 
 
@@ -53,8 +53,8 @@ CREATE TABLE dishes
     category          VARCHAR,
     dish_name         VARCHAR,
     dish_description  VARCHAR,
-    dish_price        NUMERIC(6, 2),
-    dish_is_available BOOLEAN
+    dish_price        NUMERIC(6, 2) DEFAULT 0.00,
+    dish_is_available BOOLEAN       DEFAULT TRUE
 );
 
 
@@ -64,7 +64,7 @@ CREATE TABLE orders
     restaurant_uuid   uuid,
     restaurant_id     INT,
     restaurant_name   VARCHAR,
-    courier_id        INT,
+    courier_id        INT     DEFAULT -1,
     courier_name      VARCHAR,
     customer_id       INT,
     customer_name     VARCHAR,
@@ -74,7 +74,7 @@ CREATE TABLE orders
     courier_fee       NUMERIC(10, 2),
     service_fee       NUMERIC(10, 2),
     total             NUMERIC(10, 2),
-    order_comment     VARCHAR,
+    order_comment     VARCHAR DEFAULT '',
     order_open_date   TIMESTAMP,
     order_close_date  TIMESTAMP,
     order_status      VARCHAR,
@@ -92,7 +92,7 @@ CREATE TABLE cart
     service_fee     NUMERIC(10, 2),
     courier_fee     NUMERIC(10, 2),
     total           NUMERIC(10, 2),
-    order_comment   VARCHAR
+    order_comment   VARCHAR DEFAULT ''
 );
 
 

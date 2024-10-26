@@ -432,8 +432,8 @@ class Interface:
         order_creation_datetime = datetime.datetime.now()
         curs.execute("INSERT INTO orders (order_uuid, restaurant_uuid, restaurant_id, restaurant_name, "
                      "customer_id, customer_name, delivery_location, dishes, dishes_subtotal, "
-                     "courier_fee, service_fee, total, order_open_date, order_status, order_comment, courier_id) "
-                     "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, -1)",
+                     "courier_fee, service_fee, total, order_open_date, order_status, order_comment) "
+                     "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                      (order_uuid,
                       rest_uuid,
                       rest_id,

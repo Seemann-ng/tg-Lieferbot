@@ -22,6 +22,43 @@ def lang_sel_menu(lang_code: str) -> types.InlineKeyboardMarkup:
     return menu
 
 
+# Transport selection menu.
+def transport_menu(lang_code: str) -> types.InlineKeyboardMarkup:
+    """Compose "Transport selection" menu in chosen language.
+
+    Args:
+        lang_code: Language code of the chosen language.
+
+    Returns:
+        "Transport selection" menu in required language.
+
+    """
+    menu = types.InlineKeyboardMarkup(row_width=1)
+    feet_button = types.InlineKeyboardButton(
+        text=texts[lang_code]["FEET_BTN"],
+        callback_data="type 0"
+    )
+    bicycle_button = types.InlineKeyboardButton(
+        text=texts[lang_code]["BICYCLE_BTN"],
+        callback_data="type 1"
+    )
+    motorcycle_button = types.InlineKeyboardButton(
+        text=texts[lang_code]["MOTORCYCLE_BTN"],
+        callback_data="type 2"
+    )
+    automobile_button = types.InlineKeyboardButton(
+        text=texts[lang_code]["AUTO_BTN"],
+        callback_data="type 3"
+    )
+    menu.add(
+        feet_button,
+        bicycle_button,
+        motorcycle_button,
+        automobile_button
+    )
+    return menu
+
+
 # Restaurant order ready menu.
 def rest_order_ready_menu(rest_lang: str, order_uuid: str) -> types.InlineKeyboardMarkup:
     """Compose "Order Ready" menu for Restaurant in required language.

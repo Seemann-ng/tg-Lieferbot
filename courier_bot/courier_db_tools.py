@@ -89,6 +89,46 @@ class Interface:
 
     @cursor
     @logger_decorator
+    def get_salary_balance(self, curs: psycopg2.extensions.cursor) -> float:
+        """Get Courier's salary balance from the database.
+
+        Args:
+            curs: Cursor object from psycopg2 module.
+
+        Returns:
+            Courier's salary balance.
+
+        """
+        curs.execute(
+            "SELECT account_balance FROM couriers WHERE courier_id = %s",
+            (self.courier_id,)
+        )
+        salary = float(curs.fetchone()[0])
+        return salary
+
+    @cursor
+    @logger_decorator
+    def set_courier_type(self, curs: psycopg2.extensions.cursor) -> None:
+        """Set Courier's type in the database.
+        (0 - for foot,
+        1 - for bycycle,
+        2 - for motorcycle,
+        3 - for automobile)
+
+        Args:
+            curs: Cursor object from psycopg2 module.
+
+        """
+        curs.execute(
+            "UPDATE couriers SET courier_type = %s WHERE courier_id = %s",
+            (
+                self.data_to_read.data.split(maxsplit=1)[-1],
+                self.courier_id
+            )
+        )
+
+    @cursor
+    @logger_decorator
     def open_shift(self, curs: psycopg2.extensions.cursor) -> None:
         """Make Courier available to receive orders.
 
