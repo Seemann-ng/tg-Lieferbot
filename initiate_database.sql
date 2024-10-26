@@ -39,10 +39,9 @@ CREATE TABLE restaurants
     restaurant_name    VARCHAR,
     restaurant_type    VARCHAR,
     restaurant_is_open BOOLEAN,
-    lang_code          VARCHAR       DEFAULT 'en_US',
+    lang_code          VARCHAR DEFAULT 'en_US',
     address            VARCHAR,
     location           NUMERIC(9, 6)[],
-    account_balance    NUMERIC(9, 2) DEFAULT 0.00,
     paypal_id          VARCHAR
 );
 

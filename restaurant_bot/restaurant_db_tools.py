@@ -439,11 +439,3 @@ class Interface:
         curs.execute("UPDATE orders SET order_status = 'Order ready, handled to the courier' "
                      "WHERE order_uuid = %s",
                      (order_uuid,))
-        curs.execute("SELECT account_balance FROM restaurants WHERE restaurant_tg_id = %s",
-                     (self.user_id,))
-        current_balance = float(curs.fetchone()[0])
-        curs.execute("SELECT dishes_subtotal FROM orders WHERE order_uuid = %s", (order_uuid,))
-        to_be_added = float(curs.fetchone()[0])
-        new_balance = round(current_balance + to_be_added, 2)
-        curs.execute("UPDATE restaurants SET account_balance = %s WHERE restaurant_tg_id = %s ",
-                     (new_balance, self.user_id))
