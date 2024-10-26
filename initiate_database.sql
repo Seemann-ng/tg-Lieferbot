@@ -50,7 +50,7 @@ CREATE TABLE dishes
 (
     restaurant_uuid   uuid,
     dish_uuid         uuid,
-    category          VARCHAR,
+    category          VARCHAR       DEFAULT 'No category',
     dish_name         VARCHAR,
     dish_description  VARCHAR,
     dish_price        NUMERIC(6, 2) DEFAULT 0.00,

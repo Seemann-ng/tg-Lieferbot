@@ -332,6 +332,9 @@ def set_new_price(message: types.Message) -> None:
     lang_code = msg.get_rest_lang()
     user_id = msg.user_id
     dish_uuid = message.reply_to_message.text.split()[-1]
+    msg.data_to_read.text = float(
+        msg.data_to_read.text.replace(",", ".")
+    )
     msg.edit_dish("dish_price", dish_uuid)
     rest_bot.send_message(user_id, texts[lang_code]["PRICE_SET_MSG"])
 
