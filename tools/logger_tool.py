@@ -15,7 +15,8 @@ def logger_decorator_msg(func):
     @functools.wraps(func)
     def wrapper(message: types.Message):
         logger.info(
-            f"Function {func.__name__} called by user {message.from_user.username} by message {message.text}."
+            f"Function {func.__name__} called by user "
+            f"{message.from_user.username} by message {message.text}."
         )
         result = func(message)
         logger.info(f"Function {func.__name__} executed successfully.")
@@ -27,7 +28,8 @@ def logger_decorator_callback(func):
     @functools.wraps(func)
     def wrapper(call: types.CallbackQuery):
         logger.info(
-            f"Function {func.__name__} called by user {call.from_user.username} by callback query {call.data}."
+            f"Function {func.__name__} called by user "
+            f"{call.from_user.username} by callback query {call.data}."
         )
         result = func(call)
         logger.info(f"Function {func.__name__} executed successfully.")
@@ -38,9 +40,7 @@ def logger_decorator_callback(func):
 def logger_decorator(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        logger.info(
-            f"Function {func.__name__} called."
-        )
+        logger.info(f"Function {func.__name__} called.")
         result = func(*args, **kwargs)
         logger.info(f"Function {func.__name__} executed successfully.")
         return result

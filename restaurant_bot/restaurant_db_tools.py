@@ -2,11 +2,11 @@ import uuid
 import random
 from typing import List, Tuple, Any
 
-import psycopg2
 import telebot.types as types
 from environs import Env
+from psycopg2.extensions import cursor
 
-from tools.cursor_tool import cursor
+from tools.cursor_tool import cursor as cursor_decorator
 from tools.logger_tool import logger, logger_decorator
 
 env = Env()
@@ -19,11 +19,13 @@ class Interface:
     def __init__(self, data_to_read: types.Message | types.CallbackQuery):
         self.data_to_read = data_to_read
         self.user_id = data_to_read.from_user.id
-        logger.info(f"Interface instance initialized with {type(self.data_to_read)}.")
+        logger.info(
+            f"Interface instance initialized with {type(self.data_to_read)}."
+        )
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def get_rest_lang(self, curs: psycopg2.extensions.cursor) -> str:
+    def get_rest_lang(self, curs: cursor) -> str:
         """Get code of Restaurant's chosen language.
 
         Args:
@@ -35,17 +37,18 @@ class Interface:
             otherwise default language code, set in .env.
 
         """
-        user_id = self.user_id
-        curs.execute("SELECT lang_code FROM restaurants WHERE restaurants.restaurant_tg_id = %s",
-                     (user_id,))
+        curs.execute(
+            "SELECT lang_code FROM restaurants WHERE restaurant_tg_id = %s",
+                     (self.user_id,)
+        )
         if user_lang := curs.fetchone():
             if user_lang := user_lang[0]:
                 return user_lang
         return DEF_LANG
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def rest_in_db(self, curs: psycopg2.extensions.cursor) -> bool:
+    def rest_in_db(self, curs: cursor) -> bool:
         """
 
         Args:
@@ -58,9 +61,9 @@ class Interface:
         rest_ids = curs.fetchall()
         return self.user_id in [rest[0] for rest in rest_ids]
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def get_support_id(self, curs: psycopg2.extensions.cursor) -> int:
+    def get_support_id(self, curs: cursor) -> int:
         """
 
         Args:
@@ -73,9 +76,9 @@ class Interface:
         if admin_ids := curs.fetchall():
             return random.choice(admin_ids)[0]
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def get_rest_uuid(self, curs: psycopg2.extensions.cursor) -> str:
+    def get_rest_uuid(self, curs: cursor) -> str:
         """
 
         Args:
@@ -84,15 +87,17 @@ class Interface:
         Returns:
 
         """  # TODO
-        user_id = self.user_id
-        curs.execute("SELECT restaurant_uuid FROM restaurants WHERE restaurants.restaurant_tg_id = %s",
-                     (user_id,))
+        curs.execute(
+            "SELECT restaurant_uuid FROM restaurants "
+            "WHERE restaurant_tg_id = %s",
+            (self.user_id,)
+        )
         restaurant_uuid = curs.fetchone()
         return restaurant_uuid[0]
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def set_restaurant_lang(self, curs: psycopg2.extensions.cursor) -> None:
+    def set_restaurant_lang(self, curs: cursor) -> None:
         """
         
         Args:
@@ -101,12 +106,14 @@ class Interface:
         Returns:
 
         """  # TODO
-        curs.execute("UPDATE restaurants SET lang_code = %s WHERE restaurants.restaurant_uuid = %s",
-                     (self.data_to_read.data, self.get_rest_uuid()))
+        curs.execute(
+            "UPDATE restaurants SET lang_code = %s WHERE restaurant_uuid = %s",
+            (self.data_to_read.data, self.get_rest_uuid())
+        )
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def open_shift(self, curs: psycopg2.extensions.cursor) -> None:
+    def open_shift(self, curs: cursor) -> None:
         """
         
         Args:
@@ -115,12 +122,15 @@ class Interface:
         Returns:
 
         """  # TODO
-        curs.execute("UPDATE restaurants SET restaurant_is_open = true WHERE restaurant_tg_id = %s",
-                     (self.user_id,))
+        curs.execute(
+            "UPDATE restaurants SET restaurant_is_open = true "
+            "WHERE restaurant_tg_id = %s",
+            (self.user_id,)
+        )
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def close_shift(self, curs: psycopg2.extensions.cursor) -> None:
+    def close_shift(self, curs: cursor) -> None:
         """
 
         Args:
@@ -129,12 +139,15 @@ class Interface:
         Returns:
 
         """  # TODO
-        curs.execute("UPDATE restaurants SET restaurant_is_open = false WHERE restaurant_tg_id = %s",
-                     (self.user_id,))
+        curs.execute(
+            "UPDATE restaurants SET restaurant_is_open = false "
+            "WHERE restaurant_tg_id = %s",
+            (self.user_id,)
+        )
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def set_dish_available(self, curs: psycopg2.extensions.cursor) -> None:
+    def set_dish_available(self, curs: cursor) -> None:
         """
         
         Args:
@@ -143,12 +156,14 @@ class Interface:
         Returns:
 
         """  # TODO
-        curs.execute("UPDATE dishes SET dish_is_available = true WHERE dish_uuid = %s",
-                     (self.data_to_read.data,))
+        curs.execute(
+            "UPDATE dishes SET dish_is_available = true WHERE dish_uuid = %s",
+            (self.data_to_read.data,)
+        )
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def set_dish_unavailable(self, curs: psycopg2.extensions.cursor) -> None:
+    def set_dish_unavailable(self, curs: cursor) -> None:
         """
 
         Args:
@@ -157,12 +172,14 @@ class Interface:
         Returns:
 
         """  # TODO
-        curs.execute("UPDATE dishes SET dish_is_available = false WHERE dish_uuid = %s",
-                     (self.data_to_read.data,))
+        curs.execute(
+            "UPDATE dishes SET dish_is_available = false WHERE dish_uuid = %s",
+            (self.data_to_read.data,)
+        )
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def delete_dish(self, curs: psycopg2.extensions.cursor) -> None:
+    def delete_dish(self, curs: cursor) -> None:
         """
 
         Args:
@@ -171,11 +188,14 @@ class Interface:
         Returns:
 
         """  # TODO
-        curs.execute("DELETE FROM dishes WHERE dish_uuid = %s", (self.data_to_read.data,))
+        curs.execute(
+            "DELETE FROM dishes WHERE dish_uuid = %s",
+            (self.data_to_read.data,)
+        )
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def get_dishes(self, curs: psycopg2.extensions.cursor) -> List[Tuple[Any, ...]]:
+    def get_dishes(self, curs: cursor) -> List[Tuple[Any, ...]]:
         """
         
         Args:
@@ -184,15 +204,17 @@ class Interface:
         Returns:
 
         """  # TODO
-        rest_uuid = self.get_rest_uuid()
-        curs.execute("SELECT dish_uuid, dish_name FROM dishes WHERE dishes.restaurant_uuid = %s",
-                     (rest_uuid,))
+        curs.execute(
+            "SELECT dish_uuid, dish_name FROM dishes "
+            "WHERE restaurant_uuid = %s",
+            (self.get_rest_uuid(),)
+        )
         dishes = curs.fetchall()
         return dishes
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def get_dish_name(self, curs: psycopg2.extensions.cursor) -> str | None:
+    def get_dish_name(self, curs: cursor) -> str | None:
         """
         
         Args:
@@ -201,14 +223,16 @@ class Interface:
         Returns:
 
         """  # TODO
-        curs.execute("SELECT dish_name FROM dishes WHERE dishes.dish_uuid = %s",
-                     (self.data_to_read.data,))
+        curs.execute(
+            "SELECT dish_name FROM dishes WHERE dishes.dish_uuid = %s",
+            (self.data_to_read.data,)
+        )
         if dish_name := curs.fetchone():
             return dish_name[0]
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def add_dish(self, dish_name: str, curs: psycopg2.extensions.cursor) -> None:
+    def add_dish(self, dish_name: str, curs: cursor) -> None:
         """
 
         Args:
@@ -218,12 +242,15 @@ class Interface:
         Returns:
 
         """  # TODO
-        curs.execute("INSERT INTO dishes(restaurant_uuid, dish_uuid, dish_name) VALUES (%s, %s, %s)",
-                     (self.get_rest_uuid(), str(uuid.uuid4()), dish_name))
+        curs.execute(
+            "INSERT INTO dishes(restaurant_uuid, dish_uuid, dish_name) "
+            "VALUES (%s, %s, %s)",
+            (self.get_rest_uuid(), str(uuid.uuid4()), dish_name)
+        )
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def edit_dish(self, param: str, dish_uuid: str, curs: psycopg2.extensions.cursor) -> None:  # TODO
+    def edit_dish(self, param: str, dish_uuid: str, curs: cursor) -> None:  # TODO
         """
 
         Args:
@@ -234,12 +261,14 @@ class Interface:
         Returns:
 
         """  # TODO
-        curs.execute("UPDATE dishes SET " + param + " = %s WHERE dish_uuid = %s",
-                     (self.data_to_read.text, dish_uuid))
+        curs.execute(
+            "UPDATE dishes SET " + param + " = %s WHERE dish_uuid = %s",
+            (self.data_to_read.text, dish_uuid)
+        )
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def order_accepted(self, curs: psycopg2.extensions.cursor) -> None:
+    def order_accepted(self, curs: cursor) -> None:
         """
 
         Args:
@@ -248,14 +277,14 @@ class Interface:
         Returns:
 
         """  # TODO
-        order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
-        curs.execute("UPDATE orders SET order_status = 'Accepted by res-t. Looking for courier.' "
-                     "WHERE order_uuid = %s",
-                     (order_uuid, ))
+        curs.execute(
+            "UPDATE orders SET order_status = '3' WHERE order_uuid = %s",
+            (self.data_to_read.data.split(maxsplit=1)[-1],)
+        )
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def get_available_couriers(self, curs: psycopg2.extensions.cursor) -> List[Tuple[Any, ...]]:
+    def get_available_couriers(self, curs: cursor) -> List[Tuple[Any, ...]]:
         """
 
         Args:
@@ -264,7 +293,10 @@ class Interface:
         Returns:
 
         """  # TODO
-        curs.execute("SELECT courier_id, lang_code, courier_type FROM couriers WHERE courier_status = true AND is_occupied = false")
+        curs.execute(
+            "SELECT courier_id, lang_code, courier_type FROM couriers "
+            "WHERE courier_status = true AND is_occupied = false"
+        )
         couriers = curs.fetchall()
         curs.execute(
             "SELECT delivery_distance FROM orders WHERE order_uuid = %s",
@@ -280,9 +312,9 @@ class Interface:
                 couriers.remove(courier)
         return couriers if couriers else []
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def get_customer(self, curs: psycopg2.extensions.cursor) -> Tuple[Any, ...]:
+    def get_customer(self, curs: cursor) -> Tuple[Any, ...]:
         """
 
         Args:
@@ -291,17 +323,22 @@ class Interface:
         Returns:
 
         """  # TODO
-        order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
-        curs.execute("SELECT customer_id FROM orders WHERE order_uuid = %s", (order_uuid, ))
+        curs.execute(
+            "SELECT customer_id FROM orders WHERE order_uuid = %s",
+            (self.data_to_read.data.split(maxsplit=1)[-1],)
+        )
         customer_id = curs.fetchone()[0]
-        curs.execute("SELECT lang_code FROM customers WHERE customer_id = %s", (customer_id, ))
+        curs.execute(
+            "SELECT lang_code FROM customers WHERE customer_id = %s",
+            (customer_id, )
+        )
         lang_code = curs.fetchone()[0]
         customer = (customer_id, lang_code)
         return customer
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def get_rest_location(self, curs: psycopg2.extensions.cursor) -> Tuple[str, List[int]]:
+    def get_rest_location(self, curs: cursor) -> Tuple[str, List[int]]:
         """
 
         Args:
@@ -310,14 +347,17 @@ class Interface:
         Returns:
 
         """  # TODO
-        rest_id = self.user_id
-        curs.execute("SELECT address, location FROM restaurants WHERE restaurant_tg_id = %s", (rest_id, ))
+        curs.execute(
+            "SELECT address, location FROM restaurants "
+            "WHERE restaurant_tg_id = %s",
+            (self.user_id,)
+        )
         location = curs.fetchone()
         return location
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def get_delivery_location(self, curs: psycopg2.extensions.cursor) -> Tuple[List[int], ...]:
+    def get_delivery_location(self, curs: cursor) -> Tuple[List[int], ...]:
         """
 
         Args:
@@ -326,14 +366,16 @@ class Interface:
         Returns:
 
         """  # TODO
-        order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
-        curs.execute("SELECT delivery_location FROM orders WHERE order_uuid = %s", (order_uuid, ))
+        curs.execute(
+            "SELECT delivery_location FROM orders WHERE order_uuid = %s",
+            (self.data_to_read.data.split(maxsplit=1)[-1],)
+        )
         delivery_location = curs.fetchone()
         return delivery_location
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def get_order_items(self, curs: psycopg2.extensions.cursor) -> List[str]:
+    def get_order_items(self, curs: cursor) -> List[str]:
         """
 
         Args:
@@ -342,14 +384,16 @@ class Interface:
         Returns:
 
         """  # TODO
-        order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
-        curs.execute("SELECT dishes FROM orders WHERE order_uuid = %s", (order_uuid, ))
+        curs.execute(
+            "SELECT dishes FROM orders WHERE order_uuid = %s",
+            (self.data_to_read.data.split(maxsplit=1)[-1],)
+        )
         dishes = curs.fetchone()[0]
         return dishes
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def get_rest_name(self, curs: psycopg2.extensions.cursor) -> str:
+    def get_rest_name(self, curs: cursor) -> str:
         """
 
         Args:
@@ -358,14 +402,17 @@ class Interface:
         Returns:
 
         """  # TODO
-        curs.execute("SELECT restaurant_name FROM restaurants WHERE restaurant_tg_id = %s",
-                     (self.user_id, ))
+        curs.execute(
+            "SELECT restaurant_name FROM restaurants "
+            "WHERE restaurant_tg_id = %s",
+            (self.user_id,)
+        )
         rest_name = curs.fetchone()[0]
         return rest_name
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def get_courier_fee(self, curs: psycopg2.extensions.cursor) -> float:
+    def get_courier_fee(self, curs: cursor) -> float:
         """
 
         Args:
@@ -374,14 +421,16 @@ class Interface:
         Returns:
 
         """  # TODO
-        order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
-        curs.execute("SELECT courier_fee FROM orders WHERE order_uuid = %s", (order_uuid, ))
+        curs.execute(
+            "SELECT courier_fee FROM orders WHERE order_uuid = %s",
+            (self.data_to_read.data.split(maxsplit=1)[-1],)
+        )
         courier_fee = curs.fetchone()[0]
         return courier_fee
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def get_customer_info(self, curs: psycopg2.extensions.cursor) -> Tuple[str, ...]:
+    def get_customer_info(self, curs: cursor) -> Tuple[str, ...]:
         """
 
         Args:
@@ -390,24 +439,29 @@ class Interface:
         Returns:
 
         """  # TODO
-        order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
-        curs.execute("SELECT customer_name, customer_id, order_comment FROM orders WHERE order_uuid = %s",
-                     (order_uuid,))
+        curs.execute(
+            "SELECT customer_name, customer_id, order_comment "
+            "FROM orders WHERE order_uuid = %s",
+            (self.data_to_read.data.split(maxsplit=1)[-1],)
+        )
         customer_info = curs.fetchone()
-        customer_name = customer_info[0]
-        customer_id = customer_info[1]
-        order_comment = customer_info[2]
-        curs.execute("SELECT customer_username, customer_phone_num FROM customers WHERE customer_id = %s",
-                     (customer_id,))
-        customer_info = curs.fetchone()
-        customer_username = customer_info[0]
-        customer_phone_num = customer_info[1]
-        customer_info = (customer_name, customer_username, customer_phone_num, order_comment)
+        curs.execute(
+            "SELECT customer_username, customer_phone_num "
+            "FROM customers WHERE customer_id = %s",
+            (customer_info[1],)
+        )
+        customer_information = curs.fetchone()
+        customer_info = (
+            customer_info[0],
+            customer_information[0],
+            customer_information[1],
+            customer_info[2]
+        )
         return customer_info
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def get_courier(self, curs: psycopg2.extensions.cursor) -> Tuple[int, str]:
+    def get_courier(self, curs: cursor) -> Tuple[int, str]:
         """
 
         Args:
@@ -416,17 +470,21 @@ class Interface:
         Returns:
 
         """  # TODO
-        order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
-        curs.execute("SELECT courier_id FROM orders WHERE order_uuid = %s", (order_uuid, ))
+        curs.execute(
+            "SELECT courier_id FROM orders WHERE order_uuid = %s",
+            (self.data_to_read.data.split(maxsplit=1)[-1],)
+        )
         courier_id = curs.fetchone()[0]
-        curs.execute("SELECT lang_code FROM couriers WHERE courier_id = %s", (courier_id, ))
+        curs.execute(
+            "SELECT lang_code FROM couriers WHERE courier_id = %s",
+            (courier_id,))
         lang_code = curs.fetchone()[0]
         courier = (courier_id, lang_code)
         return courier
 
-    @cursor
+    @cursor_decorator
     @logger_decorator
-    def order_ready(self, curs: psycopg2.extensions.cursor) -> None:
+    def order_ready(self, curs: cursor) -> None:
         """
 
         Args:
@@ -435,7 +493,7 @@ class Interface:
         Returns:
 
         """  # TODO
-        order_uuid = self.data_to_read.data.split(maxsplit=1)[-1]
-        curs.execute("UPDATE orders SET order_status = 'Order ready, handled to the courier' "
-                     "WHERE order_uuid = %s",
-                     (order_uuid,))
+        curs.execute(
+            "UPDATE orders SET order_status = '5' WHERE order_uuid = %s",
+            (self.data_to_read.data.split(maxsplit=1)[-1],)
+        )
