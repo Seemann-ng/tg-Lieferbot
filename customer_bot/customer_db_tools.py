@@ -679,17 +679,3 @@ class Interface:
             "is_occupied = false WHERE courier_id = %s",
             (new_balance, courier_id)
         )
-
-    @cursor_decorator
-    @logger_decorator
-    def delete_order(self, curs: cursor) -> None:
-        """Delete order from database.
-
-        Args:
-            curs: Cursor object from psycopg2 module.
-
-        """
-        curs.execute(
-            "DELETE FROM orders WHERE order_uuid = %s",
-            (self.data_to_read.data.split(maxsplit=1)[-1],)
-        )

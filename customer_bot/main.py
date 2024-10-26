@@ -1339,7 +1339,11 @@ def cancel(call: types.CallbackQuery) -> None:
     """
     c_back = DBInterface(call)
     c_back.delete_cart()
-    c_back.delete_order()
+    c_back.update_order(
+        c_back.data_to_read.data.split(maxsplit=1)[-1],
+        "order_status",
+        "-1"
+    )
     cus_bot.edit_message_text(
         texts[c_back.get_customer_lang()]["CANCEL_MSG"](
             c_back.data_to_read.data.split(maxsplit=1)[-1]
