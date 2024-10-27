@@ -266,6 +266,25 @@ class Interface:
         dish = curs.fetchone()
         return dish if dish else tuple()
 
+    @staticmethod
+    @cursor_decorator
+    @logger_decorator
+    def check_couriers(curs: cursor) -> List[Tuple[Any, ...]]:
+        """Check if there is at least one courier available.
+
+        Args:
+            curs: Cursor object from psycopg2 module.
+
+        Returns:
+            List of available couriers.
+
+        """
+        curs.execute(
+            "SELECT courier_id FROM couriers WHERE courier_status = TRUE AND is_occupied = FALSE"
+        )
+        couriers = curs.fetchall()
+        return couriers if couriers else []
+
     @cursor_decorator
     @logger_decorator
     def new_cart(self, curs: cursor) -> None:

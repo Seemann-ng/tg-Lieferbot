@@ -370,6 +370,7 @@ def options(message: types.Message) -> None:
 
     """
     msg = DBInterface(message)
+    cus_bot.delete_message(msg.data_to_read.from_user.id, msg.data_to_read.id)
     cus_bot.send_message(
         msg.data_to_read.from_user.id,
         texts[msg.get_customer_lang()]["OPTIONS_MSG"],
@@ -422,6 +423,14 @@ def new_order(message: types.Message) -> None:
 
     """
     msg = DBInterface(message)
+    cus_bot.delete_message(msg.data_to_read.from_user.id, msg.data_to_read.id)
+    if not msg.check_couriers():
+        cus_bot.send_message(
+            msg.data_to_read.from_user.id,
+            texts[msg.get_customer_lang()]["NO_COURIERS_MSG"]
+        )
+        show_main_menu(msg.data_to_read)
+        return None
     if location := msg.check_if_location():
         cus_bot.send_message(
             msg.data_to_read.from_user.id,
@@ -454,6 +463,7 @@ def main_menu(message: types.Message) -> None:
         message: Main menu request from Customer.
 
     """
+    cus_bot.delete_message(message.from_user.id, message.id)
     show_main_menu(message)
 
 
@@ -469,6 +479,7 @@ def contact_support(message: types.Message) -> None:
 
     """
     msg = DBInterface(message)
+    cus_bot.delete_message(msg.data_to_read.from_user.id, msg.data_to_read.id)
     cus_bot.send_message(
         msg.data_to_read.from_user.id,
         texts[msg.get_customer_lang()]["CUS_SUPPORT_MSG"],
@@ -503,6 +514,7 @@ def message_to_support(message: types.Message) -> None:
         msg.data_to_read.from_user.id,
         texts[msg.get_customer_lang()]["SUPPORT_SENT_MSG"]
     )
+    show_main_menu(msg.data_to_read)
 
 
 @cus_bot.message_handler(
@@ -557,6 +569,7 @@ def change_lang_menu(message: types.Message) -> None:
 
     """
     msg = DBInterface(message)
+    cus_bot.delete_message(msg.data_to_read.from_user.id, msg.data_to_read.id)
     cus_bot.send_message(
         msg.data_to_read.from_user.id,
         texts[msg.get_customer_lang()]["LANG_SEL_MENU"],

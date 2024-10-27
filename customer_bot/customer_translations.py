@@ -70,6 +70,7 @@ texts = {
         "EXITING_ORDER_MENU_MSG": "Zurück zum Hauptmenü.",
         "DELETING_CART_ALERT": "⚠️ Ihr Einkaufskorb wurde geleert.",
         "GOING_BACK_MSG": "Zurück...",
+        "NO_COURIERS_MSG": "No couriers available at the moment, please try again later.",
         "LOCATION_NOT_FOUND_MSG": "Kontaktinformationen wurden nicht gefunden.\n"
                                   "Bitte setzen Sie Ihre Kontaktinformationen zurück.",
         "CONFIRM_LOCATION_MSG": "Ist diese Lieferadresse richtig?",
@@ -240,6 +241,7 @@ texts = {
         "EXITING_ORDER_MENU_MSG": "Going back to main menu.",
         "DELETING_CART_ALERT": "⚠️ Your cart was cleared.",
         "GOING_BACK_MSG": "Going back...",
+        "NO_COURIERS_MSG": "No couriers available at the moment, please try again later.",
         "LOCATION_NOT_FOUND_MSG": "Contact information wasn't found.\n"
                                   "Please, reset Your contact information.",
         "CONFIRM_LOCATION_MSG": "Is this delivery address right?",
@@ -410,6 +412,7 @@ texts = {
         "EXITING_ORDER_MENU_MSG": "Going back to main menu.",
         "DELETING_CART_ALERT": "⚠️ Your cart was cleared.",
         "GOING_BACK_MSG": "Going back...",
+        "NO_COURIERS_MSG": "No couriers available at the moment, please try again later.",
         "LOCATION_NOT_FOUND_MSG": "Contact information wasn't found.\n"
                                   "Please, reset Your contact information.",
         "CONFIRM_LOCATION_MSG": "Is this delivery address right?",
