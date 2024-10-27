@@ -69,7 +69,7 @@ CREATE TABLE orders
     customer_id       INT,
     customer_name     VARCHAR,
     delivery_location NUMERIC(9, 6)[],
-    delivery_distance NUMERIC(5, 2) DEFAULT 0.00,
+    delivery_distance NUMERIC(9, 2) DEFAULT 0.00,
     dishes            VARCHAR[],
     dishes_subtotal   NUMERIC(10, 2),
     courier_fee       NUMERIC(10, 2),
