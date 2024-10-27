@@ -27,33 +27,33 @@ texts = {
         "LANG_SELECTED_MSG": "Language changed to English!",
         "OPEN_SHIFT_MSG": "Shift is opened, now You can receive orders.",
         "CLOSE_SHIFT_MSG": "Shift is closed.",
-        "DISH_AVAILABLE_SELECT_MSG": "Choose dish to make it available.",
-        "DISH_SET_AVAILABLE_MSG": "Selected dish has been set available.",
-        "DISH_UNAVAILABLE_SELECT_MSG": "Choose dish to make it unavailable.",
-        "DISH_SET_UNAVAILABLE_MSG": "Selected dish has been set unavailable.",
-        "DELETE_DISH_SELECT_MSG": "Select dish to delete.",
-        "DISH_DELETED_MSG": "Selected dish has been deleted.",
-        "DISH_ADDED_MSG": lambda dish_name: f"✅ Dish: {dish_name} has been added to the Database.",
-        "NO_DISH_NAME_MSG": "No dish name was provided.",
-        "EDIT_DISH_MSG": "Choose a dish to edit",
+        "DISH_AVAILABLE_SELECT_MSG": "Choose item to make it available.",
+        "DISH_SET_AVAILABLE_MSG": "Selected item has been set available.",
+        "DISH_UNAVAILABLE_SELECT_MSG": "Choose item to make it unavailable.",
+        "DISH_SET_UNAVAILABLE_MSG": "Selected item has been set unavailable.",
+        "DELETE_DISH_SELECT_MSG": "Select item to delete.",
+        "DISH_DELETED_MSG": "Selected item has been deleted.",
+        "DISH_ADDED_MSG": lambda dish_name: f"✅ Item: {dish_name} has been added to the Database.",
+        "NO_DISH_NAME_MSG": "No item name was provided.",
+        "EDIT_DISH_MSG": "Choose a item to edit",
         "GO_BACK_BTN": "⬅️ BACK",
-        "EDIT_DISH_CHOSEN_MSG": lambda dish_name: f"Dish to edit:\n{dish_name}",
-        "EDIT_DISH_PARAM_MSG": "Which parameter of the dish do You want to change?",
+        "EDIT_DISH_CHOSEN_MSG": lambda dish_name: f"Item to edit:\n{dish_name}",
+        "EDIT_DISH_PARAM_MSG": "Which parameter of the item do You want to change?",
         "EDIT_DESC_BTN": "📝 Description",
         "EDIT_CAT_BTN": "🛍 Category",
         "EDIT_PRICE_BTN": "💶 Price",
         "EDIT_CATEGORY_MSG": lambda
-            dish_uuid: f"Enter new category for the dish:\n" \
-                       f"Dish UUID: {dish_uuid}",
-        "CAT_SET_MSG": "✅ New category has been set for the dish.",
+            dish_uuid: f"Enter new category for the item:\n" \
+                       f"Item UUID: {dish_uuid}",
+        "CAT_SET_MSG": "✅ New category has been set for the item.",
         "EDIT_DESCRIPTION_MSG": lambda
-            dish_uuid: f"Enter new description for the dish:\n" \
-                       f"Dish UUID: {dish_uuid}",
-        "DESC_SET_MSG": "✅ New description has been set for the dish.",
+            dish_uuid: f"Enter new description for the item:\n" \
+                       f"Item UUID: {dish_uuid}",
+        "DESC_SET_MSG": "✅ New description has been set for the item.",
         "EDIT_PRICE_MSG": lambda
-            dish_uuid: f"Enter new price for the dish:\n" \
-                       f"Dish UUID: {dish_uuid}",
-        "PRICE_SET_MSG": "✅ New price has been set for the dish.",
+            dish_uuid: f"Enter new price for the item:\n" \
+                       f"Item UUID: {dish_uuid}",
+        "PRICE_SET_MSG": "✅ New price has been set for the item.",
         "REST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"✅ Accepted order\n`{order_uuid}`",
         "CUST_ORDER_ACCEPTED_MSG": lambda
             order_uuid: f"Order\n`{order_uuid}`\n" \
@@ -75,7 +75,7 @@ texts = {
                           f"Customer's phone:\n{customer_phone}\n" \
                           f"Order comments:\n{comment}\n" \
                           f"Restaurant:\n`{rest_name}`\n" \
-                          f"Dishes:\n{dishes}\n" \
+                          f"Item(s):\n{dishes}\n" \
                           f"Restaurant address:\n`{rest_address}`\n" \
                           f"Restaurant location:",
         "COURIER_DELIVERY_LOC_MSG": "To be delivered here:",
@@ -111,33 +111,33 @@ texts = {
         "LANG_SELECTED_MSG": "Language changed to English!",
         "OPEN_SHIFT_MSG": "Shift is opened, now You can receive orders.",
         "CLOSE_SHIFT_MSG": "Shift is closed.",
-        "DISH_AVAILABLE_SELECT_MSG": "Choose dish to make it available.",
-        "DISH_SET_AVAILABLE_MSG": "Selected dish has been set available.",
-        "DISH_UNAVAILABLE_SELECT_MSG": "Choose dish to make it unavailable.",
-        "DISH_SET_UNAVAILABLE_MSG": "Selected dish has been set unavailable.",
-        "DELETE_DISH_SELECT_MSG": "Select dish to delete.",
-        "DISH_DELETED_MSG": "Selected dish has been deleted.",
-        "DISH_ADDED_MSG": lambda dish_name: f"✅ Dish: {dish_name} has been added to the Database.",
-        "NO_DISH_NAME_MSG": "No dish name was provided.",
-        "EDIT_DISH_MSG": "Choose a dish to edit",
+        "DISH_AVAILABLE_SELECT_MSG": "Choose item to make it available.",
+        "DISH_SET_AVAILABLE_MSG": "Selected item has been set available.",
+        "DISH_UNAVAILABLE_SELECT_MSG": "Choose item to make it unavailable.",
+        "DISH_SET_UNAVAILABLE_MSG": "Selected item has been set unavailable.",
+        "DELETE_DISH_SELECT_MSG": "Select item to delete.",
+        "DISH_DELETED_MSG": "Selected item has been deleted.",
+        "DISH_ADDED_MSG": lambda dish_name: f"✅ Item: {dish_name} has been added to the Database.",
+        "NO_DISH_NAME_MSG": "No item name was provided.",
+        "EDIT_DISH_MSG": "Choose a item to edit",
         "GO_BACK_BTN": "⬅️ BACK",
-        "EDIT_DISH_CHOSEN_MSG": lambda dish_name: f"Dish to edit:\n{dish_name}",
-        "EDIT_DISH_PARAM_MSG": "Which parameter of the dish do You want to change?",
+        "EDIT_DISH_CHOSEN_MSG": lambda dish_name: f"Item to edit:\n{dish_name}",
+        "EDIT_DISH_PARAM_MSG": "Which parameter of the item do You want to change?",
         "EDIT_DESC_BTN": "📝 Description",
         "EDIT_CAT_BTN": "🛍 Category",
         "EDIT_PRICE_BTN": "💶 Price",
         "EDIT_CATEGORY_MSG": lambda
-            dish_uuid: f"Enter new category for the dish:\n" \
-                       f"Dish UUID: {dish_uuid}",
-        "CAT_SET_MSG": "✅ New category has been set for the dish.",
+            dish_uuid: f"Enter new category for the item:\n" \
+                       f"Item UUID: {dish_uuid}",
+        "CAT_SET_MSG": "✅ New category has been set for the item.",
         "EDIT_DESCRIPTION_MSG": lambda
-            dish_uuid: f"Enter new description for the dish:\n" \
-                       f"Dish UUID: {dish_uuid}",
-        "DESC_SET_MSG": "✅ New description has been set for the dish.",
+            dish_uuid: f"Enter new description for the item:\n" \
+                       f"Item UUID: {dish_uuid}",
+        "DESC_SET_MSG": "✅ New description has been set for the item.",
         "EDIT_PRICE_MSG": lambda
-            dish_uuid: f"Enter new price for the dish:\n" \
-                       f"Dish UUID: {dish_uuid}",
-        "PRICE_SET_MSG": "✅ New price has been set for the dish.",
+            dish_uuid: f"Enter new price for the item:\n" \
+                       f"Item UUID: {dish_uuid}",
+        "PRICE_SET_MSG": "✅ New price has been set for the item.",
         "REST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"✅ Accepted order\n`{order_uuid}`",
         "CUST_ORDER_ACCEPTED_MSG": lambda
             order_uuid: f"Order\n`{order_uuid}`\n" \
@@ -159,7 +159,7 @@ texts = {
                           f"Customer's phone:\n{customer_phone}\n" \
                           f"Order comments:\n{comment}\n" \
                           f"Restaurant:\n`{rest_name}`\n" \
-                          f"Dishes:\n{dishes}\n" \
+                          f"Item(s):\n{dishes}\n" \
                           f"Restaurant address:\n`{rest_address}`\n" \
                           f"Restaurant location:",
         "COURIER_DELIVERY_LOC_MSG": "To be delivered here:",
