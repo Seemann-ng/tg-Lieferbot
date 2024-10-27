@@ -20,9 +20,7 @@ DEF_LANG = env.str("DEF_LANG", default="en_US")
 class Interface:
     def __init__(self, data_to_read: types.Message | types.CallbackQuery):
         self.data_to_read = data_to_read
-        logger.info(
-            f"Interface instance initialized with {type(self.data_to_read)}."
-        )
+        logger.info(f"Interface instance initialized with {type(self.data_to_read)}.")
 
     @cursor_decorator
     @logger_decorator
@@ -41,8 +39,7 @@ class Interface:
 
         """
         curs.execute(
-            "SELECT customer_name, customer_username FROM customers "
-            "WHERE customer_id = %s",
+            "SELECT customer_name, customer_username FROM customers WHERE customer_id = %s",
             (self.data_to_read.from_user.id,)
         )
         if customer_names := curs.fetchone():
@@ -61,12 +58,8 @@ class Interface:
         """
         if not self.user_in_db():
             curs.execute(
-                "INSERT INTO customers (customer_id, customer_username) "
-                "VALUES (%s, %s)",
-                (
-                    self.data_to_read.from_user.id,
-                    self.data_to_read.from_user.username
-                )
+                "INSERT INTO customers (customer_id, customer_username) VALUES (%s, %s)",
+                (self.data_to_read.from_user.id, self.data_to_read.from_user.username)
             )
 
     @cursor_decorator
@@ -94,8 +87,7 @@ class Interface:
 
         """
         curs.execute(
-            "UPDATE customers SET customer_phone_num = %s "
-            "WHERE customer_id = %s",
+            "UPDATE customers SET customer_phone_num = %s WHERE customer_id = %s",
             (phone_number, self.data_to_read.from_user.id)
         )
 
@@ -109,8 +101,7 @@ class Interface:
 
         """
         curs.execute(
-            "UPDATE customers SET customer_location = '{%s, %s}' "
-            "WHERE customer_id = %s",
+            "UPDATE customers SET customer_location = '{%s, %s}' WHERE customer_id = %s",
             (
                 self.data_to_read.location.latitude,
                 self.data_to_read.location.longitude,
@@ -145,9 +136,8 @@ class Interface:
 
         """
         curs.execute(
-            "SELECT order_uuid, restaurant_name, courier_name, dishes, "
-            "total, order_open_date, order_status, order_close_date "
-            "FROM orders WHERE customer_id = %s",
+            "SELECT order_uuid, restaurant_name, courier_name, dishes, total, order_open_date, "
+            "order_status, order_close_date FROM orders WHERE customer_id = %s",
             (self.data_to_read.from_user.id,)
         )
         orders = curs.fetchall()
@@ -169,8 +159,8 @@ class Interface:
 
         """
         curs.execute(
-            "SELECT DISTINCT restaurant_type FROM restaurants "
-            "WHERE restaurant_is_open=TRUE ORDER BY restaurant_type"
+            "SELECT DISTINCT restaurant_type FROM restaurants WHERE restaurant_is_open=TRUE "
+            "ORDER BY restaurant_type"
         )
         restaurant_types = curs.fetchall()
         return restaurant_types if restaurant_types else []
@@ -198,7 +188,8 @@ class Interface:
     @cursor_decorator
     @logger_decorator
     def show_dish_categories(self, curs: cursor) -> List[Tuple[Any, ...]]:
-        """Get list of available dish categories in the chosen restaurant.
+        """Get list of available dish categories
+        in the chosen restaurant.
 
         Args:
             curs: Cursor object from psycopg2 module.
@@ -218,7 +209,8 @@ class Interface:
     @cursor_decorator
     @logger_decorator
     def show_dishes(self, curs: cursor) -> List[Tuple[Any, ...]]:
-        """Get list of available dishes in specified category and restaurant.
+        """Get list of available dishes
+        in specified category and restaurant.
 
         Args:
             curs: Cursor object from psycopg2 module.
@@ -229,12 +221,8 @@ class Interface:
         """
         curs.execute(
             "SELECT dish_name, dish_uuid FROM dishes "
-            "WHERE restaurant_uuid = %s AND dish_is_available = TRUE "
-            "AND category = %s",
-            (
-                self.get_from_cart("restaurant_uuid"),
-                self.data_to_read.data
-            )
+            "WHERE restaurant_uuid = %s AND dish_is_available = TRUE AND category = %s",
+            (self.get_from_cart("restaurant_uuid"), self.data_to_read.data)
         )
         dishes = curs.fetchall()
         return dishes if dishes else []
@@ -252,8 +240,7 @@ class Interface:
 
         """
         curs.execute(
-            "SELECT restaurant_name FROM restaurants "
-            "WHERE restaurant_uuid = %s",
+            "SELECT restaurant_name FROM restaurants WHERE restaurant_uuid = %s",
             (self.data_to_read.data,)
         )
         rest_name = curs.fetchone()
@@ -262,7 +249,8 @@ class Interface:
     @cursor_decorator
     @logger_decorator
     def get_dish(self, curs: cursor) -> Tuple[Any, ...]:
-        """Get dish info (name, description and price) by given dish UUID.
+        """Get dish info (name, description and price)
+        by given dish UUID.
 
         Args:
             curs: Cursor object from psycopg2 module.
@@ -272,8 +260,7 @@ class Interface:
 
         """
         curs.execute(
-            "SELECT dish_name, dish_description, dish_price FROM dishes "
-            "WHERE dish_uuid = %s",
+            "SELECT dish_name, dish_description, dish_price FROM dishes WHERE dish_uuid = %s",
             (self.data_to_read.data,)
         )
         dish = curs.fetchone()
@@ -290,8 +277,7 @@ class Interface:
 
         """
         curs.execute(
-            "INSERT INTO cart (customer_id) VALUES (%s)",
-            (self.data_to_read.from_user.id,)
+            "INSERT INTO cart (customer_id) VALUES (%s)", (self.data_to_read.from_user.id,)
         )
 
     @cursor_decorator
@@ -311,9 +297,7 @@ class Interface:
 
     @cursor_decorator
     @logger_decorator
-    def get_from_cart(self,
-                      column_name: str,
-                      curs: cursor) -> float | int | str | List[Any]:
+    def get_from_cart(self, column_name: str, curs: cursor) -> float | int | str | List[Any]:
         """Get required info from cart.
 
         Args:
@@ -353,19 +337,10 @@ class Interface:
             (self.data_to_read.from_user.id,)
         )
         rest_uuid = curs.fetchone()
-        curs.execute(
-            "SELECT location FROM restaurants WHERE restaurant_uuid = %s",
-            (rest_uuid,)
-        )
+        curs.execute("SELECT location FROM restaurants WHERE restaurant_uuid = %s", (rest_uuid,))
         rest_location_list = curs.fetchone()[0]
-        rest_location = (
-            float(rest_location_list[0]),
-            float(rest_location_list[1])
-        )
-        delivery_distance = round(
-            float(geodesic(rest_location, customer_location).km),
-            2
-        )
+        rest_location = (float(rest_location_list[0]), float(rest_location_list[1]))
+        delivery_distance = round(float(geodesic(rest_location, customer_location).km), 2)
         return delivery_distance
 
     @cursor_decorator
@@ -392,10 +367,7 @@ class Interface:
             curs: Cursor object from psycopg2 module.
 
         """
-        curs.execute(
-            "DELETE FROM cart WHERE customer_id = %s",
-            (self.data_to_read.from_user.id,)
-        )
+        curs.execute("DELETE FROM cart WHERE customer_id = %s", (self.data_to_read.from_user.id,))
 
     @cursor_decorator
     @logger_decorator
@@ -414,8 +386,7 @@ class Interface:
             (self.data_to_read.from_user.id,)
         )
         if latlon := curs.fetchone()[0]:
-            location = {"lat": latlon[0], "lon": latlon[1]}
-            return location
+            return {"lat": latlon[0], "lon": latlon[1]}
         return {}
 
     @cursor_decorator
@@ -471,10 +442,7 @@ class Interface:
             otherwise default language code, set in .env.
 
         """
-        curs.execute(
-            "SELECT lang_code FROM restaurants WHERE restaurant_uuid = %s",
-            (rest_uuid,)
-        )
+        curs.execute("SELECT lang_code FROM restaurants WHERE restaurant_uuid = %s", (rest_uuid,))
         if rest_lang := curs.fetchone():
             if rest_lang := rest_lang[0]:
                 return rest_lang
@@ -483,7 +451,8 @@ class Interface:
     @cursor_decorator
     @logger_decorator
     def order_creation(self, curs: cursor) -> List[Any]:
-        """Create order in database, transferring data from Customer's cart.
+        """Create order in database,
+        transferring data from Customer's cart.
 
         Args:
             curs: Cursor object from psycopg2 module.
@@ -493,27 +462,21 @@ class Interface:
 
         """
         curs.execute(
-            "SELECT restaurant_uuid, dishes_uuids, subtotal, service_fee, "
-            "courier_fee, total, order_comment "
-            "FROM cart WHERE customer_id = %s",
+            "SELECT restaurant_uuid, dishes_uuids, subtotal, service_fee, courier_fee, total, "
+            "order_comment FROM cart WHERE customer_id = %s",
             (self.data_to_read.from_user.id,)
         )
         order_data = curs.fetchone()
         curs.execute(
-            "SELECT restaurant_tg_id FROM restaurants "
-            "WHERE restaurant_uuid = %s",
-            (order_data[0],)
+            "SELECT restaurant_tg_id FROM restaurants WHERE restaurant_uuid = %s", (order_data[0],)
         )
         rest_id = curs.fetchone()[0]
         curs.execute(
-            "SELECT restaurant_name FROM restaurants "
-            "WHERE restaurant_uuid = %s",
-            (order_data[0],)
+            "SELECT restaurant_name FROM restaurants WHERE restaurant_uuid = %s", (order_data[0],)
         )
         rest_name = curs.fetchone()[0]
         curs.execute(
-            "SELECT customer_name, customer_location FROM customers "
-            "WHERE customer_id = %s",
+            "SELECT customer_name, customer_location FROM customers WHERE customer_id = %s",
             (self.data_to_read.from_user.id,)
         )
         customer_info = curs.fetchone()
@@ -528,15 +491,11 @@ class Interface:
         order_uuid = str(uuid.uuid4())
         order_creation_datetime = datetime.datetime.now()
         curs.execute(
-            "INSERT INTO orders (order_uuid, restaurant_uuid, "
-            "restaurant_id, restaurant_name, customer_id, customer_name, "
-            "delivery_location, dishes, dishes_subtotal, courier_fee, "
-            "service_fee, total, order_open_date, order_status, "
-            "order_comment, delivery_distance) "
-            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, "
-            "%s, %s, %s, %s, %s, %s, %s, %s)",
-            (
-                order_uuid,
+            "INSERT INTO orders (order_uuid, restaurant_uuid, restaurant_id, restaurant_name, "
+            "customer_id, customer_name, delivery_location, dishes, dishes_subtotal, courier_fee, "
+            "service_fee, total, order_open_date, order_status, order_comment, delivery_distance) "
+            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            (order_uuid,
                 order_data[0],
                 rest_id,
                 rest_name,
@@ -554,32 +513,16 @@ class Interface:
                 self.get_delivery_distance()
             )
         )
-        order_info = [
-            order_uuid,
-            order_data[0],
-            rest_id,
-            rest_name,
-            self.data_to_read.from_user.id,
-            customer_info[0],
-            customer_info[1],
-            dishes,
-            order_data[2],
-            order_data[4],
-            order_data[3],
-            order_data[5],
-            order_creation_datetime,
-            "Created",
-            order_data[6]
+        return [
+            order_uuid, order_data[0], rest_id, rest_name, self.data_to_read.from_user.id,
+            customer_info[0], customer_info[1], dishes, order_data[2], order_data[4],
+            order_data[3], order_data[5], order_creation_datetime, "1", order_data[6]
         ]
-        return order_info
 
     @staticmethod
     @cursor_decorator
     @logger_decorator
-    def update_order(order_uuid: str,
-                     column: str,
-                     new_value: str,
-                     curs: cursor) -> None:
+    def update_order(order_uuid: str, column: str, new_value: str, curs: cursor) -> None:
         """Update order information in database.
 
         Args:
@@ -590,29 +533,27 @@ class Interface:
 
         """
         curs.execute(
-            "UPDATE orders SET " + column + " = %s WHERE order_uuid = %s",
-            (new_value, order_uuid)
+            "UPDATE orders SET " + column + " = %s WHERE order_uuid = %s", (new_value, order_uuid)
         )
 
     @cursor_decorator
     @logger_decorator
     def get_support(self, curs: cursor) -> Tuple[int, str]:
-        """Get random Admin Telegram ID and their language code from database.
+        """Get random Admin Telegram ID
+        and their language code from database.
 
         Args:
             curs: Cursor object from psycopg2 module.
 
         Returns:
-            Array containing random Admin Telegram ID and their language code.
+            Array containing random Admin Telegram ID
+            and their language code.
 
         """
         curs.execute("SELECT admin_id FROM admins")
         if admin_ids := curs.fetchall():
             admin_id = random.choice(admin_ids)[0]
-            curs.execute(
-                "SELECT lang_code FROM admins WHERE admin_id = %s",
-                (admin_id,)
-            )
+            curs.execute("SELECT lang_code FROM admins WHERE admin_id = %s", (admin_id,))
             if admin_lang_code := curs.fetchone()[0]:
                 return admin_id, admin_lang_code
             return admin_id, DEF_LANG
@@ -621,9 +562,7 @@ class Interface:
     @staticmethod
     @cursor_decorator
     @logger_decorator
-    def get_order_info(order_uuid: str,
-                       column: str,
-                       curs: cursor) -> str | int:
+    def get_order_info(order_uuid: str, column: str, curs: cursor) -> str | int:
         """Get required order information from database.
 
         Args:
@@ -636,11 +575,9 @@ class Interface:
 
         """
         curs.execute(
-            "SELECT " + column + " FROM orders WHERE order_uuid = %s",
-            (order_uuid,)
+            "SELECT " + column + " FROM orders WHERE order_uuid = %s",  (order_uuid,)
         )
-        order_info = curs.fetchone()[0]
-        return order_info
+        return curs.fetchone()[0]
 
     @cursor_decorator
     @logger_decorator
@@ -652,12 +589,8 @@ class Interface:
 
         """
         curs.execute(
-            "UPDATE orders SET order_status = '0', order_close_date = %s "
-            "WHERE order_uuid = %s",
-            (
-                datetime.datetime.now(),
-                self.data_to_read.data.split(maxsplit=1)[-1]
-            )
+            "UPDATE orders SET order_status = '0', order_close_date = %s WHERE order_uuid = %s",
+            (datetime.datetime.now(), self.data_to_read.data.split(maxsplit=1)[-1])
         )
         curs.execute(
             "SELECT courier_id FROM orders WHERE order_uuid = %s",
@@ -665,17 +598,14 @@ class Interface:
         )
         courier_id = curs.fetchone()[0]
         curs.execute(
-            "SELECT account_balance FROM couriers WHERE courier_id = %s",
-            (courier_id,)
+            "SELECT account_balance FROM couriers WHERE courier_id = %s", (courier_id,)
         )
         current_balance = curs.fetchone()[0]
         curs.execute(
             "SELECT courier_fee FROM orders WHERE order_uuid = %s",
             (self.data_to_read.data.split(maxsplit=1)[-1],)
         )
-        new_balance = round((current_balance + curs.fetchone()[0]), 2)
         curs.execute(
-            "UPDATE couriers SET account_balance = %s, "
-            "is_occupied = false WHERE courier_id = %s",
-            (new_balance, courier_id)
+            "UPDATE couriers SET account_balance = %s, is_occupied = false WHERE courier_id = %s",
+            (round((current_balance + curs.fetchone()[0]), 2), courier_id)
         )

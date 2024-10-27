@@ -34,18 +34,14 @@ def pp_order_creation(order_uuid: str, curs: cursor) -> Dict[str, str]:
         url = "https://api-m.paypal.com/v2/checkout/orders"
     else:
         url = "https://api-m.sandbox.paypal.com/v2/checkout/orders"
-    curs.execute(
-        "SELECT total FROM orders WHERE order_uuid = %s",
-        (order_uuid,)
-    )
-    transaction_amount = str(curs.fetchone()[0])
+    curs.execute("SELECT total FROM orders WHERE order_uuid = %s", (order_uuid,))
     data = {
         "intent": "CAPTURE",
         "purchase_units": [
             {
                 "amount": {
                     "currency_code": "EUR",
-                    "value": transaction_amount
+                    "value": str(curs.fetchone()[0])
                 }
             }
         ],
@@ -66,11 +62,10 @@ def pp_order_creation(order_uuid: str, curs: cursor) -> Dict[str, str]:
     response = requests.post(url, json=data, auth=(pp_username, pp_password))
     if (response.status_code == 200
             and json.loads(response.text)["status"] == "PAYER_ACTION_REQUIRED"):
-        order_id = json.loads(response.text)["id"]
-        logger.info(f"PayPal order created. Order ID: {order_id}")
+        logger.info(f"PayPal order created. Order ID: {json.loads(response.text)["id"]}")
         return {
             "URL": json.loads(response.text)["links"][1]["href"],
-            "order_id": order_id
+            "order_id": json.loads(response.text)["id"]
         }
     else:
         logger.error(f"Failed to create paypal order: {response.text}")
@@ -89,17 +84,11 @@ def pp_capture_order(order_uuid: str, curs: cursor) -> bool:
     Returns:
 
     """  # TODO
-    curs.execute(
-        "SELECT paypal_order_id FROM orders WHERE order_uuid = %s",
-        (order_uuid,)
-    )
-    paypal_order_id = curs.fetchone()[0]
+    curs.execute("SELECT paypal_order_id FROM orders WHERE order_uuid = %s", (order_uuid,))
     if pp_mode == "deployment":
-        url = f"https://api-m.paypal.com/v2/checkout/orders/" \
-              f"{paypal_order_id}/capture"
+        url = f"https://api-m.paypal.com/v2/checkout/orders/{curs.fetchone()[0]}/capture"
     else:
-        url = f"https://api-m.sandbox.paypal.com/v2/checkout/orders/" \
-              f"{paypal_order_id}/capture"
+        url = f"https://api-m.sandbox.paypal.com/v2/checkout/orders/{curs.fetchone()[0]}/capture"
     data = {}
     response = requests.post(url, json=data, auth=(pp_username, pp_password))
     return response.status_code == 201
@@ -118,18 +107,12 @@ def pp_rest_payout(order_uuid: str, curs: cursor) -> int:
 
     """  # TODO
     curs.execute(
-        "SELECT restaurant_uuid, dishes_subtotal FROM orders "
-        "WHERE order_uuid = %s",
-        (order_uuid,)
+        "SELECT restaurant_uuid, dishes_subtotal FROM orders WHERE order_uuid = %s", (order_uuid,)
     )
     payment_info = curs.fetchone()
-    rest_uuid = payment_info[0]
-    to_be_paid = str(payment_info[1])
     curs.execute(
-        "SELECT paypal_id FROM restaurants WHERE restaurant_uuid = %s",
-        (rest_uuid,)
+        "SELECT paypal_id FROM restaurants WHERE restaurant_uuid = %s", (payment_info[0],)
     )
-    rest_pp_id = curs.fetchone()[0]
     if pp_mode == "deployment":
         url = f"https://api-m.paypal.com/v1/payments/payouts"
     else:
@@ -137,10 +120,10 @@ def pp_rest_payout(order_uuid: str, curs: cursor) -> int:
     data = {
         "items": [
             {
-                "receiver": rest_pp_id,
+                "receiver": curs.fetchone()[0],
                 "amount": {
                     "currency": "EUR",
-                    "value": to_be_paid
+                    "value": str(payment_info[1])
                 },
                 "purpose": "GOODS"
             }

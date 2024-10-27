@@ -18,9 +18,7 @@ class Interface:
     def __init__(self, data_to_read: types.Message | types.CallbackQuery):
         self.data_to_read = data_to_read
         self.courier_id = data_to_read.from_user.id
-        logger.info(
-            f"Interface instance initialized with {type(self.data_to_read)}."
-        )
+        logger.info(f"Interface instance initialized with {type(self.data_to_read)}.")
 
     @cursor_decorator
     @logger_decorator
@@ -36,10 +34,7 @@ class Interface:
             otherwise default language code, set in .env.
 
         """
-        curs.execute(
-            "SELECT lang_code FROM couriers WHERE courier_id = %s",
-            (self.courier_id,)
-        )
+        curs.execute("SELECT lang_code FROM couriers WHERE courier_id = %s", (self.courier_id,))
         if courier_lang := curs.fetchone():
             if courier_lang := courier_lang[0]:
                 return courier_lang
@@ -57,10 +52,7 @@ class Interface:
             Courier Telegram ID if Courier is in database,
             otherwise 0.
         """
-        curs.execute(
-            "SELECT courier_id FROM couriers WHERE courier_id = %s",
-            (self.courier_id,)
-        )
+        curs.execute("SELECT courier_id FROM couriers WHERE courier_id = %s", (self.courier_id,))
         courier_id = curs.fetchone()
         return courier_id if courier_id else 0
 
@@ -128,10 +120,7 @@ class Interface:
         """
         curs.execute(
             "UPDATE couriers SET courier_type = %s WHERE courier_id = %s",
-            (
-                self.data_to_read.data.split(maxsplit=1)[-1],
-                self.courier_id
-            )
+            (self.data_to_read.data.split(maxsplit=1)[-1], self.courier_id)
         )
 
     @cursor_decorator
@@ -161,10 +150,7 @@ class Interface:
             False otherwise.
 
         """
-        curs.execute(
-            "SELECT is_occupied FROM couriers WHERE courier_id = %s",
-            (self.courier_id,)
-        )
+        curs.execute("SELECT is_occupied FROM couriers WHERE courier_id = %s", (self.courier_id,))
         occupation_status = curs.fetchone()[0]
         return occupation_status
 
@@ -178,8 +164,7 @@ class Interface:
 
         """
         curs.execute(
-            "UPDATE couriers SET courier_status = false WHERE courier_id = %s",
-            (self.courier_id,)
+            "UPDATE couriers SET courier_status = false WHERE courier_id = %s", (self.courier_id,)
         )
 
     @cursor_decorator
@@ -203,13 +188,9 @@ class Interface:
         )
         courier_name = curs.fetchone()[0]
         curs.execute(
-            "UPDATE orders SET courier_id = %s, courier_name = %s, "
-            "order_status = '4' WHERE order_uuid = %s AND courier_id = -1",
-            (
-                self.courier_id,
-                courier_name,
-                self.data_to_read.data.split(maxsplit=1)[-1]
-            )
+            "UPDATE orders SET courier_id = %s, courier_name = %s, order_status = '4' "
+            "WHERE order_uuid = %s AND courier_id = -1",
+            (self.courier_id, courier_name, self.data_to_read.data.split(maxsplit=1)[-1])
         )
         curs.execute(
             "SELECT courier_id FROM orders WHERE order_uuid = %s",
@@ -218,8 +199,7 @@ class Interface:
         courier_id_db = curs.fetchone()[0]
         if self.courier_id == courier_id_db:
             curs.execute(
-                "UPDATE couriers SET is_occupied = true WHERE courier_id = %s ",
-                (self.courier_id,)
+                "UPDATE couriers SET is_occupied = true WHERE courier_id = %s ", (self.courier_id,)
             )
         return courier_id_db == self.courier_id
 
@@ -240,10 +220,7 @@ class Interface:
             (self.data_to_read.data.split(maxsplit=1)[-1],)
         )
         customer_id = curs.fetchone()[0]
-        curs.execute(
-            "SELECT lang_code FROM customers WHERE customer_id = %s",
-            (customer_id,)
-        )
+        curs.execute("SELECT lang_code FROM customers WHERE customer_id = %s", (customer_id,))
         lang_code = curs.fetchone()[0]
         customer_info = (customer_id, lang_code)
         return customer_info
@@ -262,8 +239,8 @@ class Interface:
 
         """
         curs.execute(
-            "SELECT courier_legal_name, courier_username, courier_phone_num "
-            "FROM couriers WHERE courier_id = %s",
+            "SELECT courier_legal_name, courier_username, courier_phone_num FROM couriers "
+            "WHERE courier_id = %s",
             (self.courier_id,)
         )
         courier_info = curs.fetchone()

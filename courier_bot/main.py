@@ -4,11 +4,7 @@ import courier_menus
 from courier_translations import texts
 from courier_db_tools import Interface as DBInterface
 from tools.bots_initialization import adm_bot, courier_bot, cus_bot, rest_bot
-from tools.logger_tool import(
-    logger,
-    logger_decorator_callback,
-    logger_decorator_msg
-)
+from tools.logger_tool import logger, logger_decorator_callback, logger_decorator_msg
 
 
 @courier_bot.message_handler(commands=["start"])
@@ -30,10 +26,7 @@ def start(message: types.Message) -> None:
             reply_markup=types.ForceReply()
         )
     else:
-        courier_bot.send_message(
-            msg.courier_id,
-            texts[msg.get_courier_lang()]["WELCOME_MSG"]
-        )
+        courier_bot.send_message(msg.courier_id, texts[msg.get_courier_lang()]["WELCOME_MSG"])
 
 
 @courier_bot.message_handler(
@@ -58,10 +51,7 @@ def ask_registration(message: types.Message) -> None:
             message.text
         )
     )
-    courier_bot.send_message(
-        msg.courier_id,
-        texts[msg.get_courier_lang()]["REG_REQ_SENT_MSG"]
-    )
+    courier_bot.send_message(msg.courier_id, texts[msg.get_courier_lang()]["REG_REQ_SENT_MSG"])
 
 
 @courier_bot.message_handler(commands=["select_language"])
@@ -103,10 +93,7 @@ def lang_set(call: types.CallbackQuery) -> None:
         c_back.data_to_read.from_user.id,
         (c_back.data_to_read.message.id - 1)
     )
-    courier_bot.delete_message(
-        c_back.data_to_read.from_user.id,
-        c_back.data_to_read.message.id
-    )
+    courier_bot.delete_message(c_back.data_to_read.from_user.id, c_back.data_to_read.message.id)
     courier_bot.send_message(
         c_back.data_to_read.from_user.id,
         texts[c_back.data_to_read.data]["LANG_SELECTED_MSG"]
@@ -175,10 +162,7 @@ def open_shift_command(message: types.Message) -> None:
     """
     msg = DBInterface(message)
     msg.open_shift()
-    courier_bot.send_message(
-        msg.courier_id,
-        texts[msg.get_courier_lang()]["OPEN_SHIFT_MSG"]
-    )
+    courier_bot.send_message(msg.courier_id, texts[msg.get_courier_lang()]["OPEN_SHIFT_MSG"])
 
 
 @courier_bot.message_handler(commands=["close_shift"])
@@ -198,10 +182,7 @@ def close_shift_command(message: types.Message) -> None:
         )
     else:
         msg.close_shift()
-        courier_bot.send_message(
-            msg.courier_id,
-            texts[msg.get_courier_lang()]["CLOSE_SHIFT_MSG"]
-        )
+        courier_bot.send_message(msg.courier_id, texts[msg.get_courier_lang()]["CLOSE_SHIFT_MSG"])
 
 
 @courier_bot.callback_query_handler(func=lambda call: "accept" in call.data)
@@ -210,7 +191,7 @@ def accept_order(call: types.CallbackQuery) -> None:
     """Process request to accept order.
 
     Args:
-        call: Callback query with request to accept order and order UUID.
+        call: Callback query with request to accept order.
 
     """
     c_back = DBInterface(call)
@@ -265,9 +246,7 @@ def accept_order(call: types.CallbackQuery) -> None:
         )
 
 
-@courier_bot.callback_query_handler(
-    func=lambda call: "in_delivery" in call.data
-)
+@courier_bot.callback_query_handler(func=lambda call: "in_delivery" in call.data)
 @logger_decorator_callback
 def in_delivery(call: types.CallbackQuery) -> None:
     """Process confirmation from Courier
@@ -280,10 +259,7 @@ def in_delivery(call: types.CallbackQuery) -> None:
     c_back = DBInterface(call)
     customer_info = c_back.get_customer_info()
     c_back.order_in_delivery()
-    courier_bot.edit_message_reply_markup(
-        c_back.courier_id,
-        c_back.data_to_read.message.id
-    )
+    courier_bot.edit_message_reply_markup(c_back.courier_id, c_back.data_to_read.message.id)
     courier_bot.send_message(
         c_back.courier_id,
         texts[c_back.get_courier_lang()]["COUR_IN_DELIVERY_MSG"](
@@ -314,10 +290,7 @@ def delivered(call: types.CallbackQuery) -> None:
     c_back = DBInterface(call)
     customer_info = c_back.get_customer_info()
     c_back.order_delivered()
-    courier_bot.edit_message_reply_markup(
-        c_back.courier_id,
-        c_back.data_to_read.message.id
-    )
+    courier_bot.edit_message_reply_markup(c_back.courier_id, c_back.data_to_read.message.id)
     courier_bot.send_message(
         c_back.courier_id,
         texts[c_back.get_courier_lang()]["COUR_DELIVERED_MSG"](

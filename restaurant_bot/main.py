@@ -4,9 +4,7 @@ import restaurant_menus
 from restaurant_translations import texts
 from restaurant_db_tools import Interface as DBInterface
 from tools.bots_initialization import adm_bot, courier_bot, cus_bot, rest_bot
-from tools.logger_tool import(
-    logger, logger_decorator_msg, logger_decorator_callback
-)
+from tools.logger_tool import logger, logger_decorator_msg, logger_decorator_callback
 
 
 @rest_bot.message_handler(commands=["start"])
@@ -28,19 +26,13 @@ def start(message: types.Message) -> None:
             reply_markup=types.ForceReply()
         )
     else:
-        rest_bot.send_message(
-            msg.user_id,
-            texts[msg.get_rest_lang()]["WELCOME_MSG"]
-        )
+        rest_bot.send_message(msg.user_id, texts[msg.get_rest_lang()]["WELCOME_MSG"])
 
 
 @rest_bot.message_handler(
     func=lambda message: message.reply_to_message \
                          and message.reply_to_message.text \
-                         in [
-                             lang["ASK_REGISTRATION_MSG"] \
-                                 for lang in texts.values()
-                         ]
+                         in [lang["ASK_REGISTRATION_MSG"] for lang in texts.values()]
 )
 @logger_decorator_msg
 def ask_registration(message: types.Message) -> None:
@@ -61,10 +53,7 @@ def ask_registration(message: types.Message) -> None:
             message.text
         )
     )
-    rest_bot.send_message(
-        msg.user_id,
-        texts[msg.get_rest_lang()]["REG_REQUEST_SENT_MSG"]
-    )
+    rest_bot.send_message(msg.user_id, texts[msg.get_rest_lang()]["REG_REQUEST_SENT_MSG"])
 
 
 @rest_bot.message_handler(commands=["select_language"])
@@ -77,10 +66,7 @@ def change_lang_menu(message: types.Message) -> None:
 
     """
     msg = DBInterface(message)
-    rest_bot.send_message(
-        msg.user_id,
-        texts[msg.get_rest_lang()]["LANG_SEL_MENU"]
-    )
+    rest_bot.send_message(msg.user_id, texts[msg.get_rest_lang()]["LANG_SEL_MENU"])
     rest_bot.send_message(
         msg.user_id,
         texts[msg.get_rest_lang()]["CHANGE_LANG_MSG"],
@@ -89,8 +75,7 @@ def change_lang_menu(message: types.Message) -> None:
 
 
 @rest_bot.callback_query_handler(
-    func= lambda call: call.message.text \
-                       in [lang["CHANGE_LANG_MSG"] for lang in texts.values()]
+    func= lambda call: call.message.text in [lang["CHANGE_LANG_MSG"] for lang in texts.values()]
 )
 @logger_decorator_callback
 def lang_set(call: types.CallbackQuery) -> None:
@@ -102,14 +87,8 @@ def lang_set(call: types.CallbackQuery) -> None:
     """
     c_back = DBInterface(call)
     c_back.set_restaurant_lang()
-    rest_bot.delete_message(
-        c_back.data_to_read.from_user.id,
-        (c_back.data_to_read.message.id - 1)
-    )
-    rest_bot.delete_message(
-        c_back.data_to_read.from_user.id,
-        c_back.data_to_read.message.id
-    )
+    rest_bot.delete_message(c_back.data_to_read.from_user.id, (c_back.data_to_read.message.id - 1))
+    rest_bot.delete_message(c_back.data_to_read.from_user.id, c_back.data_to_read.message.id)
     rest_bot.send_message(
         c_back.data_to_read.from_user.id,
         texts[c_back.data_to_read.data]["LANG_SELECTED_MSG"]
@@ -131,19 +110,13 @@ def dish_available_command(message: types.Message) -> None:
     rest_bot.send_message(
         msg.user_id,
         texts[msg.get_rest_lang()]["DISH_AVAILABLE_SELECT_MSG"],
-        reply_markup=restaurant_menus.edit_dish_menu(
-            msg.get_rest_lang(),
-            msg
-        )
+        reply_markup=restaurant_menus.edit_dish_menu(msg.get_rest_lang(), msg)
     )
 
 
 @rest_bot.callback_query_handler(
     func=lambda call: call.message.text \
-                      in [
-                          lang["DISH_AVAILABLE_SELECT_MSG"] \
-                              for lang in texts.values()
-                      ]
+                      in [lang["DISH_AVAILABLE_SELECT_MSG"] for lang in texts.values()]
 )
 @logger_decorator_callback
 def dish_available_select(call: types.CallbackQuery) -> None:
@@ -157,14 +130,8 @@ def dish_available_select(call: types.CallbackQuery) -> None:
     """  # TODO
     c_back = DBInterface(call)
     c_back.set_dish_available()
-    rest_bot.delete_message(
-        c_back.user_id,
-        c_back.data_to_read.message.id
-    )
-    rest_bot.send_message(
-        c_back.user_id,
-        texts[c_back.get_rest_lang()]["DISH_SET_AVAILABLE_MSG"]
-    )
+    rest_bot.delete_message(c_back.user_id, c_back.data_to_read.message.id)
+    rest_bot.send_message(c_back.user_id, texts[c_back.get_rest_lang()]["DISH_SET_AVAILABLE_MSG"])
 
 
 @rest_bot.message_handler(commands=["dish_unavailable"])
@@ -188,10 +155,7 @@ def dish_unavailable_command(message: types.Message) -> None:
 
 @rest_bot.callback_query_handler(
     func=lambda call: call.message.text \
-                      in [
-                          lang["DISH_UNAVAILABLE_SELECT_MSG"] \
-                              for lang in texts.values()
-                      ]
+                      in [lang["DISH_UNAVAILABLE_SELECT_MSG"] for lang in texts.values()]
 )
 @logger_decorator_callback
 def dish_unavailable_select(call: types.CallbackQuery) -> None:
@@ -225,15 +189,15 @@ def add_dish_command(message: types.Message) -> None:
     """  # TODO
     msg = DBInterface(message)
     if len(msg.data_to_read.text.split(maxsplit=1)) > 1:
-        msg.add_dish(msg.data_to_read.text.split(maxsplit=1)[1])
+        msg.add_dish(msg.data_to_read.text.split(maxsplit=1)[-1])
         rest_bot.send_message(
             msg.user_id,
             texts[msg.get_rest_lang()]["DISH_ADDED_MSG"](
-                msg.data_to_read.text.split(maxsplit=1)[1]
+                msg.data_to_read.text.split(maxsplit=1)[-1]
             )
         )
     else:
-        rest_bot.send_message(msg.user_id, "No dish name found")
+        rest_bot.send_message(msg.user_id, texts[msg.get_rest_lang()]["NO_DISH_NAME_MSG"])
 
 
 @rest_bot.message_handler(commands=["edit_dish"])
@@ -256,8 +220,7 @@ def edit_dish_command(message: types.Message) -> None:
 
 
 @rest_bot.callback_query_handler(
-    func=lambda call: call.message.text \
-                      in [lang["EDIT_DISH_MSG"] for lang in texts.values()]
+    func=lambda call: call.message.text in [lang["EDIT_DISH_MSG"] for lang in texts.values()]
 )
 @logger_decorator_callback
 def edit_dish_param(call: types.CallbackQuery) -> None:
@@ -276,28 +239,19 @@ def edit_dish_param(call: types.CallbackQuery) -> None:
         rest_bot.delete_message(c_back.user_id, c_back.data_to_read.message.id)
     else:
         rest_bot.edit_message_text(
-            texts[c_back.get_rest_lang()]["EDIT_DISH_CHOSEN_MSG"](
-                c_back.get_dish_name()
-            ),
+            texts[c_back.get_rest_lang()]["EDIT_DISH_CHOSEN_MSG"](c_back.get_dish_name()),
             c_back.user_id,
             c_back.data_to_read.message.id
         )
         rest_bot.send_message(
             c_back.user_id,
             texts[c_back.get_rest_lang()]["EDIT_DISH_PARAM_MSG"],
-            reply_markup=restaurant_menus.edit_dish_param_menu(
-                c_back.get_rest_lang(),
-                c_back
-            )
+            reply_markup=restaurant_menus.edit_dish_param_menu(c_back.get_rest_lang(), c_back)
         )
 
 
 @rest_bot.callback_query_handler(
-    func=lambda call: call.message.text \
-                      in [
-                          lang["EDIT_DISH_PARAM_MSG"] \
-                              for lang in texts.values()
-                      ]
+    func=lambda call: call.message.text in [lang["EDIT_DISH_PARAM_MSG"] for lang in texts.values()]
 )
 @logger_decorator_callback
 def req_new_dish_param(call: types.CallbackQuery) -> None:
@@ -310,18 +264,12 @@ def req_new_dish_param(call: types.CallbackQuery) -> None:
 
     """  # TODO
     c_back = DBInterface(call)
-    rest_bot.delete_message(
-        c_back.user_id,
-        (c_back.data_to_read.message.id - 1)
-    )
-    rest_bot.delete_message(
-        c_back.user_id,
-        c_back.data_to_read.message.id
-    )
+    rest_bot.delete_message(c_back.user_id, (c_back.data_to_read.message.id - 1))
+    rest_bot.delete_message(c_back.user_id, c_back.data_to_read.message.id)
     request = c_back.data_to_read.data.split(maxsplit=1)
     if c_back.data_to_read.data == restaurant_menus.back_button(
             c_back.get_rest_lang()
-    ):
+    ).callback_data:
         rest_bot.delete_message(c_back.user_id, c_back.data_to_read.message.id)
     elif request[0] == "cat":
         rest_bot.send_message(
@@ -347,9 +295,8 @@ def req_new_dish_param(call: types.CallbackQuery) -> None:
     func=lambda message: message.reply_to_message \
                          and message.reply_to_message.text \
                          in [
-                             lang["EDIT_CATEGORY_MSG"](
-                                 message.reply_to_message.text.split()[-1]
-                             ) for lang in texts.values()
+                             lang["EDIT_CATEGORY_MSG"](message.reply_to_message.text.split()[-1]) \
+                                 for lang in texts.values()
                          ]
 )
 @logger_decorator_msg
@@ -363,14 +310,8 @@ def set_new_category(message: types.Message) -> None:
 
     """  # TODO
     msg = DBInterface(message)
-    msg.edit_dish(
-        "category",
-        message.reply_to_message.text.split()[-1]
-    )
-    rest_bot.send_message(
-        msg.user_id,
-        texts[msg.get_rest_lang()]["CAT_SET_MSG"]
-    )
+    msg.edit_dish("category", message.reply_to_message.text.split()[-1])
+    rest_bot.send_message(msg.user_id, texts[msg.get_rest_lang()]["CAT_SET_MSG"])
 
 
 @rest_bot.message_handler(
@@ -393,23 +334,16 @@ def set_new_description(message: types.Message) -> None:
 
     """  # TODO
     msg = DBInterface(message)
-    msg.edit_dish(
-        "dish_description",
-        message.reply_to_message.text.split()[-1]
-    )
-    rest_bot.send_message(
-        msg.user_id,
-        texts[msg.get_rest_lang()]["DESC_SET_MSG"]
-    )
+    msg.edit_dish("dish_description", message.reply_to_message.text.split()[-1])
+    rest_bot.send_message(msg.user_id, texts[msg.get_rest_lang()]["DESC_SET_MSG"])
 
 
 @rest_bot.message_handler(
     func=lambda message: message.reply_to_message \
                          and message.reply_to_message.text \
                          in [
-                             lang["EDIT_PRICE_MSG"](
-                                 message.reply_to_message.text.split()[-1]
-                             ) for lang in texts.values()
+                             lang["EDIT_PRICE_MSG"](message.reply_to_message.text.split()[-1]) \
+                                 for lang in texts.values()
                          ]
 )
 @logger_decorator_msg
@@ -423,17 +357,9 @@ def set_new_price(message: types.Message) -> None:
 
     """  # TODO
     msg = DBInterface(message)
-    msg.data_to_read.text = float(
-        msg.data_to_read.text.replace(",", ".")
-    )
-    msg.edit_dish(
-        "dish_price",
-        message.reply_to_message.text.split()[-1]
-    )
-    rest_bot.send_message(
-        msg.user_id,
-        texts[msg.get_rest_lang()]["PRICE_SET_MSG"]
-    )
+    msg.data_to_read.text = float(msg.data_to_read.text.replace(",", "."))
+    msg.edit_dish("dish_price", message.reply_to_message.text.split()[-1])
+    rest_bot.send_message(msg.user_id, texts[msg.get_rest_lang()]["PRICE_SET_MSG"])
 
 
 @rest_bot.message_handler(commands=["delete_dish"])
@@ -457,10 +383,7 @@ def delete_dish_command(message: types.Message) -> None:
 
 @rest_bot.callback_query_handler(
     func=lambda call: call.message.text \
-                      in [
-                          lang["DELETE_DISH_SELECT_MSG"] \
-                              for lang in texts.values()
-                      ]
+                      in [lang["DELETE_DISH_SELECT_MSG"] for lang in texts.values()]
 )
 @logger_decorator_callback
 def dish_deletion_select(call: types.CallbackQuery) -> None:
@@ -475,10 +398,7 @@ def dish_deletion_select(call: types.CallbackQuery) -> None:
     c_back = DBInterface(call)
     rest_bot.delete_message(c_back.user_id, c_back.data_to_read.message.id)
     c_back.delete_dish()
-    rest_bot.send_message(
-        c_back.user_id,
-        texts[c_back.get_rest_lang()]["DISH_DELETED_MSG"]
-    )
+    rest_bot.send_message(c_back.user_id, texts[c_back.get_rest_lang()]["DISH_DELETED_MSG"])
 
 
 @rest_bot.message_handler(commands=["close_shift"])
@@ -494,10 +414,7 @@ def close_shift_command(message: types.Message) -> None:
     """  # TODO
     msg = DBInterface(message)
     msg.close_shift()
-    rest_bot.send_message(
-        msg.user_id,
-        texts[msg.get_rest_lang()]["CLOSE_SHIFT_MSG"]
-    )
+    rest_bot.send_message(msg.user_id, texts[msg.get_rest_lang()]["CLOSE_SHIFT_MSG"])
 
 
 @rest_bot.message_handler(commands=["open_shift"])
@@ -513,10 +430,7 @@ def open_shift_command(message: types.Message) -> None:
     """  # TODO
     msg = DBInterface(message)
     msg.open_shift()
-    rest_bot.send_message(
-        msg.user_id,
-        texts[msg.get_rest_lang()]["OPEN_SHIFT_MSG"]
-    )
+    rest_bot.send_message(msg.user_id, texts[msg.get_rest_lang()]["OPEN_SHIFT_MSG"])
 
 
 @rest_bot.callback_query_handler(func=lambda call: "accepted" in call.data)
@@ -536,10 +450,7 @@ def order_accepted(call: types.CallbackQuery) -> None:
     c_back.order_accepted()
     rest_location = c_back.get_rest_location()
     delivery_location = c_back.get_delivery_location()
-    rest_bot.edit_message_reply_markup(
-        c_back.user_id,
-        c_back.data_to_read.message.id
-    )
+    rest_bot.edit_message_reply_markup(c_back.user_id, c_back.data_to_read.message.id)
     rest_bot.send_message(
         c_back.user_id,
         texts[c_back.get_rest_lang()]["REST_ORDER_ACCEPTED_MSG"](
@@ -567,20 +478,9 @@ def order_accepted(call: types.CallbackQuery) -> None:
                 rest_location[0]
             )
         )
-        courier_bot.send_location(
-            courier[0],
-            rest_location[1][0],
-            rest_location[1][1]
-        )
-        courier_bot.send_message(
-            courier[0],
-            texts[courier[1]]["COURIER_DELIVERY_LOC_MSG"]
-        )
-        courier_bot.send_location(
-            courier[0],
-            delivery_location[0][0],
-            delivery_location[0][1]
-        )
+        courier_bot.send_location(courier[0], rest_location[1][0], rest_location[1][1])
+        courier_bot.send_message(courier[0], texts[courier[1]]["COURIER_DELIVERY_LOC_MSG"])
+        courier_bot.send_location(courier[0], delivery_location[0][0], delivery_location[0][1])
         courier_bot.send_message(
             courier[0],
             texts[courier[1]]["COURIER_ACCEPT_ORDER_MSG"],

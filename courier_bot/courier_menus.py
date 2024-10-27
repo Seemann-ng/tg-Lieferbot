@@ -59,18 +59,12 @@ def transport_menu(lang_code: str) -> types.InlineKeyboardMarkup:
         text=texts[lang_code]["AUTO_BTN"],
         callback_data="type 3"
     )
-    menu.add(
-        feet_button,
-        bicycle_button,
-        motorcycle_button,
-        automobile_button
-    )
+    menu.add(feet_button, bicycle_button, motorcycle_button, automobile_button)
     return menu
 
 
 # Restaurant order ready menu.
-def rest_order_ready_menu(rest_lang: str,
-                          order_uuid: str) -> types.InlineKeyboardMarkup:
+def rest_order_ready_menu(rest_lang: str, order_uuid: str) -> types.InlineKeyboardMarkup:
     """Compose "Order Ready" menu for Restaurant in required language.
 
     Args:
@@ -91,9 +85,9 @@ def rest_order_ready_menu(rest_lang: str,
 
 
 # Courier order in delivery menu.
-def order_in_delivery_menu(courier_lang: str,
-                           order_uuid: str) -> types.InlineKeyboardMarkup:
-    """Compose "Order In Delivery" menu for Courier in required language.
+def order_in_delivery_menu(courier_lang: str, order_uuid: str) -> types.InlineKeyboardMarkup:
+    """Compose "Order In Delivery" menu for Courier
+    in required language.
 
     Args:
         courier_lang: Courier language code.
@@ -113,8 +107,7 @@ def order_in_delivery_menu(courier_lang: str,
 
 
 # Customer order delivered menu.
-def cus_delivered_menu(customer_lang: str,
-                       order_uuid: str) -> types.InlineKeyboardMarkup:
+def cus_delivered_menu(customer_lang: str, order_uuid: str) -> types.InlineKeyboardMarkup:
     """Compose "Order delivered" menu for Customer in required language.
 
     Args:

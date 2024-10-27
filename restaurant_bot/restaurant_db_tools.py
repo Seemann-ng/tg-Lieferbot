@@ -19,9 +19,7 @@ class Interface:
     def __init__(self, data_to_read: types.Message | types.CallbackQuery):
         self.data_to_read = data_to_read
         self.user_id = data_to_read.from_user.id
-        logger.info(
-            f"Interface instance initialized with {type(self.data_to_read)}."
-        )
+        logger.info(f"Interface instance initialized with {type(self.data_to_read)}.")
 
     @cursor_decorator
     @logger_decorator
@@ -38,8 +36,7 @@ class Interface:
 
         """
         curs.execute(
-            "SELECT lang_code FROM restaurants WHERE restaurant_tg_id = %s",
-                     (self.user_id,)
+            "SELECT lang_code FROM restaurants WHERE restaurant_tg_id = %s", (self.user_id,)
         )
         if user_lang := curs.fetchone():
             if user_lang := user_lang[0]:
@@ -88,9 +85,7 @@ class Interface:
 
         """  # TODO
         curs.execute(
-            "SELECT restaurant_uuid FROM restaurants "
-            "WHERE restaurant_tg_id = %s",
-            (self.user_id,)
+            "SELECT restaurant_uuid FROM restaurants WHERE restaurant_tg_id = %s", (self.user_id,)
         )
         restaurant_uuid = curs.fetchone()
         return restaurant_uuid[0]
@@ -123,8 +118,7 @@ class Interface:
 
         """  # TODO
         curs.execute(
-            "UPDATE restaurants SET restaurant_is_open = true "
-            "WHERE restaurant_tg_id = %s",
+            "UPDATE restaurants SET restaurant_is_open = true WHERE restaurant_tg_id = %s",
             (self.user_id,)
         )
 
@@ -140,8 +134,7 @@ class Interface:
 
         """  # TODO
         curs.execute(
-            "UPDATE restaurants SET restaurant_is_open = false "
-            "WHERE restaurant_tg_id = %s",
+            "UPDATE restaurants SET restaurant_is_open = false WHERE restaurant_tg_id = %s",
             (self.user_id,)
         )
 
@@ -188,10 +181,7 @@ class Interface:
         Returns:
 
         """  # TODO
-        curs.execute(
-            "DELETE FROM dishes WHERE dish_uuid = %s",
-            (self.data_to_read.data,)
-        )
+        curs.execute("DELETE FROM dishes WHERE dish_uuid = %s", (self.data_to_read.data,))
 
     @cursor_decorator
     @logger_decorator
@@ -205,12 +195,10 @@ class Interface:
 
         """  # TODO
         curs.execute(
-            "SELECT dish_uuid, dish_name FROM dishes "
-            "WHERE restaurant_uuid = %s",
+            "SELECT dish_uuid, dish_name FROM dishes WHERE restaurant_uuid = %s",
             (self.get_rest_uuid(),)
         )
-        dishes = curs.fetchall()
-        return dishes
+        return curs.fetchall()
 
     @cursor_decorator
     @logger_decorator
@@ -224,8 +212,7 @@ class Interface:
 
         """  # TODO
         curs.execute(
-            "SELECT dish_name FROM dishes WHERE dishes.dish_uuid = %s",
-            (self.data_to_read.data,)
+            "SELECT dish_name FROM dishes WHERE dishes.dish_uuid = %s", (self.data_to_read.data,)
         )
         if dish_name := curs.fetchone():
             return dish_name[0]
@@ -243,8 +230,7 @@ class Interface:
 
         """  # TODO
         curs.execute(
-            "INSERT INTO dishes(restaurant_uuid, dish_uuid, dish_name) "
-            "VALUES (%s, %s, %s)",
+            "INSERT INTO dishes(restaurant_uuid, dish_uuid, dish_name) VALUES (%s, %s, %s)",
             (self.get_rest_uuid(), str(uuid.uuid4()), dish_name)
         )
 
@@ -302,13 +288,13 @@ class Interface:
             "SELECT delivery_distance FROM orders WHERE order_uuid = %s",
             (self.data_to_read.data.split(maxsplit=1)[-1],)
         )
-        delivery_distances = float(curs.fetchone()[0])
+        delivery_distance = float(curs.fetchone()[0])
         for courier in couriers:
-            if courier[2] == "0" and delivery_distances >= 3:
+            if courier[2] == "0" and delivery_distance >= 3:
                 couriers.remove(courier)
-            if courier[2] == "1" and delivery_distances >= 7:
+            if courier[2] == "1" and delivery_distance >= 7:
                 couriers.remove(courier)
-            if courier[2] == "2" and delivery_distances >= 15:
+            if courier[2] == "2" and delivery_distance >= 15:
                 couriers.remove(courier)
         return couriers if couriers else []
 
@@ -328,12 +314,8 @@ class Interface:
             (self.data_to_read.data.split(maxsplit=1)[-1],)
         )
         customer_id = curs.fetchone()[0]
-        curs.execute(
-            "SELECT lang_code FROM customers WHERE customer_id = %s",
-            (customer_id, )
-        )
-        lang_code = curs.fetchone()[0]
-        customer = (customer_id, lang_code)
+        curs.execute("SELECT lang_code FROM customers WHERE customer_id = %s", (customer_id,))
+        customer = (customer_id, curs.fetchone()[0])
         return customer
 
     @cursor_decorator
@@ -348,12 +330,10 @@ class Interface:
 
         """  # TODO
         curs.execute(
-            "SELECT address, location FROM restaurants "
-            "WHERE restaurant_tg_id = %s",
+            "SELECT address, location FROM restaurants WHERE restaurant_tg_id = %s",
             (self.user_id,)
         )
-        location = curs.fetchone()
-        return location
+        return curs.fetchone()
 
     @cursor_decorator
     @logger_decorator
@@ -370,8 +350,7 @@ class Interface:
             "SELECT delivery_location FROM orders WHERE order_uuid = %s",
             (self.data_to_read.data.split(maxsplit=1)[-1],)
         )
-        delivery_location = curs.fetchone()
-        return delivery_location
+        return curs.fetchone()
 
     @cursor_decorator
     @logger_decorator
@@ -388,8 +367,7 @@ class Interface:
             "SELECT dishes FROM orders WHERE order_uuid = %s",
             (self.data_to_read.data.split(maxsplit=1)[-1],)
         )
-        dishes = curs.fetchone()[0]
-        return dishes
+        return curs.fetchone()[0]
 
     @cursor_decorator
     @logger_decorator
@@ -403,12 +381,9 @@ class Interface:
 
         """  # TODO
         curs.execute(
-            "SELECT restaurant_name FROM restaurants "
-            "WHERE restaurant_tg_id = %s",
-            (self.user_id,)
+            "SELECT restaurant_name FROM restaurants WHERE restaurant_tg_id = %s", (self.user_id,)
         )
-        rest_name = curs.fetchone()[0]
-        return rest_name
+        return curs.fetchone()[0]
 
     @cursor_decorator
     @logger_decorator
@@ -425,8 +400,7 @@ class Interface:
             "SELECT courier_fee FROM orders WHERE order_uuid = %s",
             (self.data_to_read.data.split(maxsplit=1)[-1],)
         )
-        courier_fee = curs.fetchone()[0]
-        return courier_fee
+        return curs.fetchone()[0]
 
     @cursor_decorator
     @logger_decorator
@@ -440,14 +414,12 @@ class Interface:
 
         """  # TODO
         curs.execute(
-            "SELECT customer_name, customer_id, order_comment "
-            "FROM orders WHERE order_uuid = %s",
+            "SELECT customer_name, customer_id, order_comment FROM orders WHERE order_uuid = %s",
             (self.data_to_read.data.split(maxsplit=1)[-1],)
         )
         customer_info = curs.fetchone()
         curs.execute(
-            "SELECT customer_username, customer_phone_num "
-            "FROM customers WHERE customer_id = %s",
+            "SELECT customer_username, customer_phone_num FROM customers WHERE customer_id = %s",
             (customer_info[1],)
         )
         customer_information = curs.fetchone()
@@ -475,11 +447,8 @@ class Interface:
             (self.data_to_read.data.split(maxsplit=1)[-1],)
         )
         courier_id = curs.fetchone()[0]
-        curs.execute(
-            "SELECT lang_code FROM couriers WHERE courier_id = %s",
-            (courier_id,))
-        lang_code = curs.fetchone()[0]
-        courier = (courier_id, lang_code)
+        curs.execute("SELECT lang_code FROM couriers WHERE courier_id = %s", (courier_id,))
+        courier = (courier_id, curs.fetchone()[0])
         return courier
 
     @cursor_decorator

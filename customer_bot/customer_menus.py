@@ -4,9 +4,7 @@ from customer_translations import texts
 from customer_db_tools import Interface as DBInterface
 
 # Some common buttons here.
-main_menu_button = lambda lang_code: types.KeyboardButton(
-    text=texts[lang_code]["MAIN_MENU_BTN"]
-)
+main_menu_button = lambda lang_code: types.KeyboardButton(text=texts[lang_code]["MAIN_MENU_BTN"])
 back_button = lambda lang_code: types.InlineKeyboardButton(
     text=texts[lang_code]["GO_BACK_BTN"],
     callback_data=texts[lang_code]["GO_BACK_BTN"]
@@ -23,7 +21,8 @@ cancel_order_button = lambda lang_code: types.InlineKeyboardButton(
 
 # Agreement menu.
 def agreement_menu(lang_code: str) -> types.ReplyKeyboardMarkup:
-    """Compose "Accept Customer's agreement" menu in Customer's chosen language.
+    """Compose "Accept Customer's agreement" menu
+    in Customer's chosen language.
 
     Args:
         lang_code: Language code of the chosen language.
@@ -32,12 +31,8 @@ def agreement_menu(lang_code: str) -> types.ReplyKeyboardMarkup:
         "Accept Customer's agreement" menu in required language.
 
     """
-    show_agreement_button = types.KeyboardButton(
-        text=texts[lang_code]["SHOW_AGREEMENT_BTN"]
-    )
-    accept_agreement_button = types.KeyboardButton(
-        text=texts[lang_code]["ACCEPT_AGREEMENT_BTN"]
-    )
+    show_agreement_button = types.KeyboardButton(text=texts[lang_code]["SHOW_AGREEMENT_BTN"])
+    accept_agreement_button = types.KeyboardButton(text=texts[lang_code]["ACCEPT_AGREEMENT_BTN"])
     menu = types.ReplyKeyboardMarkup(
         resize_keyboard=True,
         input_field_placeholder=texts[lang_code]["AGREEMENT_MENU_PLACEHOLDER"]
@@ -48,7 +43,8 @@ def agreement_menu(lang_code: str) -> types.ReplyKeyboardMarkup:
 
 # Registration, phone number import method menu.
 def reg_phone_menu(lang_code: str) -> types.ReplyKeyboardMarkup:
-    """Compose "Choose phone number input method" menu in Customer's chosen language.
+    """Compose "Choose phone number input method" menu
+    in Customer's chosen language.
 
     Args:
         lang_code: Language code of the chosen language.
@@ -61,9 +57,7 @@ def reg_phone_menu(lang_code: str) -> types.ReplyKeyboardMarkup:
         text=texts[lang_code]["REG_PHONE_IMPORT_BTN"],
         request_contact=True
     )
-    reg_phone_str_button = types.KeyboardButton(
-        text=texts[lang_code]["REG_PHONE_MAN_BTN"]
-    )
+    reg_phone_str_button = types.KeyboardButton(text=texts[lang_code]["REG_PHONE_MAN_BTN"])
     menu = types.ReplyKeyboardMarkup(
         resize_keyboard=True,
         input_field_placeholder=texts[lang_code]["REG_PHONE_MENU_PLACEHOLDER"]
@@ -106,17 +100,10 @@ def main_menu(lang_code: str) -> types.ReplyKeyboardMarkup:
         Main menu in requested language.
 
     """
-    new_order_button = types.KeyboardButton(
-        text=texts[lang_code]["NEW_ORDER_BTN"]
-    )
-    my_orders_button = types.KeyboardButton(
-        text=texts[lang_code]["MY_ORDERS_BTN"]
-    )
+    new_order_button = types.KeyboardButton(text=texts[lang_code]["NEW_ORDER_BTN"])
+    my_orders_button = types.KeyboardButton(text=texts[lang_code]["MY_ORDERS_BTN"])
     options_button = types.KeyboardButton(text=texts[lang_code]["OPTIONS_BTN"])
-    menu = types.ReplyKeyboardMarkup(
-        resize_keyboard=True,
-        one_time_keyboard=True
-    )
+    menu = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     menu.add(new_order_button, my_orders_button)
     menu.add(options_button)
     return menu
@@ -133,18 +120,12 @@ def options_menu(lang_code: str) -> types.ReplyKeyboardMarkup:
         options menu in required language.
 
     """
-    change_lang_button = types.InlineKeyboardButton(
-        text=texts[lang_code]["CHANGE_LANG_BTN"]
-    )
-    contact_support_button = types.KeyboardButton(
-        text=texts[lang_code]["CONTACT_SUPPORT_BTN"]
-    )
+    change_lang_button = types.InlineKeyboardButton(text=texts[lang_code]["CHANGE_LANG_BTN"])
+    contact_support_button = types.KeyboardButton(text=texts[lang_code]["CONTACT_SUPPORT_BTN"])
     reset_contact_info_button = types.KeyboardButton(
         text=texts[lang_code]["RESET_CONTACT_INFO_BTN"]
     )
-    delete_profile_button = types.KeyboardButton(
-        text=texts[lang_code]["DELETE_PROFILE_BTN"]
-    )
+    delete_profile_button = types.KeyboardButton(text=texts[lang_code]["DELETE_PROFILE_BTN"])
     menu = types.ReplyKeyboardMarkup(
         resize_keyboard=True,
         input_field_placeholder=texts[lang_code]["OPTIONS_BTN"]
@@ -228,7 +209,8 @@ def confirm_location_menu(lang_code: str) -> types.InlineKeyboardMarkup:
 
 # Choose restaurant type menu.
 def choose_rest_type_menu(lang_code: str) -> types.InlineKeyboardMarkup:
-    """Compose "Choose restaurant type" menu in Customer's chosen language.
+    """Compose "Choose restaurant type" menu
+    in Customer's chosen language.
 
     Args:
         lang_code: Language code of the chosen language.
@@ -251,13 +233,13 @@ def choose_rest_type_menu(lang_code: str) -> types.InlineKeyboardMarkup:
 
 
 # Choose restaurant menu.
-def choose_rest_menu(lang_code: str,
-                     c_back: DBInterface) -> types.InlineKeyboardMarkup:
+def choose_rest_menu(lang_code: str, c_back: DBInterface) -> types.InlineKeyboardMarkup:
     """Compose "Choose restaurant" menu in Customer's chosen language.
 
     Args:
         lang_code: Language code of the chosen language.
-        c_back: DBInterface object containing data regarding Customer's chosen restaurant type.
+        c_back: DBInterface object containing data
+        about Customer's chosen restaurant type.
 
     Returns:
         "Choose restaurant" menu in required language.
@@ -266,24 +248,20 @@ def choose_rest_menu(lang_code: str,
     menu = types.InlineKeyboardMarkup(row_width=1)
     if restaurants := c_back.show_restaurants():
         for restaurant in restaurants:
-            menu.add(
-                types.InlineKeyboardButton(
-                    text=restaurant[0],
-                    callback_data=restaurant[1]
-                )
-            )
+            menu.add(types.InlineKeyboardButton(text=restaurant[0], callback_data=restaurant[1]))
     menu.add(back_button(lang_code))
     return menu
 
 
 # Choose dish category menu.
-def choose_dish_cat_menu(lang_code: str,
-                         c_back: DBInterface) -> types.InlineKeyboardMarkup:
-    """Compose "Choose dish category" menu in Customer's chosen language.
+def choose_dish_cat_menu(lang_code: str, c_back: DBInterface) -> types.InlineKeyboardMarkup:
+    """Compose "Choose dish category" menu
+    in Customer's chosen language.
 
     Args:
         lang_code: Language code of the chosen language.
-        c_back: DBInterface object containing data regarding Customer's chosen restaurant.
+        c_back: DBInterface object containing data
+        abot Customer's chosen restaurant.
 
     Returns:
         "Choose dish category" menu in required language.
@@ -292,12 +270,7 @@ def choose_dish_cat_menu(lang_code: str,
     menu = types.InlineKeyboardMarkup(row_width=1)
     if dish_categories := c_back.show_dish_categories():
         for category in dish_categories:
-            menu.add(
-                types.InlineKeyboardButton(
-                    text=category[0],
-                    callback_data=category[0]
-                )
-            )
+            menu.add(types.InlineKeyboardButton(text=category[0], callback_data=category[0]))
     menu.add(cart_button(lang_code))
     if c_back.data_to_read.message.text != texts[lang_code]["ADD_MORE_BTN"]:
         menu.add(back_button(lang_code))
@@ -306,13 +279,13 @@ def choose_dish_cat_menu(lang_code: str,
 
 
 # Choose dish menu.
-def choose_dish_menu(lang_code: str,
-                     c_back: DBInterface) -> types.InlineKeyboardMarkup:
+def choose_dish_menu(lang_code: str, c_back: DBInterface) -> types.InlineKeyboardMarkup:
     """Compose "Choose dish" menu in Customer's chosen language.
 
     Args:
         lang_code: Language code of the chosen language.
-        c_back: DBInterface object containing data regarding Customer's chosen dish category.
+        c_back: DBInterface object containing data
+        about Customer's chosen dish category.
 
     Returns:
         "Choose dish" menu in required language.
@@ -321,9 +294,7 @@ def choose_dish_menu(lang_code: str,
     menu = types.InlineKeyboardMarkup(row_width=1)
     if dishes := c_back.show_dishes():
         for dish in dishes:
-            menu.add(
-                types.InlineKeyboardButton(text=dish[0], callback_data=dish[1])
-            )
+            menu.add(types.InlineKeyboardButton(text=dish[0], callback_data=dish[1]))
     menu.add(cart_button(lang_code))
     menu.add(back_button(lang_code))
     menu.add(cancel_order_button(lang_code))
@@ -331,9 +302,9 @@ def choose_dish_menu(lang_code: str,
 
 
 # Dish selection confirmation menu.
-def conf_sel_dish_menu(lang_code: str,
-                       c_back: DBInterface) -> types.InlineKeyboardMarkup:
-    """Compose "Confirm selected dish" menu in Customer's chosen language.
+def conf_sel_dish_menu(lang_code: str, c_back: DBInterface) -> types.InlineKeyboardMarkup:
+    """Compose "Confirm selected dish" menu
+    in Customer's chosen language.
 
     Args:
         lang_code: Language code of the chosen language.
@@ -405,8 +376,7 @@ def comment_menu(lang_code: str) -> types.InlineKeyboardMarkup:
 
 
 # Item deletion menu.
-def item_deletion_menu(lang_code: str,
-                       c_back: DBInterface) -> types.InlineKeyboardMarkup:
+def item_deletion_menu(lang_code: str, c_back: DBInterface) -> types.InlineKeyboardMarkup:
     """Compose "Item deletion" menu in Customer's chosen language.
 
     Args:
@@ -423,12 +393,7 @@ def item_deletion_menu(lang_code: str,
         for dish_uuid in dishes_uuids:
             c_back.data_to_read.data = dish_uuid
             dish_name = c_back.get_dish()[0]
-            menu.add(
-                types.InlineKeyboardButton(
-                    text=dish_name,
-                    callback_data=dish_uuid
-                )
-            )
+            menu.add(types.InlineKeyboardButton(text=dish_name, callback_data=dish_uuid))
     menu.add(cart_button(lang_code))
     return menu
 
@@ -462,8 +427,7 @@ def lang_sel_menu(lang_code: str) -> types.InlineKeyboardMarkup:
 
 
 # Payment menu.
-def payment_menu(lang_code: str,
-                 order_uuid: str) -> types.InlineKeyboardMarkup:
+def payment_menu(lang_code: str, order_uuid: str) -> types.InlineKeyboardMarkup:
     """Compose "Payment" menu in Customer's chosen language.'
 
     Args:
@@ -488,9 +452,9 @@ def payment_menu(lang_code: str,
 
 
 # Restaurant accept order menu.
-def rest_accept_order_menu(lang_code: str,
-                           order_uuid: str) -> types.InlineKeyboardMarkup:
-    """Compose "Accept order" menu for a Restaurant in Restaurant's language.
+def rest_accept_order_menu(lang_code: str, order_uuid: str) -> types.InlineKeyboardMarkup:
+    """Compose "Accept order" menu for a Restaurant
+    in Restaurant's language.
 
     Args:
         lang_code: Restaurant's language.

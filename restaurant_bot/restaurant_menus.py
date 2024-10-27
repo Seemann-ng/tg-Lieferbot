@@ -9,8 +9,7 @@ back_button = lambda lang_code: types.InlineKeyboardButton(
 )
 
 
-def edit_dish_menu(lang_code: str,
-                   msg: DBInterface) -> types.InlineKeyboardMarkup:
+def edit_dish_menu(lang_code: str, msg: DBInterface) -> types.InlineKeyboardMarkup:
     """
 
     Args:
@@ -22,17 +21,13 @@ def edit_dish_menu(lang_code: str,
     """  # TODO
     menu = types.InlineKeyboardMarkup(row_width=1)
     for dish in msg.get_dishes():
-        dish_button = types.InlineKeyboardButton(
-            text=dish[1],
-            callback_data=dish[0]
-        )
+        dish_button = types.InlineKeyboardButton(text=dish[1], callback_data=dish[0])
         menu.add(dish_button)
     menu.add(back_button(lang_code))
     return menu
 
 
-def edit_dish_param_menu(lang_code: str,
-                         c_back: DBInterface) -> types.InlineKeyboardMarkup:
+def edit_dish_param_menu(lang_code: str, c_back: DBInterface) -> types.InlineKeyboardMarkup:
     """
     
     Args:
@@ -55,12 +50,7 @@ def edit_dish_param_menu(lang_code: str,
         callback_data=f"prc {c_back.data_to_read.data}"
     )
     menu = types.InlineKeyboardMarkup(row_width=1)
-    menu.add(
-        cat_button,
-        descr_button,
-        price_button,
-        back_button(lang_code)
-    )
+    menu.add(cat_button, descr_button, price_button, back_button(lang_code))
     return menu
 
 
@@ -92,8 +82,7 @@ def lang_sel_menu(lang_code: str) -> types.InlineKeyboardMarkup:
 
 
 # Courier accept order menu.
-def courier_accept_menu(order_uuid: str,
-                        lang_code: str) -> types.InlineKeyboardMarkup:
+def courier_accept_menu(order_uuid: str, lang_code: str) -> types.InlineKeyboardMarkup:
     """
 
     Args:
@@ -113,8 +102,7 @@ def courier_accept_menu(order_uuid: str,
 
 
 # Courier order in delivery menu.
-def courier_in_delivery_menu(order_uuid: str,
-                             courier_lang: str) -> types.InlineKeyboardMarkup:
+def courier_in_delivery_menu(order_uuid: str, courier_lang: str) -> types.InlineKeyboardMarkup:
     """
 
     Args:
