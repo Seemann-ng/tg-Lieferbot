@@ -177,7 +177,7 @@ texts = {
     "ru_RU": {
         "ASK_REGISTRATION_MSG": "Данный Телеграм аккаунт не зарегистрирован как заведение.\n"
                                 "Пожалуйста, подайте заявку на регистрацию в Службу Поддержки путем ответа на это сообщение.\n"
-                                "(Отвечая на данное сообщение Вы соглашаетесь на передечу ваших данных т.е. юзернейма и ID Телеграм Нашей Службе Поддержки.)",
+                                "(Отвечая на данное сообщение Вы соглашаетесь на передачу ваших данных т.е. ника и ID Телеграм Нашей Службе Поддержки.)",
         "WELCOME_MSG": f"Добро пожаловать в {BOT_NAME}-Restaurant!",
         "REG_REQUEST_MSG": lambda
             username,
@@ -196,8 +196,8 @@ texts = {
         "CLOSE_SHIFT_MSG": "Смена закончена.",
         "DISH_AVAILABLE_SELECT_MSG": "Выберите товар, чтобы сделать его доступным для заказа.",
         "DISH_SET_AVAILABLE_MSG": "Выбранный товар теперь доступен для заказа.",
-        "DISH_UNAVAILABLE_SELECT_MSG": "Выберите товар, чтобы сделать его НЕдоступным для заказа.",
-        "DISH_SET_UNAVAILABLE_MSG": "Выбранный товар теперь НЕдоступен для заказа.",
+        "DISH_UNAVAILABLE_SELECT_MSG": "Выберите товар, чтобы сделать его недоступным для заказа.",
+        "DISH_SET_UNAVAILABLE_MSG": "Выбранный товар теперь недоступен для заказа.",
         "DELETE_DISH_SELECT_MSG": "Выберите товар, чтобы удалить его.",
         "DISH_DELETED_MSG": "Выбранный товар был удален.",
         "DISH_ADDED_MSG": lambda dish_name: f"✅ Товар: {dish_name} был добавлен в базу данных.",
@@ -216,7 +216,7 @@ texts = {
         "EDIT_DESCRIPTION_MSG": lambda
             dish_uuid: f"Введите новое описание товара:\n" \
                        f"UUID товара: {dish_uuid}",
-        "DESC_SET_MSG": "✅ Тоавру присвоено новое описание.",
+        "DESC_SET_MSG": "✅ Товару присвоено новое описание.",
         "EDIT_PRICE_MSG": lambda
             dish_uuid: f"Введите новую цену товара:\n" \
                        f"UUID товара: {dish_uuid}",
@@ -245,7 +245,7 @@ texts = {
                           f"Товар(ы):\n{dishes}\n" \
                           f"Адрес заведения:\n`{rest_address}`\n" \
                           f"Местоположение заведения:",
-        "COURIER_DELIVERY_LOC_MSG": "Доаставить сюда:",
+        "COURIER_DELIVERY_LOC_MSG": "Доставить сюда:",
         "COURIER_ACCEPT_ORDER_MSG": "Принять заказ?",
         "COURIER_ACCEPT_BTN": "✅ Принять",
         "ORDER_READY_MSG": lambda order_uuid: f"Заказ\n`{order_uuid}`\nготов и передан курьеру.",
