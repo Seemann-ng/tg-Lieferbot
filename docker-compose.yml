@@ -52,6 +52,7 @@ services:
       - COURIER_BOT_TOKEN=${COURIER_BOT_TOKEN}
       - ADMIN_BOT_TOKEN=${ADMIN_BOT_TOKEN}
       - DEF_LANG=${DEF_LANG}
+      - BRAND_NAME=${BRAND_NAME}
     container_name: liefer_bot_restaurant
     restart: always
 
@@ -67,6 +68,7 @@ services:
       - COURIER_BOT_TOKEN=${COURIER_BOT_TOKEN}
       - ADMIN_BOT_TOKEN=${ADMIN_BOT_TOKEN}
       - DEF_LANG=${DEF_LANG}
+      - BRAND_NAME=${BRAND_NAME}
     container_name: liefer_bot_courier
     restart: always
 
