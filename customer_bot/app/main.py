@@ -23,8 +23,8 @@ MAX_PHONE_LENGTH = 11
 # Auxiliary functions.
 @logger_decorator_msg
 def show_main_menu(message: types.Message) -> None:
-    """Show Customer main menu if Customer is in the DB,
-    otherwise call start().
+    """Show Customer main menu if Customer is in the DB, otherwise call
+    start().
 
     Args:
         message: Main menu request from Customer.
@@ -43,8 +43,8 @@ def show_main_menu(message: types.Message) -> None:
 
 @logger_decorator_msg
 def phone_from_msg(message: types.Message) -> str:
-    """Check if manually entered phone number is valid
-    and add it into the DB.Customers if so.
+    """Check if manually entered phone number is valid and add it into
+    the DB.Customers if so.
 
     Args:
         message: Manually entered phone number.
@@ -75,8 +75,7 @@ def callback_to_msg(call: types.CallbackQuery) -> types.Message:
 
     """
     call.message.from_user.id = call.from_user.id
-    msg = call.message
-    return msg
+    return call.message
 
 
 @logger_decorator_callback
@@ -87,39 +86,39 @@ def clear_cart(call: types.CallbackQuery) -> None:
         call: Callback query with Customer's cart deletion request.
 
     """
-    c_back = DBInterface(call)
+    callback = DBInterface(call)
     cus_bot.answer_callback_query(
-        c_back.data_to_read.id,
-        texts[c_back.get_customer_lang()]["DELETING_CART_ALERT"],
+        callback.data_to_read.id,
+        texts[callback.get_customer_lang()]["DELETING_CART_ALERT"],
         show_alert=True
     )
-    cus_bot.delete_message(c_back.data_to_read.from_user.id, c_back.data_to_read.message.id)
-    c_back.delete_cart()
-    show_main_menu(callback_to_msg(c_back.data_to_read))
+    cus_bot.delete_message(callback.data_to_read.from_user.id, callback.data_to_read.message.id)
+    callback.delete_cart()
+    show_main_menu(callback_to_msg(callback.data_to_read))
 
 
 @logger_decorator_callback
 def prices_calc(call: types.CallbackQuery) -> None:
-    """Calculate subtotal courier and service fees
-    and total based on dishes in Customer's cart.
+    """Calculate subtotal courier and service fees and total based on
+    dishes in Customer's cart.
 
     Args:
         call: Callback query containing Customer's Telegram ID.
 
     """
-    c_back = DBInterface(call)
+    callback = DBInterface(call)
     subtotal = 0
-    for dish in c_back.get_from_cart("dishes_uuids"):
-        c_back.data_to_read.data = dish
-        subtotal += c_back.get_dish()[2]
-    c_back.data_to_read.data = subtotal
-    c_back.add_to_cart("subtotal")
+    for dish in callback.get_from_cart("dishes_uuids"):
+        callback.data_to_read.data = dish
+        subtotal += callback.get_dish()[2]
+    callback.data_to_read.data = subtotal
+    callback.add_to_cart("subtotal")
     if subtotal > 0:
         courier_fee = round(
             (
                 COURIER_FEE_BASE
                 + float(subtotal)*COURIER_FEE_RATE
-                + c_back.get_delivery_distance()*COURIER_FEE_DISTANCE_RATE
+                + callback.get_delivery_distance()*COURIER_FEE_DISTANCE_RATE
             ),
             2
         )
@@ -127,21 +126,20 @@ def prices_calc(call: types.CallbackQuery) -> None:
     else:
         courier_fee = round(0, 2)
         service_fee = round(0, 2)
-    c_back.data_to_read.data = courier_fee
-    c_back.add_to_cart("courier_fee")
-    c_back.data_to_read.data = service_fee
-    c_back.add_to_cart("service_fee")
-    c_back.data_to_read.data = round((float(subtotal) + courier_fee + service_fee), 2)
-    c_back.add_to_cart("total")
+    callback.data_to_read.data = courier_fee
+    callback.add_to_cart("courier_fee")
+    callback.data_to_read.data = service_fee
+    callback.add_to_cart("service_fee")
+    callback.data_to_read.data = round((float(subtotal) + courier_fee + service_fee), 2)
+    callback.add_to_cart("total")
 
 
 # Sing in/sign up block.
 @cus_bot.message_handler(commands=["start"])
 @logger_decorator_msg
 def start(message: types.Message) -> None:
-    """Commence interaction between Customer and the bot.
-    Check if Customer in the DB
-    and start corresponding interaction sequence.
+    """Commence interaction between Customer and the bot. Check if
+    Customer in the DB and start corresponding interaction sequence.
 
     Args:
         message: /start command from Customer.
@@ -190,8 +188,7 @@ def show_agreement(message: types.Message) -> None:
 )
 @logger_decorator_msg
 def agreement_accepted(message: types.Message) -> None:
-    """Commence Customer sign up sequence.
-    Add new Customer to the DB.
+    """Commence Customer sign up sequence. Add new Customer to the DB.
 
     Args:
         message: Accept Agreement input from Customer.
@@ -220,8 +217,8 @@ def agreement_accepted(message: types.Message) -> None:
 )
 @logger_decorator_msg
 def reg_name(message: types.Message) -> None:
-    """Add Customer's name to the DB.
-    Ask Customer to choose phone number input method.
+    """Add Customer's name to the DB. Ask Customer to choose phone
+    number input method.
 
     Args:
         message: Customer's name.
@@ -246,8 +243,8 @@ def reg_name(message: types.Message) -> None:
 )
 @logger_decorator_msg
 def contact(message: types.Message) -> None:
-    """Add Customer's phone number imported via Telegram contact info into the DB.
-    Ask Customer to provide delivery location.
+    """Add Customer's phone number imported via Telegram contact info
+    into the DB. Ask Customer to provide delivery location.
 
     Args:
         message: Customer's Telegram contact info.
@@ -297,10 +294,9 @@ def reg_phone_str(message: types.Message) -> None:
 )
 @logger_decorator_msg
 def reg_phone(message: types.Message) -> None:
-    """Check if phone number was added to the DB
-    if manual input was chosen.
-    Ask Customer to provide delivery location if so.
-    Ask Customer to input phone number again otherwise.
+    """Check if phone number was added to the DB if manual input was
+    chosen. Ask Customer to provide delivery location if so. Ask
+    Customer to input phone number again otherwise.
 
     Args:
         message: Customer's phone number entered manually.
@@ -414,9 +410,8 @@ def my_orders(message: types.Message) -> None:
 )
 @logger_decorator_msg
 def new_order(message: types.Message) -> None:
-    """Commence order creation sequence.
-    Check if User location is provided.
-    If location is provided, ask confirmation.
+    """Commence order creation sequence. Check if User location is
+    provided. If location is provided, ask confirmation.
 
     Args:
         message: Request form Customer to create new order.
@@ -593,11 +588,14 @@ def lang_set(call: types.CallbackQuery) -> None:
         call: Callback query from Customer with selected language info.
 
     """
-    c_back = DBInterface(call)
-    c_back.set_customer_lang()
-    cus_bot.delete_message(c_back.data_to_read.from_user.id, (c_back.data_to_read.message.id - 1))
-    cus_bot.delete_message(c_back.data_to_read.from_user.id, c_back.data_to_read.message.id)
-    show_main_menu(callback_to_msg(c_back.data_to_read))
+    callback = DBInterface(call)
+    callback.set_customer_lang()
+    cus_bot.delete_message(
+        callback.data_to_read.from_user.id,
+        (callback.data_to_read.message.id - 1)
+    )
+    cus_bot.delete_message(callback.data_to_read.from_user.id, callback.data_to_read.message.id)
+    show_main_menu(callback_to_msg(callback.data_to_read))
 
 
 # Contact Info reset block.
@@ -648,29 +646,32 @@ def confirm_delete(message: types.Message) -> None:
 @logger_decorator_callback
 def check_location_confirmation(call: types.CallbackQuery) -> None:
     """Process Customer's response to location confirmation request.
-    Show Customer restaurant type selection menu if confirmed,
-    send back to main menu if not.
+    Show Customer restaurant type selection menu if confirmed, send back
+    to main menu if not.
 
     Args:
-        call: Callback query from Customer
-        with response to location confirmation request.
+        call: Callback query from Customer with response to location
+            confirmation request.
 
     """
-    c_back = DBInterface(call)
-    cus_bot.delete_message(c_back.data_to_read.from_user.id, c_back.data_to_read.message.id)
-    cus_bot.delete_message(c_back.data_to_read.from_user.id, (c_back.data_to_read.message.id - 1))
-    if c_back.data_to_read.data == texts[c_back.get_customer_lang()]["WRONG_LOCATION_BTN"]:
+    callback = DBInterface(call)
+    cus_bot.delete_message(callback.data_to_read.from_user.id, callback.data_to_read.message.id)
+    cus_bot.delete_message(
+        callback.data_to_read.from_user.id,
+        (callback.data_to_read.message.id - 1)
+    )
+    if callback.data_to_read.data == texts[callback.get_customer_lang()]["WRONG_LOCATION_BTN"]:
         cus_bot.send_message(
-            c_back.data_to_read.from_user.id,
-            texts[c_back.get_customer_lang()]["REG_LOCATION_MSG"],
-            reply_markup=customer_menus.reg_location_menu(c_back.get_customer_lang())
+            callback.data_to_read.from_user.id,
+            texts[callback.get_customer_lang()]["REG_LOCATION_MSG"],
+            reply_markup=customer_menus.reg_location_menu(callback.get_customer_lang())
         )
-    elif c_back.data_to_read.data == texts[c_back.get_customer_lang()]["CONFIRM_LOCATION_BTN"]:
-        c_back.new_cart()
+    elif callback.data_to_read.data == texts[callback.get_customer_lang()]["CONFIRM_LOCATION_BTN"]:
+        callback.new_cart()
         cus_bot.send_message(
-            c_back.data_to_read.from_user.id,
-            texts[c_back.get_customer_lang()]["CHOOSE_REST_TYPE_MSG"],
-            reply_markup=customer_menus.choose_rest_type_menu(c_back.get_customer_lang())
+            callback.data_to_read.from_user.id,
+            texts[callback.get_customer_lang()]["CHOOSE_REST_TYPE_MSG"],
+            reply_markup=customer_menus.choose_rest_type_menu(callback.get_customer_lang())
         )
 
 
@@ -680,38 +681,43 @@ def check_location_confirmation(call: types.CallbackQuery) -> None:
 )
 @logger_decorator_callback
 def rest_type_chosen(call: types.CallbackQuery) -> None:
-    """Process Customer's response to restaurant type selection.
-    Show Customer restaurants of selected type
-    and add restaurant type to the Customer's cart
-    or go back to main menu if "go back" button is clicked.
+    """Process Customer's response to restaurant type selection. Show
+    Customer restaurants of selected type and add restaurant type to the
+    Customer's cart or go back to main menu if "go back" button is
+    clicked.
     
     Args:
-        call: Callback query from Customer
-        with response to restaurant type selection.
+        call: Callback query from Customer with response to restaurant
+            type selection.
 
     """
-    c_back = DBInterface(call)
-    if c_back.data_to_read.data == customer_menus.back_button(
-            c_back.get_customer_lang()
+    callback = DBInterface(call)
+    if callback.data_to_read.data == customer_menus.back_button(
+            callback.get_customer_lang()
     ).callback_data:
         cus_bot.answer_callback_query(
-            c_back.data_to_read.id,
-            texts[c_back.get_customer_lang()]["EXITING_ORDER_MENU_MSG"]
+            callback.data_to_read.id,
+            texts[callback.get_customer_lang()]["EXITING_ORDER_MENU_MSG"]
         )
-        cus_bot.delete_message(c_back.data_to_read.from_user.id, c_back.data_to_read.message.id)
-        c_back.delete_cart()
-        show_main_menu(callback_to_msg(c_back.data_to_read))
+        cus_bot.delete_message(
+            callback.data_to_read.from_user.id,
+            callback.data_to_read.message.id
+        )
+        callback.delete_cart()
+        show_main_menu(callback_to_msg(callback.data_to_read))
     else:
-        c_back.add_to_cart("restaurant_type")
+        callback.add_to_cart("restaurant_type")
         cus_bot.edit_message_text(
-            texts[c_back.get_customer_lang()]["REST_TYPE_SELECTED_MSG"](c_back.data_to_read.data),
-            c_back.data_to_read.from_user.id,
-            c_back.data_to_read.message.id
+            texts[callback.get_customer_lang()]["REST_TYPE_SELECTED_MSG"](
+                callback.data_to_read.data
+            ),
+            callback.data_to_read.from_user.id,
+            callback.data_to_read.message.id
         )
         cus_bot.send_message(
-            c_back.data_to_read.from_user.id,
-            texts[c_back.get_customer_lang()]["CHOOSE_REST_MSG"],
-            reply_markup=customer_menus.choose_rest_menu(c_back.get_customer_lang(), c_back)
+            callback.data_to_read.from_user.id,
+            texts[callback.get_customer_lang()]["CHOOSE_REST_MSG"],
+            reply_markup=customer_menus.choose_rest_menu(callback.get_customer_lang(), callback)
         )
 
 
@@ -720,46 +726,52 @@ def rest_type_chosen(call: types.CallbackQuery) -> None:
 )
 @logger_decorator_callback
 def restaurant_chosen(call: types.CallbackQuery) -> None:
-    """Process Customer's response to restaurant selection.
-    Show Customer dish types available in selected restaurant
-    and add restaurant UUID to the Customer's cart
-    or go back to main menu if "go back" button is clicked.
+    """Process Customer's response to restaurant selection. Show
+    Customer dish types available in selected restaurant and add
+    restaurant UUID to the Customer's cart or go back to main menu if
+    "go back" button is clicked.
 
     Args:
-        call: Callback query from Customer
-        with response to restaurant selection.
+        call: Callback query from Customer with response to restaurant
+            selection.
 
     """
-    c_back = DBInterface(call)
+    callback = DBInterface(call)
     try:
         cus_bot.delete_message(
-            c_back.data_to_read.from_user.id,
-            (c_back.data_to_read.message.id - 1)
+            callback.data_to_read.from_user.id,
+            (callback.data_to_read.message.id - 1)
         )
     except ApiTelegramException:
         pass
-    if c_back.data_to_read.data == customer_menus.back_button(
-            c_back.get_customer_lang()
+    if callback.data_to_read.data == customer_menus.back_button(
+            callback.get_customer_lang()
     ).callback_data:
         cus_bot.answer_callback_query(
-            c_back.data_to_read.id,
-            texts[c_back.get_customer_lang()]["DELETING_CART_ALERT"],
+            callback.data_to_read.id,
+            texts[callback.get_customer_lang()]["DELETING_CART_ALERT"],
             show_alert=True
         )
-        cus_bot.delete_message(c_back.data_to_read.from_user.id, c_back.data_to_read.message.id)
-        c_back.delete_cart()
-        show_main_menu(callback_to_msg(c_back.data_to_read))
+        cus_bot.delete_message(
+            callback.data_to_read.from_user.id,
+            callback.data_to_read.message.id
+        )
+        callback.delete_cart()
+        show_main_menu(callback_to_msg(callback.data_to_read))
     else:
-        c_back.add_to_cart("restaurant_uuid")
+        callback.add_to_cart("restaurant_uuid")
         cus_bot.edit_message_text(
-            texts[c_back.get_customer_lang()]["REST_SELECTED_MSG"](c_back.rest_name_by_uuid()),
-            c_back.data_to_read.from_user.id,
-            c_back.data_to_read.message.id
+            texts[callback.get_customer_lang()]["REST_SELECTED_MSG"](callback.rest_name_by_uuid()),
+            callback.data_to_read.from_user.id,
+            callback.data_to_read.message.id
         )
         cus_bot.send_message(
-            c_back.data_to_read.from_user.id,
-            texts[c_back.get_customer_lang()]["CHOOSE_DISH_CATEGORY_MSG"],
-            reply_markup=customer_menus.choose_dish_cat_menu(c_back.get_customer_lang(), c_back)
+            callback.data_to_read.from_user.id,
+            texts[callback.get_customer_lang()]["CHOOSE_DISH_CATEGORY_MSG"],
+            reply_markup=customer_menus.choose_dish_cat_menu(
+                callback.get_customer_lang(),
+                callback
+            )
         )
 
 
@@ -769,51 +781,51 @@ def restaurant_chosen(call: types.CallbackQuery) -> None:
 )
 @logger_decorator_callback
 def dish_category_chosen(call: types.CallbackQuery) -> None:
-    """Process Customer's response to dish category selection.
-    Show Customer dishes of selected category
-    available in selected restaurant
-    or go back to restaurant selection menu
-    if "go back" button is clicked.
-    Show Customer their cart or clear it
-    if corresponding buttons are clicked.
+    """Process Customer's response to dish category selection. Show
+    Customer dishes of selected category available in selected
+    restaurant or go back to restaurant selection menu if "go back"
+    button is clicked. Show Customer their cart or clear it if
+    corresponding buttons are clicked.
 
     Args:
-        call: Callback query from Customer
-        with response to dish category selection.
+        call: Callback query from Customer with response to dish
+            category selection.
 
     """
-    c_back = DBInterface(call)
+    callback = DBInterface(call)
     try:
         cus_bot.delete_message(
-            c_back.data_to_read.from_user.id,
-            (c_back.data_to_read.message.id - 1)
+            callback.data_to_read.from_user.id,
+            (callback.data_to_read.message.id - 1)
         )
     except ApiTelegramException:
         pass
-    if c_back.data_to_read.data == customer_menus.back_button(
-            c_back.get_customer_lang()
+    if callback.data_to_read.data == customer_menus.back_button(
+            callback.get_customer_lang()
     ).callback_data:
-        c_back.delete_from_cart("restaurant_uuid")
-        c_back.data_to_read.data = c_back.get_from_cart("restaurant_type")
-        rest_type_chosen(c_back.data_to_read)
-    elif c_back.data_to_read.data == customer_menus.cancel_order_button(
-            c_back.get_customer_lang()
+        callback.delete_from_cart("restaurant_uuid")
+        callback.data_to_read.data = callback.get_from_cart("restaurant_type")
+        rest_type_chosen(callback.data_to_read)
+    elif callback.data_to_read.data == customer_menus.cancel_order_button(
+            callback.get_customer_lang()
     ).callback_data:
-        clear_cart(c_back.data_to_read)
-    elif c_back.data_to_read.data == customer_menus.cart_button(
-            c_back.get_customer_lang()
+        clear_cart(callback.data_to_read)
+    elif callback.data_to_read.data == customer_menus.cart_button(
+            callback.get_customer_lang()
     ).callback_data:
-        is_dish_added(c_back.data_to_read)
+        is_dish_added(callback.data_to_read)
     else:
         cus_bot.edit_message_text(
-            texts[c_back.get_customer_lang()]["DISH_CAT_SELECTED_MSG"](c_back.data_to_read.data),
-            c_back.data_to_read.from_user.id,
-            c_back.data_to_read.message.id
+            texts[callback.get_customer_lang()]["DISH_CAT_SELECTED_MSG"](
+                callback.data_to_read.data
+            ),
+            callback.data_to_read.from_user.id,
+            callback.data_to_read.message.id
         )
         cus_bot.send_message(
-            c_back.data_to_read.from_user.id,
-            texts[c_back.get_customer_lang()]["CHOOSE_DISH_MSG"],
-            reply_markup=customer_menus.choose_dish_menu(c_back.get_customer_lang(), c_back)
+            callback.data_to_read.from_user.id,
+            texts[callback.get_customer_lang()]["CHOOSE_DISH_MSG"],
+            reply_markup=customer_menus.choose_dish_menu(callback.get_customer_lang(), callback)
         )
 
 
@@ -822,50 +834,48 @@ def dish_category_chosen(call: types.CallbackQuery) -> None:
 )
 @logger_decorator_callback
 def dish_chosen(call: types.CallbackQuery) -> None:
-    """Process Customer's response to dish selection.
-    Show Customer dish selection confirmation menu
-    displaying dish description and price
-    or go back to restaurant selection menu
-    if "go back" button is clicked.
-    Show Customer their cart or clear it
-    if corresponding buttons are clicked.
+    """Process Customer's response to dish selection. Show Customer dish
+    selection confirmation menu displaying dish description and price or
+    go back to restaurant selection menu if "go back" button is clicked.
+    Show Customer their cart or clear it if corresponding buttons are
+    clicked.
 
     Args:
-        call: Callback query from Customer
-        with response to dish selection.
+        call: Callback query from Customer with response to dish
+            selection.
 
     """
-    c_back = DBInterface(call)
+    callback = DBInterface(call)
     try:
         cus_bot.delete_message(
-            c_back.data_to_read.from_user.id,
-            (c_back.data_to_read.message.id - 1)
+            callback.data_to_read.from_user.id,
+            (callback.data_to_read.message.id - 1)
         )
     except ApiTelegramException:
         pass
-    if c_back.data_to_read.data == customer_menus.back_button(
-            c_back.get_customer_lang()
+    if callback.data_to_read.data == customer_menus.back_button(
+            callback.get_customer_lang()
     ).callback_data:
-        c_back.data_to_read.data = c_back.get_from_cart("restaurant_uuid")
-        restaurant_chosen(c_back.data_to_read)
-    elif c_back.data_to_read.data == customer_menus.cancel_order_button(
-            c_back.get_customer_lang()
+        callback.data_to_read.data = callback.get_from_cart("restaurant_uuid")
+        restaurant_chosen(callback.data_to_read)
+    elif callback.data_to_read.data == customer_menus.cancel_order_button(
+            callback.get_customer_lang()
     ).callback_data:
-        clear_cart(c_back.data_to_read)
-    elif c_back.data_to_read.data == customer_menus.cart_button(
-            c_back.get_customer_lang()
+        clear_cart(callback.data_to_read)
+    elif callback.data_to_read.data == customer_menus.cart_button(
+            callback.get_customer_lang()
     ).callback_data:
-        is_dish_added(c_back.data_to_read)
+        is_dish_added(callback.data_to_read)
     else:
         cus_bot.edit_message_text(
-            texts[c_back.get_customer_lang()]["DISH_SELECTED_MSG"](c_back.get_dish()),
-            c_back.data_to_read.from_user.id,
-            c_back.data_to_read.message.id
+            texts[callback.get_customer_lang()]["DISH_SELECTED_MSG"](callback.get_dish()),
+            callback.data_to_read.from_user.id,
+            callback.data_to_read.message.id
         )
         cus_bot.send_message(
-            c_back.data_to_read.from_user.id,
-            texts[c_back.get_customer_lang()]["ADD_DISH_MSG"],
-            reply_markup=customer_menus.conf_sel_dish_menu(c_back.get_customer_lang(), c_back)
+            callback.data_to_read.from_user.id,
+            texts[callback.get_customer_lang()]["ADD_DISH_MSG"],
+            reply_markup=customer_menus.conf_sel_dish_menu(callback.get_customer_lang(), callback)
         )
 
 
@@ -874,62 +884,61 @@ def dish_chosen(call: types.CallbackQuery) -> None:
 )
 @logger_decorator_callback
 def is_dish_added(call: types.CallbackQuery) -> None:
-    """Process Customer's response to selected dish confirmation.
-    Show Customer's cart menu displaying dishes and price
-    or go back to dish category selection menu
-    if confirmation isn't obtained.
+    """Process Customer's response to selected dish confirmation. Show
+    Customer's cart menu displaying dishes and price or go back to dish
+    category selection menu if confirmation isn't obtained.
 
     Args:
-        call: Callback query from Customer
-        with response to selected dish confirmation.
+        call: Callback query from Customer with response to selected
+            dish confirmation.
 
     """
-    c_back = DBInterface(call)
+    callback = DBInterface(call)
     try:
         cus_bot.delete_message(
-            c_back.data_to_read.from_user.id,
-            (c_back.data_to_read.message.id - 1)
+            callback.data_to_read.from_user.id,
+            (callback.data_to_read.message.id - 1)
         )
     except ApiTelegramException:
         pass
-    if c_back.data_to_read.data == customer_menus.back_button(
-            c_back.get_customer_lang()
+    if callback.data_to_read.data == customer_menus.back_button(
+            callback.get_customer_lang()
     ).callback_data:
-        c_back.data_to_read.data = c_back.get_from_cart("restaurant_uuid")
-        restaurant_chosen(c_back.data_to_read)
+        callback.data_to_read.data = callback.get_from_cart("restaurant_uuid")
+        restaurant_chosen(callback.data_to_read)
     else:
-        if c_back.data_to_read.data != customer_menus.cart_button(
-                c_back.get_customer_lang()
+        if callback.data_to_read.data != customer_menus.cart_button(
+                callback.get_customer_lang()
         ).callback_data:
-            new_c_back = DBInterface(call)
-            dishes_uuids = c_back.get_from_cart("dishes_uuids")
+            new_callback = DBInterface(call)
+            dishes_uuids = callback.get_from_cart("dishes_uuids")
             if not dishes_uuids:
                 dishes_uuids = []
-            dishes_uuids.append(c_back.data_to_read.data)
-            new_c_back.data_to_read.data = dishes_uuids
-            new_c_back.add_to_cart("dishes_uuids")
-            prices_calc(new_c_back.data_to_read)
-        c_back.data_to_read.data = c_back.get_from_cart("dishes_uuids")
+            dishes_uuids.append(callback.data_to_read.data)
+            new_callback.data_to_read.data = dishes_uuids
+            new_callback.add_to_cart("dishes_uuids")
+            prices_calc(new_callback.data_to_read)
+        callback.data_to_read.data = callback.get_from_cart("dishes_uuids")
         dishes = []
-        if c_back.data_to_read.data:
-            for dish in c_back.data_to_read.data:
-                c_back.data_to_read.data = dish
-                dishes.append(c_back.get_dish()[0])
+        if callback.data_to_read.data:
+            for dish in callback.data_to_read.data:
+                callback.data_to_read.data = dish
+                dishes.append(callback.get_dish()[0])
         cus_bot.edit_message_text(
-            texts[c_back.get_customer_lang()]["YOUR_CART_MSG"](
+            texts[callback.get_customer_lang()]["YOUR_CART_MSG"](
                 "\n".join(sorted(dishes)),
-                c_back.get_from_cart("subtotal"),
-                c_back.get_from_cart("courier_fee"),
-                c_back.get_from_cart("service_fee"),
-                c_back.get_from_cart("total")
+                callback.get_from_cart("subtotal"),
+                callback.get_from_cart("courier_fee"),
+                callback.get_from_cart("service_fee"),
+                callback.get_from_cart("total")
             ),
-            c_back.data_to_read.from_user.id,
-            c_back.data_to_read.message.id
+            callback.data_to_read.from_user.id,
+            callback.data_to_read.message.id
         )
         cus_bot.send_message(
-            c_back.data_to_read.from_user.id,
-            texts[c_back.get_customer_lang()]["CART_ACTIONS_MSG"],
-            reply_markup=customer_menus.cart_menu(c_back.get_customer_lang())
+            callback.data_to_read.from_user.id,
+            texts[callback.get_customer_lang()]["CART_ACTIONS_MSG"],
+            reply_markup=customer_menus.cart_menu(callback.get_customer_lang())
         )
 
 
@@ -938,63 +947,71 @@ def is_dish_added(call: types.CallbackQuery) -> None:
 )
 @logger_decorator_callback
 def cart_actions(call: types.CallbackQuery) -> None:
-    """Process Customer's input from cart actions menu.
-    Clear cart if corresponding button is clicked.
-    Call item deletion menu on request.
-    Return Customer to dish category selection menu on request.
-    Generate payment URL and proceed to payment menu on request
-    if payment URL has been generated successfully
-    otherwise send "payment URL generation failed" message to Customer.
+    """Process Customer's input from cart actions menu. Clear cart if
+    corresponding button is clicked. Call item deletion menu on request.
+    Return Customer to dish category selection menu on request. Generate
+    payment URL and proceed to payment menu on request if payment URL
+    has been generated successfully otherwise send "payment URL
+    generation failed" message to Customer.
 
     Args:
-        call: Callback query with Customer's input
-        from cart actions menu.
+        call: Callback query with Customer's input from cart actions
+            menu.
 
     """
-    c_back = DBInterface(call)
-    cus_bot.delete_message(c_back.data_to_read.from_user.id, (c_back.data_to_read.message.id - 1))
-    if c_back.data_to_read.data == customer_menus.cancel_order_button(
-            c_back.get_customer_lang()
+    callback = DBInterface(call)
+    cus_bot.delete_message(
+        callback.data_to_read.from_user.id,
+        (callback.data_to_read.message.id - 1)
+    )
+    if callback.data_to_read.data == customer_menus.cancel_order_button(
+            callback.get_customer_lang()
     ).callback_data:
-        clear_cart(c_back.data_to_read)
-    elif c_back.data_to_read.data == texts[c_back.get_customer_lang()]["DELETE_ITEM_BTN"]:
+        clear_cart(callback.data_to_read)
+    elif callback.data_to_read.data == texts[callback.get_customer_lang()]["DELETE_ITEM_BTN"]:
         cus_bot.edit_message_text(
-            texts[c_back.get_customer_lang()]["DELETE_ITEM_MSG"],
-            c_back.data_to_read.from_user.id,
-            c_back.data_to_read.message.id,
-            reply_markup=customer_menus.item_deletion_menu(c_back.get_customer_lang(), c_back)
+            texts[callback.get_customer_lang()]["DELETE_ITEM_MSG"],
+            callback.data_to_read.from_user.id,
+            callback.data_to_read.message.id,
+            reply_markup=customer_menus.item_deletion_menu(callback.get_customer_lang(), callback)
         )
-    elif c_back.data_to_read.data == texts[c_back.get_customer_lang()]["ADD_MORE_BTN"]:
-        c_back.data_to_read.data = c_back.get_from_cart("restaurant_uuid")
-        c_back.data_to_read.message.text = texts[c_back.get_customer_lang()]["ADD_MORE_BTN"]
-        restaurant_chosen(c_back.data_to_read)
-    elif c_back.data_to_read.data == texts[c_back.get_customer_lang()]["ADD_COMMENT_BTN"]:
-        cus_bot.delete_message(c_back.data_to_read.from_user.id, c_back.data_to_read.message.id)
+    elif callback.data_to_read.data == texts[callback.get_customer_lang()]["ADD_MORE_BTN"]:
+        callback.data_to_read.data = callback.get_from_cart("restaurant_uuid")
+        callback.data_to_read.message.text = texts[callback.get_customer_lang()]["ADD_MORE_BTN"]
+        restaurant_chosen(callback.data_to_read)
+    elif callback.data_to_read.data == texts[callback.get_customer_lang()]["ADD_COMMENT_BTN"]:
+        cus_bot.delete_message(
+            callback.data_to_read.from_user.id,
+            callback.data_to_read.message.id
+        )
         cus_bot.send_message(
-            c_back.data_to_read.from_user.id,
-            texts[c_back.get_customer_lang()]["ADD_COMMENT_MSG"],
+            callback.data_to_read.from_user.id,
+            texts[callback.get_customer_lang()]["ADD_COMMENT_MSG"],
             reply_markup=types.ForceReply()
         )
-    elif c_back.data_to_read.data == texts[c_back.get_customer_lang()]["MAKE_ORDER_BTN"]:
-        order_info = c_back.order_creation()
+    elif callback.data_to_read.data == texts[callback.get_customer_lang()]["MAKE_ORDER_BTN"]:
+        order_info = callback.order_creation()
         if paypal_order_info := paypal.pp_order_creation(order_info[0]):
             payment_url = paypal_order_info["URL"]
             pp_order_id = paypal_order_info["order_id"]
-            c_back.update_order(order_info[0], "paypal_order_id", pp_order_id)
+            callback.update_order(order_info[0], "paypal_order_id", pp_order_id)
             cus_bot.edit_message_text(
-                texts[c_back.get_customer_lang()]["ORDER_CREATED_MSG"](order_info),
-                c_back.data_to_read.from_user.id,
-                c_back.data_to_read.message.id
+                texts[callback.get_customer_lang()]["ORDER_CREATED_MSG"](order_info),
+                callback.data_to_read.from_user.id,
+                callback.data_to_read.message.id
             )
             cus_bot.send_message(
-                c_back.data_to_read.from_user.id,
-                texts[c_back.get_customer_lang()]["PAYMENT_MENU_MSG"](payment_url),
-                reply_markup=customer_menus.payment_menu(c_back.get_customer_lang(), order_info[0])
+                callback.data_to_read.from_user.id,
+                texts[callback.get_customer_lang()]["PAYMENT_MENU_MSG"](payment_url),
+                reply_markup=customer_menus.payment_menu(
+                    callback.get_customer_lang(),
+                    order_info[0]
+                )
             )
         else:
             cus_bot.send_message(
-                c_back.data_to_read.from_user.id,
-                texts[c_back.get_customer_lang()]["PAYPAL_ORDER_CREATION_FAIL_MSG"]
+                callback.data_to_read.from_user.id,
+                texts[callback.get_customer_lang()]["PAYPAL_ORDER_CREATION_FAIL_MSG"]
             )
 
 
@@ -1046,89 +1063,91 @@ def return_to_cart_after_comment(call: types.CallbackQuery) -> None:
 )
 @logger_decorator_callback
 def item_deletion(call: types.CallbackQuery) -> None:
-    """Delete selected item from Customer's cart.
-    Call cart menu.
+    """Delete selected item from Customer's cart. Call cart menu.
 
     Args:
-        call: Callback query with Customer's input
-        from item deletion menu.
+        call: Callback query with Customer's input from item deletion
+            menu.
 
     """
-    c_back = DBInterface(call)
-    if c_back.data_to_read.data != customer_menus.cart_button(
-            c_back.get_customer_lang()
+    callback = DBInterface(call)
+    if callback.data_to_read.data != customer_menus.cart_button(
+            callback.get_customer_lang()
     ).callback_data:
-        if dishes_uuids := c_back.get_from_cart("dishes_uuids"):
-            dishes_uuids.remove(c_back.data_to_read.data)
-            c_back.data_to_read.data = dishes_uuids
-            c_back.add_to_cart("dishes_uuids")
-        prices_calc(c_back.data_to_read)
-    c_back.data_to_read.data = customer_menus.cart_button(c_back.get_customer_lang()).callback_data
-    is_dish_added(c_back.data_to_read)
+        if dishes_uuids := callback.get_from_cart("dishes_uuids"):
+            dishes_uuids.remove(callback.data_to_read.data)
+            callback.data_to_read.data = dishes_uuids
+            callback.add_to_cart("dishes_uuids")
+        prices_calc(callback.data_to_read)
+    callback.data_to_read.data = customer_menus.cart_button(
+        callback.get_customer_lang()
+    ).callback_data
+    is_dish_added(callback.data_to_read)
 
 
 # Payment block.
 @cus_bot.callback_query_handler(func=lambda call: "paid" in call.data)
 @logger_decorator_callback
 def order_paid(call: types.CallbackQuery) -> None:
-    """Process "paid" button,
-    Send payment capture request to PayPal
-    and send order to the Restaurant
-    if payment was captured.
+    """Process "paid" button, Send payment capture request to PayPal and
+    send order to the Restaurant if payment was captured.
 
     Args:
         call: Callback query from "paid" button with order UUID in it.
 
     """
-    c_back = DBInterface(call)
-    if paypal.pp_capture_order(c_back.data_to_read.data.split(maxsplit=1)[1]):
-        c_back.update_order(c_back.data_to_read.data.split(maxsplit=1)[1], "order_status", "2")
+    callback = DBInterface(call)
+    if paypal.pp_capture_order(callback.data_to_read.data.split(maxsplit=1)[1]):
+        callback.update_order(callback.data_to_read.data.split(maxsplit=1)[1], "order_status", "2")
         rest_bot.send_message(
-            c_back.get_order_info(c_back.data_to_read.data.split(maxsplit=1)[1], "restaurant_id"),
+            callback.get_order_info(
+                callback.data_to_read.data.split(maxsplit=1)[1],
+                "restaurant_id"
+            ),
             texts[
-                c_back.get_restaurant_lang(
-                    c_back.get_order_info(
-                        c_back.data_to_read.data.split(maxsplit=1)[1],
+                callback.get_restaurant_lang(
+                    callback.get_order_info(
+                        callback.data_to_read.data.split(maxsplit=1)[1],
                         "restaurant_uuid"
                     )
                 )
             ]["REST_NEW_ORDER_MSG"](
-                c_back.data_to_read.data.split(maxsplit=1)[1],
-                c_back.get_order_info(c_back.data_to_read.data.split(maxsplit=1)[1], "dishes"),
-                c_back.get_order_info(
-                    c_back.data_to_read.data.split(maxsplit=1)[1],
+                callback.data_to_read.data.split(maxsplit=1)[1],
+                callback.get_order_info(callback.data_to_read.data.split(maxsplit=1)[1], "dishes"),
+                callback.get_order_info(
+                    callback.data_to_read.data.split(maxsplit=1)[1],
                     "dishes_subtotal"
                 ),
-                c_back.get_order_info(
-                    c_back.data_to_read.data.split(maxsplit=1)[1],
+                callback.get_order_info(
+                    callback.data_to_read.data.split(maxsplit=1)[1],
                     "order_comment"
                 )
             ),
             reply_markup=customer_menus.rest_accept_order_menu(
-                c_back.get_restaurant_lang(
-                    c_back.get_order_info(
-                        c_back.data_to_read.data.split(maxsplit=1)[1],
+                callback.get_restaurant_lang(
+                    callback.get_order_info(
+                        callback.data_to_read.data.split(maxsplit=1)[1],
                         "restaurant_uuid"
                     )
                 ),
-                c_back.data_to_read.data.split(maxsplit=1)[1]
+                callback.data_to_read.data.split(maxsplit=1)[1]
             )
         )
         cus_bot.edit_message_text(
-            texts[c_back.get_customer_lang()]["CUS_PAYMENT_CONFIRMED_MSG"](
-                c_back.data_to_read.data.split(maxsplit=1)[1]
+            texts[callback.get_customer_lang()]["CUS_PAYMENT_CONFIRMED_MSG"](
+                callback.data_to_read.data.split(maxsplit=1)[1]
             ),
-            c_back.data_to_read.from_user.id,
-            c_back.data_to_read.message.id
+            callback.data_to_read.from_user.id,
+            callback.data_to_read.message.id
         )
-        paypal.pp_rest_payout(c_back.data_to_read.data.split(maxsplit=1)[1])
-        c_back.delete_cart()
-        show_main_menu(callback_to_msg(c_back.data_to_read))
+        paypal.pp_rest_payout(callback.data_to_read.data.split(maxsplit=1)[1])
+        callback.delete_cart()
+        show_main_menu(callback_to_msg(callback.data_to_read))
     else:
         cus_bot.send_message(
-            c_back.data_to_read.from_user.id,
-            texts[c_back.get_customer_lang()]["WAIT_FOR_CONFIRMATION_MSG"](
-                c_back.data_to_read.data.split(maxsplit=1)[1]
+            callback.data_to_read.from_user.id,
+            texts[callback.get_customer_lang()]["WAIT_FOR_CONFIRMATION_MSG"](
+                callback.data_to_read.data.split(maxsplit=1)[1]
             )
         )
 
@@ -1139,20 +1158,20 @@ def order_closed(call: types.CallbackQuery) -> None:
     """Process confirmation of order receiving from Customer.
 
     Args:
-        call: Callback query from "Order received" button
-        with order UUID in it.
+        call: Callback query from "Order received" button with order
+            UUID in it.
 
     """
-    c_back = DBInterface(call)
-    c_back.close_order()
+    callback = DBInterface(call)
+    callback.close_order()
     cus_bot.edit_message_reply_markup(
-        c_back.data_to_read.from_user.id,
-        c_back.data_to_read.message.id
+        callback.data_to_read.from_user.id,
+        callback.data_to_read.message.id
     )
     cus_bot.send_message(
-        c_back.data_to_read.from_user.id,
-        texts[c_back.get_customer_lang()]["ORDER_CLOSED_MSG"](
-            c_back.data_to_read.data.split(maxsplit=1)[-1]
+        callback.data_to_read.from_user.id,
+        texts[callback.get_customer_lang()]["ORDER_CLOSED_MSG"](
+            callback.data_to_read.data.split(maxsplit=1)[-1]
         )
     )
 
@@ -1163,20 +1182,21 @@ def cancel(call: types.CallbackQuery) -> None:
     """Process order cancellation button after order is already created.
 
     Args:
-        call: Callback query from "Cancel order" button with order UUID in it.
+        call: Callback query from "Cancel order" button with order UUID
+            in it.
 
     """
-    c_back = DBInterface(call)
-    c_back.delete_cart()
-    c_back.update_order(c_back.data_to_read.data.split(maxsplit=1)[-1], "order_status", "-1")
+    callback = DBInterface(call)
+    callback.delete_cart()
+    callback.update_order(callback.data_to_read.data.split(maxsplit=1)[-1], "order_status", "-1")
     cus_bot.edit_message_text(
-        texts[c_back.get_customer_lang()]["CANCEL_MSG"](
-            c_back.data_to_read.data.split(maxsplit=1)[-1]
+        texts[callback.get_customer_lang()]["CANCEL_MSG"](
+            callback.data_to_read.data.split(maxsplit=1)[-1]
         ),
-        c_back.data_to_read.from_user.id,
-        c_back.data_to_read.message.id
+        callback.data_to_read.from_user.id,
+        callback.data_to_read.message.id
     )
-    show_main_menu(callback_to_msg(c_back.data_to_read))
+    show_main_menu(callback_to_msg(callback.data_to_read))
 
 
 def main():

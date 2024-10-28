@@ -21,15 +21,16 @@ return_link = env.str("RETURN_LINK", default="https://google.com/")
 @cursor_decorator
 @logger_decorator
 def pp_order_creation(order_uuid: str, curs: cursor) -> Dict[str, str]:
-    """
+    """Create PayPal order.
 
     Args:
-        order_uuid:
-        curs:
+        order_uuid: Order UUID.
+        curs: Cursor object from psycopg2.
 
     Returns:
+        PayPal payment link and PayPal order id.
 
-    """  # TODO
+    """
     if pp_mode == "deployment":
         url = "https://api-m.paypal.com/v2/checkout/orders"
     else:
@@ -75,15 +76,16 @@ def pp_order_creation(order_uuid: str, curs: cursor) -> Dict[str, str]:
 @cursor_decorator
 @logger_decorator
 def pp_capture_order(order_uuid: str, curs: cursor) -> bool:
-    """
+    """Capture PayPal order.
 
     Args:
-        order_uuid:
-        curs:
+        order_uuid: Order UUID.
+        curs: Cursor object from psycopg2.
 
     Returns:
+        True if response status code is 201, False otherwise.
 
-    """  # TODO
+    """
     curs.execute("SELECT paypal_order_id FROM orders WHERE order_uuid = %s", (order_uuid,))
     if pp_mode == "deployment":
         url = f"https://api-m.paypal.com/v2/checkout/orders/{curs.fetchone()[0]}/capture"
@@ -97,15 +99,16 @@ def pp_capture_order(order_uuid: str, curs: cursor) -> bool:
 @cursor_decorator
 @logger_decorator
 def pp_rest_payout(order_uuid: str, curs: cursor) -> int:
-    """
+    """Commit PayPal payout to the Restaurant.
 
     Args:
-        order_uuid:
-        curs:
+        order_uuid: Order UUID.
+        curs: Cursor object from psycopg2.
 
     Returns:
+        Response status code.
 
-    """  # TODO
+    """
     curs.execute(
         "SELECT restaurant_uuid, dishes_subtotal FROM orders WHERE order_uuid = %s", (order_uuid,)
     )

@@ -27,27 +27,27 @@ def edit_dish_menu(lang_code: str, msg: DBInterface) -> types.InlineKeyboardMark
     return menu
 
 
-def edit_dish_param_menu(lang_code: str, c_back: DBInterface) -> types.InlineKeyboardMarkup:
+def edit_dish_param_menu(lang_code: str, callback: DBInterface) -> types.InlineKeyboardMarkup:
     """
     
     Args:
         lang_code: 
-        c_back: 
+        callback: 
 
     Returns:
 
     """  # TODO
     cat_button = types.InlineKeyboardButton(
         text=texts[lang_code]["EDIT_CAT_BTN"],
-        callback_data=f"cat {c_back.data_to_read.data}"
+        callback_data=f"cat {callback.data_to_read.data}"
     )
     descr_button = types.InlineKeyboardButton(
         text=texts[lang_code]["EDIT_DESC_BTN"],
-        callback_data=f"des {c_back.data_to_read.data}"
+        callback_data=f"des {callback.data_to_read.data}"
     )
     price_button = types.InlineKeyboardButton(
         text=texts[lang_code]["EDIT_PRICE_BTN"],
-        callback_data=f"prc {c_back.data_to_read.data}"
+        callback_data=f"prc {callback.data_to_read.data}"
     )
     menu = types.InlineKeyboardMarkup(row_width=1)
     menu.add(cat_button, descr_button, price_button, back_button(lang_code))

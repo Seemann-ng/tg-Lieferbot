@@ -27,21 +27,20 @@ class Interface:
         """Get code of Restaurant's chosen language.
 
         Args:
-            curs: PostgreSQL cursor object.
+            curs: Cursor object from psycopg2.
 
         Returns:
-            Code of Restaurant's chosen language
-            if Restaurant has chosen one,
-            otherwise default language code, set in .env.
+            Code of Restaurant's chosen language if Restaurant has
+            chosen one, otherwise default language code, set in .env.
 
         """
         curs.execute(
             "SELECT lang_code FROM restaurants WHERE restaurant_tg_id = %s", (self.user_id,)
         )
+        lang = DEF_LANG
         if user_lang := curs.fetchone():
-            if user_lang := user_lang[0]:
-                return user_lang
-        return DEF_LANG
+            lang = user_lang[0] or lang
+        return lang
 
     @cursor_decorator
     @logger_decorator
@@ -87,8 +86,7 @@ class Interface:
         curs.execute(
             "SELECT restaurant_uuid FROM restaurants WHERE restaurant_tg_id = %s", (self.user_id,)
         )
-        restaurant_uuid = curs.fetchone()
-        return restaurant_uuid[0]
+        return curs.fetchone()[0]
 
     @cursor_decorator
     @logger_decorator

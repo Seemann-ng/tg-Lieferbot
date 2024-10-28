@@ -21,8 +21,8 @@ cancel_order_button = lambda lang_code: types.InlineKeyboardButton(
 
 # Agreement menu.
 def agreement_menu(lang_code: str) -> types.ReplyKeyboardMarkup:
-    """Compose "Accept Customer's agreement" menu
-    in Customer's chosen language.
+    """Compose "Accept Customer's agreement" menu in Customer's chosen
+    language.
 
     Args:
         lang_code: Language code of the chosen language.
@@ -43,8 +43,8 @@ def agreement_menu(lang_code: str) -> types.ReplyKeyboardMarkup:
 
 # Registration, phone number import method menu.
 def reg_phone_menu(lang_code: str) -> types.ReplyKeyboardMarkup:
-    """Compose "Choose phone number input method" menu
-    in Customer's chosen language.
+    """Compose "Choose phone number input method" menu in Customer's
+     chosen language.
 
     Args:
         lang_code: Language code of the chosen language.
@@ -209,8 +209,8 @@ def confirm_location_menu(lang_code: str) -> types.InlineKeyboardMarkup:
 
 # Choose restaurant type menu.
 def choose_rest_type_menu(lang_code: str) -> types.InlineKeyboardMarkup:
-    """Compose "Choose restaurant type" menu
-    in Customer's chosen language.
+    """Compose "Choose restaurant type" menu in Customer's chosen
+    language.
 
     Args:
         lang_code: Language code of the chosen language.
@@ -233,12 +233,12 @@ def choose_rest_type_menu(lang_code: str) -> types.InlineKeyboardMarkup:
 
 
 # Choose restaurant menu.
-def choose_rest_menu(lang_code: str, c_back: DBInterface) -> types.InlineKeyboardMarkup:
+def choose_rest_menu(lang_code: str, callback: DBInterface) -> types.InlineKeyboardMarkup:
     """Compose "Choose restaurant" menu in Customer's chosen language.
 
     Args:
         lang_code: Language code of the chosen language.
-        c_back: DBInterface object containing data
+        callback: DBInterface object containing data
         about Customer's chosen restaurant type.
 
     Returns:
@@ -246,7 +246,7 @@ def choose_rest_menu(lang_code: str, c_back: DBInterface) -> types.InlineKeyboar
 
     """
     menu = types.InlineKeyboardMarkup(row_width=1)
-    if restaurants := c_back.show_restaurants():
+    if restaurants := callback.show_restaurants():
         for restaurant in restaurants:
             menu.add(types.InlineKeyboardButton(text=restaurant[0], callback_data=restaurant[1]))
     menu.add(back_button(lang_code))
@@ -254,13 +254,13 @@ def choose_rest_menu(lang_code: str, c_back: DBInterface) -> types.InlineKeyboar
 
 
 # Choose dish category menu.
-def choose_dish_cat_menu(lang_code: str, c_back: DBInterface) -> types.InlineKeyboardMarkup:
-    """Compose "Choose dish category" menu
-    in Customer's chosen language.
+def choose_dish_cat_menu(lang_code: str, callback: DBInterface) -> types.InlineKeyboardMarkup:
+    """Compose "Choose dish category" menu in Customer's chosen
+    language.
 
     Args:
         lang_code: Language code of the chosen language.
-        c_back: DBInterface object containing data
+        callback: DBInterface object containing data
         abot Customer's chosen restaurant.
 
     Returns:
@@ -268,23 +268,23 @@ def choose_dish_cat_menu(lang_code: str, c_back: DBInterface) -> types.InlineKey
 
     """
     menu = types.InlineKeyboardMarkup(row_width=1)
-    if dish_categories := c_back.show_dish_categories():
+    if dish_categories := callback.show_dish_categories():
         for category in dish_categories:
             menu.add(types.InlineKeyboardButton(text=category[0], callback_data=category[0]))
     menu.add(cart_button(lang_code))
-    if c_back.data_to_read.message.text != texts[lang_code]["ADD_MORE_BTN"]:
+    if callback.data_to_read.message.text != texts[lang_code]["ADD_MORE_BTN"]:
         menu.add(back_button(lang_code))
     menu.add(cancel_order_button(lang_code))
     return menu
 
 
 # Choose dish menu.
-def choose_dish_menu(lang_code: str, c_back: DBInterface) -> types.InlineKeyboardMarkup:
+def choose_dish_menu(lang_code: str, callback: DBInterface) -> types.InlineKeyboardMarkup:
     """Compose "Choose dish" menu in Customer's chosen language.
 
     Args:
         lang_code: Language code of the chosen language.
-        c_back: DBInterface object containing data
+        callback: DBInterface object containing data
         about Customer's chosen dish category.
 
     Returns:
@@ -292,7 +292,7 @@ def choose_dish_menu(lang_code: str, c_back: DBInterface) -> types.InlineKeyboar
 
     """
     menu = types.InlineKeyboardMarkup(row_width=1)
-    if dishes := c_back.show_dishes():
+    if dishes := callback.show_dishes():
         for dish in dishes:
             menu.add(types.InlineKeyboardButton(text=dish[0], callback_data=dish[1]))
     menu.add(cart_button(lang_code))
@@ -302,13 +302,13 @@ def choose_dish_menu(lang_code: str, c_back: DBInterface) -> types.InlineKeyboar
 
 
 # Dish selection confirmation menu.
-def conf_sel_dish_menu(lang_code: str, c_back: DBInterface) -> types.InlineKeyboardMarkup:
-    """Compose "Confirm selected dish" menu
-    in Customer's chosen language.
+def conf_sel_dish_menu(lang_code: str, callback: DBInterface) -> types.InlineKeyboardMarkup:
+    """Compose "Confirm selected dish" menu in Customer's chosen
+    language.
 
     Args:
         lang_code: Language code of the chosen language.
-        c_back: DBInterface object containing data
+        callback: DBInterface object containing data
         regarding Customer's chosen dish.
 
     Returns:
@@ -317,7 +317,7 @@ def conf_sel_dish_menu(lang_code: str, c_back: DBInterface) -> types.InlineKeybo
     """
     add_dish_button = types.InlineKeyboardButton(
         text=texts[lang_code]["ADD_DISH_BTN"],
-        callback_data=c_back.data_to_read.data
+        callback_data=callback.data_to_read.data
     )
     menu = types.InlineKeyboardMarkup(row_width=2)
     menu.add(back_button(lang_code), add_dish_button)
@@ -376,23 +376,23 @@ def comment_menu(lang_code: str) -> types.InlineKeyboardMarkup:
 
 
 # Item deletion menu.
-def item_deletion_menu(lang_code: str, c_back: DBInterface) -> types.InlineKeyboardMarkup:
+def item_deletion_menu(lang_code: str, callback: DBInterface) -> types.InlineKeyboardMarkup:
     """Compose "Item deletion" menu in Customer's chosen language.
 
     Args:
         lang_code: Language code of the chosen language.
-        c_back: DBInterface object containing data regarding Customer.
+        callback: DBInterface object containing data regarding Customer.
 
     Returns:
         "Item deletion" menu in required language.
 
     """
     menu = types.InlineKeyboardMarkup(row_width=1)
-    if dishes_uuids := c_back.get_from_cart("dishes_uuids"):
+    if dishes_uuids := callback.get_from_cart("dishes_uuids"):
         dishes_uuids = sorted(dishes_uuids)
         for dish_uuid in dishes_uuids:
-            c_back.data_to_read.data = dish_uuid
-            dish_name = c_back.get_dish()[0]
+            callback.data_to_read.data = dish_uuid
+            dish_name = callback.get_dish()[0]
             menu.add(types.InlineKeyboardButton(text=dish_name, callback_data=dish_uuid))
     menu.add(cart_button(lang_code))
     return menu
@@ -453,8 +453,8 @@ def payment_menu(lang_code: str, order_uuid: str) -> types.InlineKeyboardMarkup:
 
 # Restaurant accept order menu.
 def rest_accept_order_menu(lang_code: str, order_uuid: str) -> types.InlineKeyboardMarkup:
-    """Compose "Accept order" menu for a Restaurant
-    in Restaurant's language.
+    """Compose "Accept order" menu for a Restaurant in Restaurant's
+    language.
 
     Args:
         lang_code: Restaurant's language.

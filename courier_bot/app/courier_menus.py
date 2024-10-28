@@ -86,8 +86,8 @@ def rest_order_ready_menu(rest_lang: str, order_uuid: str) -> types.InlineKeyboa
 
 # Courier order in delivery menu.
 def order_in_delivery_menu(courier_lang: str, order_uuid: str) -> types.InlineKeyboardMarkup:
-    """Compose "Order In Delivery" menu for Courier
-    in required language.
+    """Compose "Order In Delivery" menu for Courier in required
+    language.
 
     Args:
         courier_lang: Courier language code.

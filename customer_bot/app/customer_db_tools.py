@@ -26,16 +26,15 @@ class Interface:
     @logger_decorator
     def user_in_db(self, curs: cursor) -> str | None:
         """Check if Customer is in the DB and if so get their name
-        or Telegram username.
+         or Telegram username.
 
         Args:
             curs: Cursor object from psycopg2 module.
 
         Returns:
-            Customer name from the DB
-            if Customer is in the DB and has provided their name,
-            Telegram username
-            if Customer is in the DB and has NOT provided their name.
+            Customer name from the DB if Customer is in the DB and
+            has provided their name, Telegram username if Customer is
+            in the DB and has NOT provided their name.
 
         """
         curs.execute(
@@ -56,11 +55,12 @@ class Interface:
             curs: Cursor object from psycopg2 module.
 
         """
-        if not self.user_in_db():
-            curs.execute(
-                "INSERT INTO customers (customer_id, customer_username) VALUES (%s, %s)",
-                (self.data_to_read.from_user.id, self.data_to_read.from_user.username)
-            )
+        if self.user_in_db():
+            return None
+        curs.execute(
+            "INSERT INTO customers (customer_id, customer_username) VALUES (%s, %s)",
+            (self.data_to_read.from_user.id, self.data_to_read.from_user.username)
+        )
 
     @cursor_decorator
     @logger_decorator
@@ -140,16 +140,15 @@ class Interface:
             "order_status, order_close_date FROM orders WHERE customer_id = %s",
             (self.data_to_read.from_user.id,)
         )
-        orders = curs.fetchall()
-        return orders if orders else []
+        orders = [] or curs.fetchall()
+        return orders
 
     @staticmethod
     @cursor_decorator
     @logger_decorator
     def show_restaurant_types(curs: cursor) -> List[Tuple[Any, ...]]:
-        """Get list of restaurant types
-        containing at least one restaurant
-        which is open now in each of the types.
+        """Get list of restaurant types containing at least one
+        restaurant which is open now in each of the types.
 
         Args:
             curs: Cursor object from psycopg2 module.
@@ -162,8 +161,8 @@ class Interface:
             "SELECT DISTINCT restaurant_type FROM restaurants WHERE restaurant_is_open=TRUE "
             "ORDER BY restaurant_type"
         )
-        restaurant_types = curs.fetchall()
-        return restaurant_types if restaurant_types else []
+        restaurant_types = [] or curs.fetchall()
+        return restaurant_types
 
     @cursor_decorator
     @logger_decorator
@@ -182,14 +181,14 @@ class Interface:
             "WHERE restaurant_type = %s AND restaurant_is_open = TRUE",
             (self.data_to_read.data,)
         )
-        restaurants = curs.fetchall()
-        return restaurants if restaurants else []
+        restaurants = [] or curs.fetchall()
+        return restaurants
 
     @cursor_decorator
     @logger_decorator
     def show_dish_categories(self, curs: cursor) -> List[Tuple[Any, ...]]:
-        """Get list of available dish categories
-        in the chosen restaurant.
+        """Get list of available dish categories in the chosen
+        restaurant.
 
         Args:
             curs: Cursor object from psycopg2 module.
@@ -203,14 +202,14 @@ class Interface:
             "WHERE restaurant_uuid = %s AND dish_is_available = TRUE",
             (self.data_to_read.data,)
         )
-        categories = curs.fetchall()
-        return categories if categories else []
+        categories = [] or curs.fetchall()
+        return categories
 
     @cursor_decorator
     @logger_decorator
     def show_dishes(self, curs: cursor) -> List[Tuple[Any, ...]]:
-        """Get list of available dishes
-        in specified category and restaurant.
+        """Get list of available dishes in specified category
+        and restaurant.
 
         Args:
             curs: Cursor object from psycopg2 module.
@@ -224,8 +223,8 @@ class Interface:
             "WHERE restaurant_uuid = %s AND dish_is_available = TRUE AND category = %s",
             (self.get_from_cart("restaurant_uuid"), self.data_to_read.data)
         )
-        dishes = curs.fetchall()
-        return dishes if dishes else []
+        dishes = [] or curs.fetchall()
+        return dishes
 
     @cursor_decorator
     @logger_decorator
@@ -249,8 +248,8 @@ class Interface:
     @cursor_decorator
     @logger_decorator
     def get_dish(self, curs: cursor) -> Tuple[Any, ...]:
-        """Get dish info (name, description and price)
-        by given dish UUID.
+        """Get dish info (name, description and price) by given dish
+        UUID.
 
         Args:
             curs: Cursor object from psycopg2 module.
@@ -263,8 +262,8 @@ class Interface:
             "SELECT dish_name, dish_description, dish_price FROM dishes WHERE dish_uuid = %s",
             (self.data_to_read.data,)
         )
-        dish = curs.fetchone()
-        return dish if dish else tuple()
+        dish = tuple() or curs.fetchone()
+        return dish
 
     @staticmethod
     @cursor_decorator
@@ -282,14 +281,14 @@ class Interface:
         curs.execute(
             "SELECT courier_id FROM couriers WHERE courier_status = TRUE AND is_occupied = FALSE"
         )
-        couriers = curs.fetchall()
-        return couriers if couriers else []
+        couriers = [] or curs.fetchall()
+        return couriers
 
     @cursor_decorator
     @logger_decorator
     def new_cart(self, curs: cursor) -> None:
-        """Create new cart in the DB.cart table
-        and add Customer's Telegram ID in it.
+        """Create new cart in the DB.cart table and add Customer's
+        Telegram ID in it.
 
         Args:
             curs: Cursor object from psycopg2 module.
@@ -331,8 +330,8 @@ class Interface:
             "SELECT " + column_name + " FROM cart WHERE customer_id = %s",
             (self.data_to_read.from_user.id,)
         )
-        value = curs.fetchone()
-        return value[0] if value else ""
+        value = "" or curs.fetchone()
+        return value[0]
 
     @cursor_decorator
     @logger_decorator
@@ -417,19 +416,18 @@ class Interface:
             curs: Cursor object from psycopg2 module.
 
         Returns:
-            Code of Customer's chosen language
-            if Customer has chosen one,
-            otherwise default language code, set in .env.
+            Code of Customer's chosen language if Customer has chosen
+            one, otherwise default language code, set in .env.
 
         """
         curs.execute(
             "SELECT lang_code FROM customers WHERE customer_id = %s",
             (self.data_to_read.from_user.id,)
         )
+        lang = DEF_LANG
         if customer_lang := curs.fetchone():
-            if customer_lang := customer_lang[0]:
-                return customer_lang
-        return DEF_LANG
+            lang = customer_lang[0] or lang
+        return lang
 
     @cursor_decorator
     @logger_decorator
@@ -456,22 +454,21 @@ class Interface:
             curs: Cursor object from psycopg2 module.
 
         Returns:
-            Restaurant language code,
-            if Restaurant has chosen one,
+            Restaurant language code, if Restaurant has chosen one,
             otherwise default language code, set in .env.
 
         """
         curs.execute("SELECT lang_code FROM restaurants WHERE restaurant_uuid = %s", (rest_uuid,))
-        if rest_lang := curs.fetchone():
-            if rest_lang := rest_lang[0]:
-                return rest_lang
-        return DEF_LANG
+        lang = DEF_LANG
+        if restaurant_lang := curs.fetchone():
+            lang = restaurant_lang[0] or lang
+        return lang
 
     @cursor_decorator
     @logger_decorator
     def order_creation(self, curs: cursor) -> List[Any]:
-        """Create order in database,
-        transferring data from Customer's cart.
+        """Create order in database, transferring data from Customer's
+        cart.
 
         Args:
             curs: Cursor object from psycopg2 module.
@@ -558,15 +555,15 @@ class Interface:
     @cursor_decorator
     @logger_decorator
     def get_support(self, curs: cursor) -> Tuple[int, str]:
-        """Get random Admin Telegram ID
-        and their language code from database.
+        """Get random Admin Telegram ID and their language code from
+        database.
 
         Args:
             curs: Cursor object from psycopg2 module.
 
         Returns:
-            Array containing random Admin Telegram ID
-            and their language code.
+            Array containing random Admin Telegram ID and their
+            language code.
 
         """
         curs.execute("SELECT admin_id FROM admins")

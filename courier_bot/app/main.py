@@ -10,9 +10,8 @@ from tools.logger_tool import logger, logger_decorator_callback, logger_decorato
 @courier_bot.message_handler(commands=["start"])
 @logger_decorator_msg
 def start(message: types.Message) -> None:
-    """Start interaction with bot;
-    ask to send registration request to Admin,
-    if User is not in courier database.
+    """Start interaction with bot; ask to send registration request to
+    Admin, if User is not in courier database.
 
     Args:
         message: /start command message.
@@ -87,16 +86,19 @@ def lang_set(call: types.CallbackQuery) -> None:
         call: Callback query with selected language info.
 
     """
-    c_back = DBInterface(call)
-    c_back.set_courier_lang()
+    callback = DBInterface(call)
+    callback.set_courier_lang()
     courier_bot.delete_message(
-        c_back.data_to_read.from_user.id,
-        (c_back.data_to_read.message.id - 1)
+        callback.data_to_read.from_user.id,
+        (callback.data_to_read.message.id - 1)
     )
-    courier_bot.delete_message(c_back.data_to_read.from_user.id, c_back.data_to_read.message.id)
+    courier_bot.delete_message(
+        callback.data_to_read.from_user.id,
+        callback.data_to_read.message.id
+    )
     courier_bot.send_message(
-        c_back.data_to_read.from_user.id,
-        texts[c_back.data_to_read.data]["LANG_SELECTED_MSG"]
+        callback.data_to_read.from_user.id,
+        texts[callback.data_to_read.data]["LANG_SELECTED_MSG"]
     )
 
 
@@ -194,35 +196,35 @@ def accept_order(call: types.CallbackQuery) -> None:
         call: Callback query with request to accept order.
 
     """
-    c_back = DBInterface(call)
+    callback = DBInterface(call)
     courier_bot.edit_message_reply_markup(
-        c_back.data_to_read.from_user.id,
-        c_back.data_to_read.message.id
+        callback.data_to_read.from_user.id,
+        callback.data_to_read.message.id
     )
-    if c_back.cur_accept_order():
+    if callback.cur_accept_order():
         courier_bot.edit_message_text(
-            texts[c_back.get_courier_lang()]["COUR_ORDER_ACCEPTED_MSG"](
-                c_back.data_to_read.data.split(maxsplit=1)[-1]
+            texts[callback.get_courier_lang()]["COUR_ORDER_ACCEPTED_MSG"](
+                callback.data_to_read.data.split(maxsplit=1)[-1]
             ),
-            c_back.data_to_read.from_user.id,
-            c_back.data_to_read.message.id
+            callback.data_to_read.from_user.id,
+            callback.data_to_read.message.id
         )
-        customer_info = c_back.get_customer_info()
-        courier_info = c_back.get_courier_info()
+        customer_info = callback.get_customer_info()
+        courier_info = callback.get_courier_info()
         cus_bot.send_message(
             customer_info[0],
             texts[customer_info[1]]["COURIER_FOUND_MSG"](
-                c_back.data_to_read.data.split(maxsplit=1)[-1],
+                callback.data_to_read.data.split(maxsplit=1)[-1],
                 courier_info[0],
                 courier_info[1],
                 courier_info[2]
             )
         )
-        rest_info = c_back.get_rest_info()
+        rest_info = callback.get_rest_info()
         rest_bot.send_message(
             rest_info[0],
             texts[rest_info[1]]["COURIER_FOUND_MSG"](
-                c_back.data_to_read.data.split(maxsplit=1)[-1],
+                callback.data_to_read.data.split(maxsplit=1)[-1],
                 courier_info[0],
                 courier_info[1],
                 courier_info[2]
@@ -231,49 +233,49 @@ def accept_order(call: types.CallbackQuery) -> None:
         rest_bot.send_message(
             rest_info[0],
             texts[rest_info[1]]["REST_ORDER_READY_MSG"](
-                c_back.data_to_read.data.split(maxsplit=1)[-1]
+                callback.data_to_read.data.split(maxsplit=1)[-1]
             ),
             reply_markup=courier_menus.rest_order_ready_menu(
                 rest_info[1],
-                c_back.data_to_read.data.split(maxsplit=1)[-1]
+                callback.data_to_read.data.split(maxsplit=1)[-1]
             )
         )
     else:
         courier_bot.edit_message_text(
-            texts[c_back.get_courier_lang()]["ORDER_ALREADY_ACCEPTED_MSG"],
-            c_back.data_to_read.from_user.id,
-            c_back.data_to_read.message.id
+            texts[callback.get_courier_lang()]["ORDER_ALREADY_ACCEPTED_MSG"],
+            callback.data_to_read.from_user.id,
+            callback.data_to_read.message.id
         )
 
 
 @courier_bot.callback_query_handler(func=lambda call: "in_delivery" in call.data)
 @logger_decorator_callback
 def in_delivery(call: types.CallbackQuery) -> None:
-    """Process confirmation from Courier
-    that order has been received in delivery.
+    """Process confirmation from Courier that order has been received
+    in delivery.
 
     Args:
         call: Callback query with confirmation and order UUID.
 
     """
-    c_back = DBInterface(call)
-    customer_info = c_back.get_customer_info()
-    c_back.order_in_delivery()
-    courier_bot.edit_message_reply_markup(c_back.courier_id, c_back.data_to_read.message.id)
+    callback = DBInterface(call)
+    customer_info = callback.get_customer_info()
+    callback.order_in_delivery()
+    courier_bot.edit_message_reply_markup(callback.courier_id, callback.data_to_read.message.id)
     courier_bot.send_message(
-        c_back.courier_id,
-        texts[c_back.get_courier_lang()]["COUR_IN_DELIVERY_MSG"](
-            c_back.data_to_read.data.split(maxsplit=1)[-1]
+        callback.courier_id,
+        texts[callback.get_courier_lang()]["COUR_IN_DELIVERY_MSG"](
+            callback.data_to_read.data.split(maxsplit=1)[-1]
         ),
         reply_markup=courier_menus.order_in_delivery_menu(
-            c_back.get_courier_lang(),
-            c_back.data_to_read.data.split(maxsplit=1)[-1]
+            callback.get_courier_lang(),
+            callback.data_to_read.data.split(maxsplit=1)[-1]
         )
     )
     cus_bot.send_message(
         customer_info[0],
         texts[customer_info[1]]["CUS_IN_DELIVERY_MSG"](
-            c_back.data_to_read.data.split(maxsplit=1)[-1]
+            callback.data_to_read.data.split(maxsplit=1)[-1]
         )
     )
 
@@ -287,24 +289,24 @@ def delivered(call: types.CallbackQuery) -> None:
         call: Callback query with confirmation and order UUID.
 
     """
-    c_back = DBInterface(call)
-    customer_info = c_back.get_customer_info()
-    c_back.order_delivered()
-    courier_bot.edit_message_reply_markup(c_back.courier_id, c_back.data_to_read.message.id)
+    callback = DBInterface(call)
+    customer_info = callback.get_customer_info()
+    callback.order_delivered()
+    courier_bot.edit_message_reply_markup(callback.courier_id, callback.data_to_read.message.id)
     courier_bot.send_message(
-        c_back.courier_id,
-        texts[c_back.get_courier_lang()]["COUR_DELIVERED_MSG"](
-            c_back.data_to_read.data.split(maxsplit=1)[-1]
+        callback.courier_id,
+        texts[callback.get_courier_lang()]["COUR_DELIVERED_MSG"](
+            callback.data_to_read.data.split(maxsplit=1)[-1]
         )
     )
     cus_bot.send_message(
         customer_info[0],
         texts[customer_info[1]]["CUS_DELIVERED_MSG"](
-            c_back.data_to_read.data.split(maxsplit=1)[-1]
+            callback.data_to_read.data.split(maxsplit=1)[-1]
         ),
         reply_markup=courier_menus.cus_delivered_menu(
             customer_info[1],
-            c_back.data_to_read.data.split(maxsplit=1)[-1]
+            callback.data_to_read.data.split(maxsplit=1)[-1]
         )
     )
 

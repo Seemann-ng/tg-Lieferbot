@@ -91,9 +91,9 @@ texts = {
         "COUR_ORDER_IN_DELIVERY_BTN": "✅ Order received"
     },
     "de_DE": {
-        "ASK_REGISTRATION_MSG": "Dieses Telegram-Konto ist nicht als Restaurantkonto registriert.\n" \
-                                f"Bitte kontaktieren Sie den Support für die Registrierung, indem Sie auf diese Nachricht antworten.\n" \
-                                f"(Mit der Antwort stimmen Sie zu, dass Ihre Kontaktinformationen, also Telegram-ID und Benutzername, unserem Support-Service zur Verfügung gestellt werden.)",
+        "ASK_REGISTRATION_MSG": "Dieses Telegram-Konto ist nicht als Restaurantkonto registriert.\n"
+                                "Bitte kontaktieren Sie den Support für die Registrierung, indem Sie auf diese Nachricht antworten.\n"
+                                "(Mit der Antwort stimmen Sie zu, dass Ihre Kontaktinformationen, also Telegram-ID und Benutzername, unserem Support-Service zur Verfügung gestellt werden.)",
         "WELCOME_MSG": f"Willkommen bei {BOT_NAME}-Restaurant!",
         "REG_REQUEST_MSG": lambda
             username,

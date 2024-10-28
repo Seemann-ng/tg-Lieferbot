@@ -8,7 +8,7 @@
 
 Delivery service based on the system of Telegram bots with integrated payments via PayPal.
 
-## 💾 Build and run:
+## 🚀 Build and run:
 
 Run the following command to start the Service:
 
@@ -21,39 +21,39 @@ docker compose up -d --build
 In the `.env` file, or through the `-e` flags, you must set the required variables from
 tables below.
 
-| Variable             | Default        | Description                                                                                                          |
-|----------------------|----------------|----------------------------------------------------------------------------------------------------------------------|
-| CUSTOMER_BOT_TOKEN   | **(required)** | Telegram bot token for Customer bot.                                                                                 |
-| RESTAURANT_BOT_TOKEN | **(required)** | Telegram bot token for Restaurant bot.                                                                               |
-| COURIER_BOT_TOKEN    | **(required)** | Telegram bot token for Courier bot.                                                                                  |
-| ADMIN_BOT_TOKEN      | **(required)** | Telegram bot token for Admin bot.                                                                                    |
-| DB_USER              | **(required)** | PostgreSQL DB username.                                                                                              |
-| DB_PASSWORD          | **(required)** | PostgreSQL DB user password.                                                                                         |
-| DB_EXT_PORT          | **(optional)** | External DB host port, defaults to `5432`.                                                                           |
-| DEF_LANG             | **(optional)** | Default language of the bots, defaults to __en_US__.                                                                 |
-| COURIER_FEE_BASE     | **(optional)** | Defaults to __2.25__ _(see remark below)._                                                                           |
-| COURIER_FEE_RATE     | **(optional)** | Defaults to __0.08__ _(see remark below)._                                                                           |
-| SERVICE_FEE_BASE     | **(optional)** | Defaults to __1.75__ _(see remark below)._                                                                           |
-| SERVICE_FEE_RATE     | **(optional)** | Defaults to __0.05__ _(see remark below)._                                                                           |
-| PP_USERNAME          | **(required)** | PayPal app Client ID.                                                                                                |
-| PP_PASSWORD          | **(required)** | PayPal app secret key.                                                                                               |
-| PP_MODE              | **(optional)** | PayPal mode, `deployment` for real money transactions, `sandbox` for sandbox mode, defaults to `sandbox`.            |
-| BRAND_NAME           | **(optional)** | Name of the Service displayed on PayPal payment page.                                                                |
-| RETURN_LINK          | **(optional)** | URL Customer to be redirected to after payment completion on PayPal payment page, defaults to `https://google.com/`. |
+| Variable             | Default                 | Description                                                                        |
+|----------------------|-------------------------|------------------------------------------------------------------------------------|
+| CUSTOMER_BOT_TOKEN   | **(required)**          | Telegram bot token for Customer bot.                                               |
+| RESTAURANT_BOT_TOKEN | **(required)**          | Telegram bot token for Restaurant bot.                                             |
+| COURIER_BOT_TOKEN    | **(required)**          | Telegram bot token for Courier bot.                                                |
+| ADMIN_BOT_TOKEN      | **(required)**          | Telegram bot token for Admin bot.                                                  |
+| DB_USER              | **(required)**          | PostgreSQL DB username.                                                            |
+| DB_PASSWORD          | **(required)**          | PostgreSQL DB user password.                                                       |
+| DB_EXT_PORT          | **5432**                | External DB host port.                                                             |
+| DEF_LANG             | **en_US**               | Default language of the bots (`en_US`, `de_DE`, `ru_RU` available).                |
+| COURIER_FEE_BASE     | **2.25**                | (see remark below)                                                                 |
+| COURIER_FEE_RATE     | **0.08**                | (see remark below)                                                                 |
+| SERVICE_FEE_BASE     | **1.75**                | (see remark below)                                                                 |
+| SERVICE_FEE_RATE     | **0.05**                | (see remark below)                                                                 |
+| PP_USERNAME          | **(required)**          | PayPal app Client ID.                                                              |
+| PP_PASSWORD          | **(required)**          | PayPal app secret key.                                                             |
+| PP_MODE              | **sandbox**             | PayPal mode, `deployment` for real money transactions, `sandbox` for sandbox mode. |
+| BRAND_NAME           | **Shop**                | Name of the Service displayed on PayPal payment page.                              |
+| RETURN_LINK          | **https://google.com/** | URL Customer to be redirected to after payment completion on PayPal payment page.  |
 
 __REMARK:__
 
 Total price for the Customer is being calculated as per following formula:
 
-__TOTAL__ = __SUBTOTAL__ + __COURIER_FEE__ + __SERVICE_FEE__
+`TOTAL = SUBTOTAL + COURIER_FEE + SERVICE_FEE`
 
 Where:
 
-__COURIER_FEE__ = __SUBTOTAL__ * __COURIER_FEE_RATE__ + __COURIER_FEE_BASE__
+`COURIER_FEE = SUBTOTAL * COURIER_FEE_RATE + COURIER_FEE_DISTANCE_RATE * DELIVERY_DISTANCE + COURIER_FEE_BASE`
 
 AND
 
-__SERVICE_FEE__ = __SUBTOTAL__ * __SERVICE_FEE_RATE__ + __SERVICE_FEE_BASE__
+`SERVICE_FEE = SUBTOTAL * SERVICE_FEE_RATE + SERVICE_FEE_BASE`
 
 ## 🤖 Interaction with the bots:
 

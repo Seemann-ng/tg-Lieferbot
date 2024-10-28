@@ -4,7 +4,7 @@ LABEL authors="Seemann-ng"
 COPY ../requirements.txt /app/requirements.txt
 RUN pip3 install -r /app/requirements.txt
 
-COPY admin_bot /app
+COPY admin_bot/app /app
 COPY ../tools /app/tools
 
 WORKDIR /app
