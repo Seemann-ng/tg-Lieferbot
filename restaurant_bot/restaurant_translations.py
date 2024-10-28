@@ -91,58 +91,55 @@ texts = {
         "COUR_ORDER_IN_DELIVERY_BTN": "✅ Order received"
     },
     "de_DE": {
-        "ASK_REGISTRATION_MSG": "This Telegram account isn't registered as a Restaurant account.\n"
-                                "Please contact support for registration by replying to this message.\n"
-                                "(By replying You agree Your contact info i.e. Telegram ID and Username "
-                                "to be provided to Our Support Service.)",
-        "WELCOME_MSG": f"Welcome to {BOT_NAME}-Restaurant!",
+        "ASK_REGISTRATION_MSG": "Dieses Telegram-Konto ist nicht als Restaurantkonto registriert.\n" \
+                                f"Bitte kontaktieren Sie den Support für die Registrierung, indem Sie auf diese Nachricht antworten.\n" \
+                                f"(Mit der Antwort stimmen Sie zu, dass Ihre Kontaktinformationen, also Telegram-ID und Benutzername, unserem Support-Service zur Verfügung gestellt werden.)",
+        "WELCOME_MSG": f"Willkommen bei {BOT_NAME}-Restaurant!",
         "REG_REQUEST_MSG": lambda
             username,
             user_id,
-            text: f"❗️ Incoming restaurant registration request\n" \
-                  f"from @{username} (`{user_id}`):\n" \
-                  f"{text}",
-        "REG_REQUEST_SENT_MSG": "Your request has been sent to Our Support Service.",
-        "LANG_SEL_MENU": "Bot language selection menu.",
-        "CHANGE_LANG_MSG": "Select bot language",
-        "SEL_LANG_DE_BTN": "🇩🇪 German\n(Deutsch)",
-        "SEL_LANG_EN_BTN": "🇺🇸 English",
-        "SEL_LANG_RU_BTN": "🇷🇺 Russian\n(Русский)",
-        "LANG_SELECTED_MSG": "Language changed to English!",
-        "OPEN_SHIFT_MSG": "Shift is opened, now You can receive orders.",
-        "CLOSE_SHIFT_MSG": "Shift is closed.",
-        "DISH_AVAILABLE_SELECT_MSG": "Choose item to make it available.",
-        "DISH_SET_AVAILABLE_MSG": "Selected item has been set available.",
-        "DISH_UNAVAILABLE_SELECT_MSG": "Choose item to make it unavailable.",
-        "DISH_SET_UNAVAILABLE_MSG": "Selected item has been set unavailable.",
-        "DELETE_DISH_SELECT_MSG": "Select item to delete.",
-        "DISH_DELETED_MSG": "Selected item has been deleted.",
-        "DISH_ADDED_MSG": lambda dish_name: f"✅ Item: {dish_name} has been added to the Database.",
-        "NO_DISH_NAME_MSG": "No item name was provided.",
-        "EDIT_DISH_MSG": "Choose a item to edit",
-        "GO_BACK_BTN": "⬅️ BACK",
-        "EDIT_DISH_CHOSEN_MSG": lambda dish_name: f"Item to edit:\n{dish_name}",
-        "EDIT_DISH_PARAM_MSG": "Which parameter of the item do You want to change?",
-        "EDIT_DESC_BTN": "📝 Description",
-        "EDIT_CAT_BTN": "🛍 Category",
-        "EDIT_PRICE_BTN": "💶 Price",
+            text: f"❗️ Eingehende Restaurant-Anmeldungsanfrage\n" \
+                  f"von @{username} ({user_id}):\n{text}",
+        "REG_REQUEST_SENT_MSG": "Ihre Anfrage wurde an unseren Support-Service gesendet.",
+        "LANG_SEL_MENU": "Menü zur Auswahl der Bot-Sprache.",
+        "CHANGE_LANG_MSG": "Wählen Sie die Bot-Sprache aus",
+        "SEL_LANG_DE_BTN": "🇩🇪 Deutsch",
+        "SEL_LANG_EN_BTN": "🇺🇸 Englisch\n(English)",
+        "SEL_LANG_RU_BTN": "🇷🇺 Russisch\n(Русский)",
+        "LANG_SELECTED_MSG": "Sprache gewechselt zu Deutsch!",
+        "OPEN_SHIFT_MSG": "Schicht ist geöffnet, Sie können jetzt Bestellungen annehmen.",
+        "CLOSE_SHIFT_MSG": "Schicht ist geschlossen.",
+        "DISH_AVAILABLE_SELECT_MSG": "Wählen Sie einen Artikel aus, um ihn verfügbar zu machen.",
+        "DISH_SET_AVAILABLE_MSG": "Ausgewählter Artikel wurde als verfügbar eingestellt.",
+        "DISH_UNAVAILABLE_SELECT_MSG": "Wählen Sie einen Artikel aus, um ihn nicht verfügbar zu machen.",
+        "DISH_SET_UNAVAILABLE_MSG": "Ausgewählter Artikel wurde als nicht verfügbar eingestellt.",
+        "DELETE_DISH_SELECT_MSG": "Wählen Sie einen Artikel zum Löschen aus.",
+        "DISH_DELETED_MSG": "Ausgewählter Artikel wurde gelöscht.",
+        "DISH_ADDED_MSG": lambda dish_name: f"✅ Artikel: {dish_name} wurde zur Datenbank hinzugefügt.",
+        "NO_DISH_NAME_MSG": "Kein Artikelname wurde angegeben.",
+        "EDIT_DISH_MSG": "Wählen Sie einen Artikel zum Bearbeiten aus",
+        "GO_BACK_BTN": "⬅️ ZURÜCK",
+        "EDIT_DISH_CHOSEN_MSG": lambda dish_name: f"Artikel zum Bearbeiten:\n{dish_name}",
+        "EDIT_DISH_PARAM_MSG": "Welchen Parameter des Artikels möchten Sie ändern?",
+        "EDIT_DESC_BTN": "📝 Beschreibung",
+        "EDIT_CAT_BTN": "🛍 Kategorie",
+        "EDIT_PRICE_BTN": "💶 Preis",
         "EDIT_CATEGORY_MSG": lambda
-            dish_uuid: f"Enter new category for the item:\n" \
-                       f"Item UUID: {dish_uuid}",
-        "CAT_SET_MSG": "✅ New category has been set for the item.",
+            dish_uuid: f"Geben Sie die neue Kategorie für den Artikel ein:\n" \
+                       f"Artikel UUID: {dish_uuid}",
+        "CAT_SET_MSG": "✅ Neue Kategorie wurde für den Artikel eingestellt.",
         "EDIT_DESCRIPTION_MSG": lambda
-            dish_uuid: f"Enter new description for the item:\n" \
-                       f"Item UUID: {dish_uuid}",
-        "DESC_SET_MSG": "✅ New description has been set for the item.",
+            dish_uuid: f"Geben Sie die neue Beschreibung für den Artikel ein:\n" \
+                       f"Artikel UUID: {dish_uuid}",
+        "DESC_SET_MSG": "✅ Neue Beschreibung wurde für den Artikel eingestellt.",
         "EDIT_PRICE_MSG": lambda
-            dish_uuid: f"Enter new price for the item:\n" \
-                       f"Item UUID: {dish_uuid}",
-        "PRICE_SET_MSG": "✅ New price has been set for the item.",
-        "REST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"✅ Accepted order\n`{order_uuid}`",
+            dish_uuid: f"Geben Sie den neuen Preis für den Artikel ein:\n" \
+                       f"Artikel UUID: {dish_uuid}",
+        "PRICE_SET_MSG": "✅ Neuer Preis wurde für den Artikel eingestellt.",
+        "REST_ORDER_ACCEPTED_MSG": lambda order_uuid: f"✅ Bestellung akzeptiert\n`{order_uuid}`",
         "CUST_ORDER_ACCEPTED_MSG": lambda
-            order_uuid: f"Order\n`{order_uuid}`\n" \
-                        f"Status update:\n" \
-                        f"Order received by the restaurant, looking for a courier.",
+            order_uuid: f"Bestellung\n`{order_uuid}`\n" \
+                        f"Statusaktualisierung:\nBestellung vom Restaurant erhalten, Kurier wird gesucht.",
         "LOOKING_FOR_COURIER_MSG": lambda
             order_uuid,
             courier_fee,
@@ -152,27 +149,30 @@ texts = {
             comment,
             rest_name,
             dishes,
-            rest_address: f"New incoming order:\n`{order_uuid}`\n" \
-                          f"Courier pay:\n€`{courier_fee}`\n" \
-                          f"Customer's name:\n{customer_name}\n" \
-                          f"Customer's Telegram:\n @{customer_username}\n" \
-                          f"Customer's phone:\n{customer_phone}\n" \
-                          f"Order comments:\n{comment}\n" \
+            rest_address: f"Neue eingehende Bestellung:\n`{order_uuid}`\n" \
+                          f"Kurierlohn:\n€`{courier_fee}`\n" \
+                          f"Name des Kunden:\n{customer_name}\n" \
+                          f"Telegram des Kunden:\n @{customer_username}\n" \
+                          f"Telefon des Kunden:\n{customer_phone}\n" \
+                          f"Bestellkommentare:\n{comment}\n" \
                           f"Restaurant:\n`{rest_name}`\n" \
-                          f"Item(s):\n{dishes}\n" \
-                          f"Restaurant address:\n`{rest_address}`\n" \
-                          f"Restaurant location:",
-        "COURIER_DELIVERY_LOC_MSG": "To be delivered here:",
-        "COURIER_ACCEPT_ORDER_MSG": "Accept order?",
-        "COURIER_ACCEPT_BTN": "✅ Accept",
-        "ORDER_READY_MSG": lambda order_uuid: f"Order\n`{order_uuid}`\nis ready and handled to the courier.",
+                          f"Artikel:\n{dishes}\n" \
+                          f"Adresse des Restaurants:\n`{rest_address}`\n" \
+                          f"Lage des Restaurants:",
+        "COURIER_DELIVERY_LOC_MSG": "Hierhin liefern:",
+        "COURIER_ACCEPT_ORDER_MSG": "Bestellung annehmen?",
+        "COURIER_ACCEPT_BTN": "✅ Annehmen",
+        "ORDER_READY_MSG": lambda
+            order_uuid: f"Bestellung\n`{order_uuid}`\n" \
+                        f"ist bereit und an den Kurier übergeben.",
         "COUR_ORDER_IN_DELIVERY_MSG": lambda
-            order_uuid: f"Please confirm receiving order\n`{order_uuid}`\n" \
-                        f"by pressing button below.",
+            order_uuid: f"Bitte bestätigen Sie den Erhalt der Bestellung\n`{order_uuid}`\n" \
+                        f"indem Sie den untenstehenden Knopf drücken.",
         "CUST_ORDER_IN_DELIVERY_MSG": lambda
-            order_uuid: f"Order\n`{order_uuid}`\n" \
-                        f"Status update:\nOrder is ready and handled to the courier.",
-        "COUR_ORDER_IN_DELIVERY_BTN": "✅ Order received"
+            order_uuid: f"Bestellung\n`{order_uuid}`\n" \
+                        f"Statusaktualisierung:\n" \
+                        f"Bestellung ist bereit und an den Kurier übergeben.",
+        "COUR_ORDER_IN_DELIVERY_BTN": "✅ Bestellung erhalten"
     },
     "ru_RU": {
         "ASK_REGISTRATION_MSG": "Данный Телеграм аккаунт не зарегистрирован как заведение.\n"
