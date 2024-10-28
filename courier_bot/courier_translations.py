@@ -68,65 +68,64 @@ texts = {
         "ORDER_CLOSED_BTN": "✅ Order received"
     },
     "de_DE": {
-        "ASK_REG_MSG": "This Telegram account isn't registered as a Courier account.\n"
-                       "Please contact support for registration by replying to this message.\n"
-                       "(By replying You agree Your contact info i.e. Telegram ID and Username "
-                       "to be provided to Our Support Service.)",
-        "WELCOME_MSG": f"Welcome to {BOT_NAME}-Courier!",
+        "ASK_REG_MSG": "Dieses Telegram-Konto ist nicht als Kurierkonto registriert.\n"
+                       "Bitte kontaktieren Sie den Support für die Registrierung, indem Sie auf diese Nachricht antworten.\n"
+                       "(Mit Ihrer Antwort stimmen Sie zu, dass Ihre Kontaktinformationen, also Telegram-ID und Benutzername, unserem Support-Service zur Verfügung gestellt werden.)",
+        "WELCOME_MSG": f"Willkommen bei {BOT_NAME}-Courier!",
         "REG_REQ_MSG": lambda
             username,
             user_id,
-            text: f"❗️ Incoming courier registration request\n" \
-                  f"from @{username} (`{user_id}`):\n" \
-                  f"{text}",
-        "REG_REQ_SENT_MSG": "Your request has been sent to Our Support Service.",
-        "LANG_SEL_MENU": "Bot language selection menu.",
-        "CHANGE_LANG_MSG": "Select bot language",
-        "SEL_LANG_DE_BTN": "🇩🇪 German\n(Deutsch)",
-        "SEL_LANG_EN_BTN": "🇺🇸 English",
-        "SEL_LANG_RU_BTN": "🇷🇺 Russian\n(Русский)",
-        "LANG_SELECTED_MSG": "Language changed to English!",
-        "BALANCE_MSG": lambda salary: f"Your current salary balance is €{salary:.2f}",
-        "CHANGE_TRANSPORT_MENU": "Please choose your transport type.",
-        "FEET_BTN": "🚶‍➡️ On feet",
-        "BICYCLE_BTN": "🚲 Bicycle",
-        "MOTORCYCLE_BTN": "🛵 Motorcycle",
-        "AUTO_BTN": "🚗 Automobile",
-        "TRANSPORT_SELECTED_MSG": "Transport type has been selected.",
-        "OPEN_SHIFT_MSG": "Shift is opened, now You can receive orders.",
-        "CLOSE_SHIFT_MSG": "Shift is closed.",
-        "CANNOT_CLOSE_SHIFT_MSG": "Can't close shift due to unclosed order.",
-        "COUR_ORDER_ACCEPTED_MSG": lambda order_uuid: f"✅ Order\n`{order_uuid}`\naccepted.",
+            text: f"❗️ Eingehende Kurieranmeldungsanfrage\n" \
+                  f"von @{username} (`{user_id}`):\n{text}",
+        "REG_REQ_SENT_MSG": "Ihre Anfrage wurde an unseren Support-Service gesendet.",
+        "LANG_SEL_MENU": "Menü zur Auswahl der Bot-Sprache.",
+        "CHANGE_LANG_MSG": "Wählen Sie die Bot-Sprache aus",
+        "SEL_LANG_DE_BTN": "🇩🇪 Deutsch",
+        "SEL_LANG_EN_BTN": "🇺🇸 Englisch\n(English)",
+        "SEL_LANG_RU_BTN": "🇷🇺 Russisch\n(Русский)",
+        "LANG_SELECTED_MSG": "Sprache gewechselt zu Deutsch!",
+        "BALANCE_MSG": lambda salary: f"Ihr aktuelles Gehaltssaldo beträgt €{salary:.2f}",
+        "CHANGE_TRANSPORT_MENU": "Bitte wählen Sie Ihren Transporttyp.",
+        "FEET_BTN": "🚶‍➡️ Zu Fuß",
+        "BICYCLE_BTN": "🚲 Fahrrad",
+        "MOTORCYCLE_BTN": "🛵 Motorrad",
+        "AUTO_BTN": "🚗 Auto",
+        "TRANSPORT_SELECTED_MSG": "Transporttyp wurde ausgewählt.",
+        "OPEN_SHIFT_MSG": "Schicht ist geöffnet, Sie können jetzt Bestellungen annehmen.",
+        "CLOSE_SHIFT_MSG": "Schicht ist geschlossen.",
+        "CANNOT_CLOSE_SHIFT_MSG": "Schicht kann wegen einer ungeschlossenen Bestellung nicht geschlossen werden.",
+        "COUR_ORDER_ACCEPTED_MSG": lambda order_uuid: f"✅ Bestellung\n`{order_uuid}`\nakzeptiert.",
         "COURIER_FOUND_MSG": lambda
             order_uuid,
             courier_name,
             courier_username,
-            courier_phone: f"Order\n`{order_uuid}`\n" \
-                           f"Status update:\nCourier found.\n" \
-                           f"Courier's name:\n{courier_name}\n" \
-                           f"Courier's Telegram:\n@{courier_username}\n" \
-                           f"Courier's phone:\n{courier_phone}",
-        "ORDER_ALREADY_ACCEPTED_MSG": "Sorry, order is already accepted by another courier.",
+            courier_phone: f"Bestellung\n`{order_uuid}`\n" \
+                           f"Statusaktualisierung:\nKurier gefunden.\n" \
+                           f"Name des Kuriers:\n{courier_name}\n" \
+                           f"Telegram des Kuriers:\n@{courier_username}\n" \
+                           f"Telefon des Kuriers:\n{courier_phone}",
+        "ORDER_ALREADY_ACCEPTED_MSG": "Entschuldigung, die Bestellung wurde bereits von einem anderen Kurier angenommen.",
         "REST_ORDER_READY_MSG": lambda
-            order_uuid: f"Please, press the button below when order\n`{order_uuid}`\n" \
-                        f"is ready and handled to the courier.",
-        "REST_READY_BTN": "✅ Order is ready",
+            order_uuid: f"Bitte drücken Sie den untenstehenden Knopf, wenn die Bestellung\n`{order_uuid}`\n" \
+                        f"fertig und dem Kurier übergeben ist.",
+        "REST_READY_BTN": "✅ Bestellung ist fertig",
         "COUR_IN_DELIVERY_MSG": lambda
-            order_uuid: f"Order\n`{order_uuid}`\n" \
-                        f"is in delivery.\n" \
-                        f"Please press the button below when order is delivered.",
+            order_uuid: f"Bestellung\n`{order_uuid}`\n" \
+                        f"ist in Zustellung.\n" \
+                        f"Bitte drücken Sie den untenstehenden Knopf, wenn die Bestellung zugestellt ist.",
         "CUS_IN_DELIVERY_MSG": lambda
-            order_uuid: f"Order\n`{order_uuid}`\n" \
-                        f"Status update:\nOrder in delivery.",
-        "DELIVERED_BTN": "✅ Order delivered",
+            order_uuid: f"Bestellung\n`{order_uuid}`\n" \
+                        f"Statusaktualisierung:\nBestellung in Zustellung.",
+        "DELIVERED_BTN": "✅ Bestellung zugestellt",
         "COUR_DELIVERED_MSG": lambda
-            order_uuid: f"Order\n`{order_uuid}`\n" f"is delivered.\n" \
-                        f"Thank You:)",
+            order_uuid: f"Bestellung\n`{order_uuid}`\n" \
+                        f"ist zugestellt.\nVielen Dank :)",
         "CUS_DELIVERED_MSG": lambda
-            order_uuid: f"Order\n`{order_uuid}`\n" \
-                        f"Status update:\nCourier reported Your order as delivered.\n" \
-                        f"Please confirm receiving Your order.",
-        "ORDER_CLOSED_BTN": "✅ Order received"
+            order_uuid: f"Bestellung\n`{order_uuid}`\n" \
+                        f"Statusaktualisierung:\n" \
+                        f"Der Kurier hat gemeldet, dass Ihre Bestellung zugestellt wurde.\n" \
+                        f"Bitte bestätigen Sie den Erhalt Ihrer Bestellung.",
+        "ORDER_CLOSED_BTN": "✅ Bestellung erhalten"
     },
     "ru_RU": {
         "ASK_REG_MSG": "Этот профиль Телеграм не зарегистрирован как курьер.\n"
