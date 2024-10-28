@@ -27,6 +27,13 @@ texts = {
         "LANG_SELECTED_MSG": "Language changed to English!",
         "OPEN_SHIFT_MSG": "Shift is opened, now You can receive orders.",
         "CLOSE_SHIFT_MSG": "Shift is closed.",
+        "REST_SUPPORT_MSG": "What's Your question?",
+        "SUPPORT_FR_REST_MSG": lambda
+            customer_username,
+            customer_id,
+            req_text: f"❗️ New incoming support request from restaurant @{customer_username}" \
+                      f"({customer_id}):\n{req_text}",
+        "SUPPORT_SENT_MSG": "Your request was sent to our Support service.\nThey will contact you soon.",
         "DISH_AVAILABLE_SELECT_MSG": "Choose item to make it available.",
         "DISH_SET_AVAILABLE_MSG": "Selected item has been set available.",
         "DISH_UNAVAILABLE_SELECT_MSG": "Choose item to make it unavailable.",
@@ -109,6 +116,13 @@ texts = {
         "LANG_SELECTED_MSG": "Sprache gewechselt zu Deutsch!",
         "OPEN_SHIFT_MSG": "Schicht ist geöffnet, Sie können jetzt Bestellungen annehmen.",
         "CLOSE_SHIFT_MSG": "Schicht ist geschlossen.",
+        "REST_SUPPORT_MSG": "Was ist Ihre Frage?",
+        "SUPPORT_FR_REST_MSG": lambda
+            customer_username,
+            customer_id,
+            req_text: f"❗️ Neue eingehende Support-Anfrage von Restaurant @{customer_username} " \
+                      f"({customer_id}):\n{req_text}",
+        "SUPPORT_SENT_MSG": "Ihre Anfrage wurde an unseren Support-Service gesendet.\nSie werden sich in Kürze mit Ihnen in Verbindung setzen.",
         "DISH_AVAILABLE_SELECT_MSG": "Wählen Sie einen Artikel aus, um ihn verfügbar zu machen.",
         "DISH_SET_AVAILABLE_MSG": "Ausgewählter Artikel wurde als verfügbar eingestellt.",
         "DISH_UNAVAILABLE_SELECT_MSG": "Wählen Sie einen Artikel aus, um ihn nicht verfügbar zu machen.",
@@ -194,6 +208,13 @@ texts = {
         "LANG_SELECTED_MSG": "Язык изменен на русский!",
         "OPEN_SHIFT_MSG": "Смена начата, теперь Вы будете получать заказы.",
         "CLOSE_SHIFT_MSG": "Смена закончена.",
+        "REST_SUPPORT_MSG": "Задайте ваш вопрос:",
+        "SUPPORT_FR_REST_MSG": lambda
+            customer_username,
+            customer_id,
+            req_text: f"❗️Новое входящие обращение от Заведения @{customer_username}" \
+                      f"({customer_id}):\n{req_text}",
+        "SUPPORT_SENT_MSG": "Ваше обращение было отправлено в службу поддержки.\nСкоро с Вами свяжутся.",
         "DISH_AVAILABLE_SELECT_MSG": "Выберите товар, чтобы сделать его доступным для заказа.",
         "DISH_SET_AVAILABLE_MSG": "Выбранный товар теперь доступен для заказа.",
         "DISH_UNAVAILABLE_SELECT_MSG": "Выберите товар, чтобы сделать его недоступным для заказа.",

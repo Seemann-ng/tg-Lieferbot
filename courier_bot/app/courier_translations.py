@@ -35,6 +35,13 @@ texts = {
         "OPEN_SHIFT_MSG": "Shift is opened, now You can receive orders.",
         "CLOSE_SHIFT_MSG": "Shift is closed.",
         "CANNOT_CLOSE_SHIFT_MSG": "Can't close shift due to unclosed order.",
+        "COURIER_SUPPORT_MSG": "What's Your question?",
+        "SUPPORT_FR_COUR_MSG": lambda
+            customer_username,
+            customer_id,
+            req_text: f"❗️ New incoming support request from courier @{customer_username}" \
+                      f"({customer_id}):\n{req_text}",
+        "SUPPORT_SENT_MSG": "Your request was sent to our Support service.\nThey will contact you soon.",
         "COUR_ORDER_ACCEPTED_MSG": lambda order_uuid: f"✅ Order\n`{order_uuid}`\naccepted.",
         "COURIER_FOUND_MSG": lambda
             order_uuid,
@@ -94,6 +101,13 @@ texts = {
         "OPEN_SHIFT_MSG": "Schicht ist geöffnet, Sie können jetzt Bestellungen annehmen.",
         "CLOSE_SHIFT_MSG": "Schicht ist geschlossen.",
         "CANNOT_CLOSE_SHIFT_MSG": "Schicht kann wegen einer ungeschlossenen Bestellung nicht geschlossen werden.",
+        "COURIER_SUPPORT_MSG": "Was ist Ihre Frage?",
+        "SUPPORT_FR_COUR_MSG": lambda
+            customer_username,
+            customer_id,
+            req_text: f"❗️ Neue eingehende Support-Anfrage von Kurier @{customer_username} " \
+                      f"({customer_id}):\n{req_text}",
+        "SUPPORT_SENT_MSG": "Ihre Anfrage wurde an unseren Support-Service gesendet.\nSie werden sich in Kürze mit Ihnen in Verbindung setzen.",
         "COUR_ORDER_ACCEPTED_MSG": lambda order_uuid: f"✅ Bestellung\n`{order_uuid}`\nakzeptiert.",
         "COURIER_FOUND_MSG": lambda
             order_uuid,
@@ -155,6 +169,13 @@ texts = {
         "OPEN_SHIFT_MSG": "Смена начата, теперь Вы будете получать заказы.",
         "CLOSE_SHIFT_MSG": "Смена закончена.",
         "CANNOT_CLOSE_SHIFT_MSG": "Не удалось закончить смену из-за незакрытого заказа.",
+        "COURIER_SUPPORT_MSG": "Задайте ваш вопрос:",
+        "SUPPORT_FR_COUR_MSG": lambda
+            customer_username,
+            customer_id,
+            req_text: f"❗️Новое входящие обращение от Курьера @{customer_username}" \
+                      f"({customer_id}):\n{req_text}",
+        "SUPPORT_SENT_MSG": "Ваше обращение было отправлено в службу поддержки.\nСкоро с Вами свяжутся.",
         "COUR_ORDER_ACCEPTED_MSG": lambda order_uuid: f"✅ Заказ\n`{order_uuid}`\nпринят.",
         "COURIER_FOUND_MSG": lambda
             order_uuid,

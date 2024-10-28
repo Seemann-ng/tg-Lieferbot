@@ -42,9 +42,10 @@ def ask_registration(message: types.Message) -> None:
 
     """
     msg = DBInterface(message)
+    admin = msg.get_support()
     adm_bot.send_message(
-        msg.get_support_id(),
-        texts[msg.get_courier_lang()]["REG_REQ_MSG"](
+        admin[0],
+        texts[admin[1]]["REG_REQ_MSG"](
             msg.data_to_read.from_user.username,
             msg.courier_id,
             message.text
@@ -185,6 +186,53 @@ def close_shift_command(message: types.Message) -> None:
     else:
         msg.close_shift()
         courier_bot.send_message(msg.courier_id, texts[msg.get_courier_lang()]["CLOSE_SHIFT_MSG"])
+
+
+@courier_bot.message_handler(commands=["support"])
+@logger_decorator_msg
+def contact_support(message: types.Message) -> None:
+    """Start support request sequence.
+
+    Args:
+        message: Message from courier with corresponding request.
+
+    """
+    msg = DBInterface(message)
+    courier_bot.delete_message(msg.data_to_read.from_user.id, msg.data_to_read.id)
+    courier_bot.send_message(
+        msg.data_to_read.from_user.id,
+        texts[msg.get_courier_lang()]["COURIER_SUPPORT_MSG"],
+        reply_markup=types.ForceReply()
+    )
+
+
+@courier_bot.message_handler(
+    func=lambda message: message.reply_to_message \
+                         and message.reply_to_message.text \
+                         in [lang["COURIER_SUPPORT_MSG"] for lang in texts.values()]
+)
+@logger_decorator_msg
+def message_to_support(message: types.Message) -> None:
+    """Forward message from Courier to Support.
+
+    Args:
+        message: Message from Courier to Support.
+
+    """
+    msg = DBInterface(message)
+    support = msg.get_support()
+    adm_bot.send_message(
+        support[0],
+        texts[support[1]]["SUPPORT_FR_CUS_MSG"](
+            msg.data_to_read.from_user.username,
+            msg.data_to_read.from_user.id,
+            message.text
+        )
+    )
+    courier_bot.send_message(
+        msg.data_to_read.from_user.id,
+        texts[msg.get_courier_lang()]["SUPPORT_SENT_MSG"]
+    )
 
 
 @courier_bot.callback_query_handler(func=lambda call: "accept" in call.data)

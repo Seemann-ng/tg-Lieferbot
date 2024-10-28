@@ -41,9 +41,10 @@ def ask_registration(message: types.Message) -> None:
 
     """
     msg = DBInterface(message)
+    support = msg.get_support()
     adm_bot.send_message(
-        msg.get_support_id(),
-        texts[msg.get_rest_lang()]["REG_REQUEST_MSG"](
+        support[0],
+        texts[support[1]]["REG_REQUEST_MSG"](
             msg.data_to_read.from_user.username,
             msg.user_id,
             message.text
@@ -403,6 +404,53 @@ def open_shift_command(message: types.Message) -> None:
     msg = DBInterface(message)
     msg.open_shift()
     rest_bot.send_message(msg.user_id, texts[msg.get_rest_lang()]["OPEN_SHIFT_MSG"])
+
+
+@rest_bot.message_handler(commands=["support"])
+@logger_decorator_msg
+def contact_support(message: types.Message) -> None:
+    """Start support request sequence.
+
+    Args:
+        message: Message from restaurant with corresponding request.
+
+    """
+    msg = DBInterface(message)
+    rest_bot.delete_message(msg.data_to_read.from_user.id, msg.data_to_read.id)
+    rest_bot.send_message(
+        msg.data_to_read.from_user.id,
+        texts[msg.get_rest_lang()]["REST_SUPPORT_MSG"],
+        reply_markup=types.ForceReply()
+    )
+
+
+@courier_bot.message_handler(
+    func=lambda message: message.reply_to_message \
+                         and message.reply_to_message.text \
+                         in [lang["REST_SUPPORT_MSG"] for lang in texts.values()]
+)
+@logger_decorator_msg
+def message_to_support(message: types.Message) -> None:
+    """Forward message from Restaurant to Support.
+
+    Args:
+        message: Message from Restaurant to Support.
+
+    """
+    msg = DBInterface(message)
+    support = msg.get_support()
+    adm_bot.send_message(
+        support[0],
+        texts[support[1]]["SUPPORT_FR_REST_MSG"](
+            msg.data_to_read.from_user.username,
+            msg.data_to_read.from_user.id,
+            message.text
+        )
+    )
+    rest_bot.send_message(
+        msg.data_to_read.from_user.id,
+        texts[msg.get_rest_lang()]["SUPPORT_SENT_MSG"]
+    )
 
 
 @rest_bot.callback_query_handler(func=lambda call: "accepted" in call.data)

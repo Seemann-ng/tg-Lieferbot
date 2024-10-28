@@ -57,19 +57,20 @@ class Interface:
 
     @cursor_decorator
     @logger_decorator
-    def get_support_id(self, curs: cursor) -> int:
-        """Get Telegram ID of ramdom Admin in the database.
+    def get_support(self, curs: cursor) -> Tuple[int, str]:
+        """Get Telegram ID and language code of ramdom Admin in the
+        database.
 
         Args:
             curs: Cursor object from psycopg2 module.
 
         Returns:
-            Telegram ID of Admin.
+            Telegram ID and language code of Admin.
 
         """
-        curs.execute("SELECT admin_id FROM admins")
-        if admin_ids := curs.fetchall():
-            return random.choice(admin_ids)[0]
+        curs.execute("SELECT admin_id, lang_code FROM admins")
+        if admins := curs.fetchall():
+            return random.choice(admins)
 
     @cursor_decorator
     @logger_decorator

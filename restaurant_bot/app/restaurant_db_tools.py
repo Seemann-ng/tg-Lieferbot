@@ -60,19 +60,19 @@ class Interface:
 
     @cursor_decorator
     @logger_decorator
-    def get_support_id(self, curs: cursor) -> int:
-        """Get random Admin Telegram ID from database.
+    def get_support(self, curs: cursor) -> Tuple[int, str]:
+        """Get random Admin Telegram ID and language code from database.
 
         Args:
             curs: Cursor object from psycopg2.
 
         Returns:
-            Admin Telegram ID.
+            Admin Telegram ID and language code.
 
         """
-        curs.execute("SELECT admin_id FROM admins")
+        curs.execute("SELECT admin_id, lang_code FROM admins")
         if admin_ids := curs.fetchall():
-            return random.choice(admin_ids)[0]
+            return random.choice(admin_ids)
 
     @cursor_decorator
     @logger_decorator
