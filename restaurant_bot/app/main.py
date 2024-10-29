@@ -95,13 +95,13 @@ def lang_set(call: types.CallbackQuery) -> None:
     )
 
 
-@rest_bot.message_handler(commands=["dish_available"])
+@rest_bot.message_handler(commands=["item_available"])
 @logger_decorator_msg
 def dish_available_command(message: types.Message) -> None:
-    """Process /dish_available command from User.
+    """Process /item_available command from User.
 
     Args:
-        message: /dish_available command.
+        message: /item_available command.
 
     """
     msg = DBInterface(message)
@@ -133,13 +133,13 @@ def dish_available_select(call: types.CallbackQuery) -> None:
     )
 
 
-@rest_bot.message_handler(commands=["dish_unavailable"])
+@rest_bot.message_handler(commands=["item_unavailable"])
 @logger_decorator_msg
 def dish_unavailable_command(message: types.Message) -> None:
-    """Process /dish_unavailable command from User.
+    """Process /item_unavailable command from User.
 
     Args:
-        message: /dish_unavailable command.
+        message: /item_unavailable command.
 
     """
     msg = DBInterface(message)
@@ -171,13 +171,13 @@ def dish_unavailable_select(call: types.CallbackQuery) -> None:
     )
 
 
-@rest_bot.message_handler(commands=["add_dish"])
+@rest_bot.message_handler(commands=["add_item"])
 @logger_decorator_msg
 def add_dish_command(message: types.Message) -> None:
-    """Process /add_dish command from User.
+    """Process /add_item command from User.
 
     Args:
-        message: /add_dish command with dish name.
+        message: /add_item command with dish name.
 
     """
     msg = DBInterface(message)
@@ -193,13 +193,13 @@ def add_dish_command(message: types.Message) -> None:
         rest_bot.send_message(msg.user_id, texts[msg.get_rest_lang()]["NO_DISH_NAME_MSG"])
 
 
-@rest_bot.message_handler(commands=["edit_dish"])
+@rest_bot.message_handler(commands=["edit_item"])
 @logger_decorator_msg
 def edit_dish_command(message: types.Message) -> None:
-    """Process /edit_dish command from User.
+    """Process /edit_item command from User.
     
     Args:
-        message: /edit_dish command.
+        message: /edit_item command.
 
     """
     msg = DBInterface(message)
@@ -343,13 +343,13 @@ def set_new_price(message: types.Message) -> None:
     rest_bot.send_message(msg.user_id, texts[msg.get_rest_lang()]["PRICE_SET_MSG"])
 
 
-@rest_bot.message_handler(commands=["delete_dish"])
+@rest_bot.message_handler(commands=["delete_item"])
 @logger_decorator_msg
 def delete_dish_command(message: types.Message) -> None:
-    """Process /delete_dish command.
+    """Process /delete_item command.
 
     Args:
-        message: /delete_dish command.
+        message: /delete_item command.
 
     """
     msg = DBInterface(message)

@@ -3,7 +3,7 @@ from environs import Env
 from telebot.apihelper import ApiTelegramException
 
 import customer_menus
-import paypal_tools.pp_tools as paypal
+import tools.pp_tools as paypal
 from customer_translations import texts
 from customer_db_tools import Interface as DBInterface
 from tools.bots_initialization import adm_bot, cus_bot, rest_bot

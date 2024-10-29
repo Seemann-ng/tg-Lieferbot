@@ -31,6 +31,8 @@ services:
       - COURIER_FEE_DISTANCE_RATE=${COURIER_FEE_DISTANCE_RATE}
       - SERVICE_FEE_BASE=${SERVICE_FEE_BASE}
       - SERVICE_FEE_RATE=${SERVICE_FEE_RATE}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
       - DEF_LANG=${DEF_LANG}
       - PP_USERNAME=${PP_USERNAME}
       - PP_PASSWORD=${PP_PASSWORD}
@@ -51,6 +53,8 @@ services:
       - RESTAURANT_BOT_TOKEN=${RESTAURANT_BOT_TOKEN}
       - COURIER_BOT_TOKEN=${COURIER_BOT_TOKEN}
       - ADMIN_BOT_TOKEN=${ADMIN_BOT_TOKEN}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
       - DEF_LANG=${DEF_LANG}
       - BRAND_NAME=${BRAND_NAME}
     container_name: liefer_bot_restaurant
@@ -67,6 +71,8 @@ services:
       - RESTAURANT_BOT_TOKEN=${RESTAURANT_BOT_TOKEN}
       - COURIER_BOT_TOKEN=${COURIER_BOT_TOKEN}
       - ADMIN_BOT_TOKEN=${ADMIN_BOT_TOKEN}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
       - DEF_LANG=${DEF_LANG}
       - BRAND_NAME=${BRAND_NAME}
     container_name: liefer_bot_courier
@@ -83,7 +89,14 @@ services:
       - RESTAURANT_BOT_TOKEN=${RESTAURANT_BOT_TOKEN}
       - COURIER_BOT_TOKEN=${COURIER_BOT_TOKEN}
       - ADMIN_BOT_TOKEN=${ADMIN_BOT_TOKEN}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
       - DEF_LANG=${DEF_LANG}
+      - PP_USERNAME=${PP_USERNAME}
+      - PP_PASSWORD=${PP_PASSWORD}
+      - PP_MODE=${PP_MODE?:sandbox}
+      - BRAND_NAME=${BRAND_NAME}
+      - RETURN_LINK=${RETURN_LINK?:https://google.com}
     container_name: liefer_bot_admin
     restart: always
 

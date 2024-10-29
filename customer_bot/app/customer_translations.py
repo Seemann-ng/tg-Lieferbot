@@ -1,9 +1,11 @@
+from email.policy import default
+
 from environs import Env
 
 env = Env()
 env.read_env()
 
-BOT_NAME = env.str("BRAND_NAME")
+BOT_NAME = env.str("BRAND_NAME", default="LieferBot")
 
 texts = {
     "en_US": {
@@ -65,7 +67,7 @@ texts = {
         "SUPPORT_FR_CUS_MSG": lambda
             customer_username,
             customer_id,
-            req_text: f"❗️ New incoming support request from customer @{customer_username}" \
+            req_text: f"❗️ New incoming support request from customer `@{customer_username}` " \
                       f"({customer_id}):\n{req_text}",
         "SUPPORT_SENT_MSG": "Your request was sent to our Support service.\nThey will contact you soon.",
         "LANG_SEL_MENU": "Bot language selection menu.",
@@ -141,7 +143,7 @@ texts = {
             "6": "In delivery",
             "7": "Delivered"
         },
-        "ADD_COMMENT_MSG": "Add comment for Your order:",
+        "ADD_COMMENT_MSG": "Add comment for Your order (in German):",
         "COMMENT_ADDED_MSG": "Your comment was added.",
         "TO_CART_MSG": "Proceed to cart?",
         "ORDER_CREATED_MSG": lambda
@@ -235,7 +237,7 @@ texts = {
         "SUPPORT_FR_CUS_MSG": lambda
             customer_username,
             customer_id,
-            req_text: f"❗️ Neue eingehende Support-Anfrage von Kunde @{customer_username} " \
+            req_text: f"❗️ Neue eingehende Support-Anfrage von Kunde `@{customer_username}` " \
                       f"({customer_id}):\n{req_text}",
         "SUPPORT_SENT_MSG": "Ihre Anfrage wurde an unseren Support-Service gesendet.\nSie werden sich in Kürze mit Ihnen in Verbindung setzen.",
         "LANG_SEL_MENU": "Sprachauswahlmenü des Bots.",
@@ -380,7 +382,7 @@ texts = {
         "SUPPORT_FR_CUS_MSG": lambda
             customer_username,
             customer_id,
-            req_text: f"❗️Новое входящие обращение от Пользователя @{customer_username}" \
+            req_text: f"❗️Новое входящие обращение от Пользователя `@{customer_username}` " \
                       f"({customer_id}):\n{req_text}",
         "SUPPORT_SENT_MSG": "Ваше обращение было отправлено в службу поддержки.\nСкоро с Вами свяжутся.",
         "LANG_SEL_MENU": "Меню выбора языка бота.",
@@ -456,7 +458,7 @@ texts = {
             "6": "В доставке",
             "7": "Доставлен"
         },
-        "ADD_COMMENT_MSG": "Добавьте комментарий к Вашему заказу:",
+        "ADD_COMMENT_MSG": "Добавьте комментарий к Вашему заказу (на немецком):",
         "COMMENT_ADDED_MSG": "Ваш комментарий добавлен.",
         "TO_CART_MSG": "Вернуться в корзину?",
         "ORDER_CREATED_MSG": lambda

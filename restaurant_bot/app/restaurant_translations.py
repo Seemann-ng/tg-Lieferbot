@@ -1,9 +1,11 @@
+from email.policy import default
+
 from environs import Env
 
 env = Env()
 env.read_env()
 
-BOT_NAME = env.str("BRAND_NAME")
+BOT_NAME = env.str("BRAND_NAME", default="LieferBot")
 
 texts = {
     "en_US": {
@@ -16,7 +18,7 @@ texts = {
             username,
             user_id,
             text: f"❗️ Incoming restaurant registration request\n" \
-                  f"from @{username} (`{user_id}`):\n" \
+                  f"from `@{username}` (`{user_id}`):\n" \
                   f"{text}",
         "REG_REQUEST_SENT_MSG": "Your request has been sent to Our Support Service.",
         "LANG_SEL_MENU": "Bot language selection menu.",
@@ -31,7 +33,7 @@ texts = {
         "SUPPORT_FR_REST_MSG": lambda
             customer_username,
             customer_id,
-            req_text: f"❗️ New incoming support request from restaurant @{customer_username}" \
+            req_text: f"❗️ New incoming support request from restaurant `@{customer_username}` " \
                       f"({customer_id}):\n{req_text}",
         "SUPPORT_SENT_MSG": "Your request was sent to our Support service.\nThey will contact you soon.",
         "DISH_AVAILABLE_SELECT_MSG": "Choose item to make it available.",
@@ -78,7 +80,7 @@ texts = {
             rest_address: f"New incoming order:\n`{order_uuid}`\n" \
                           f"Courier pay:\n€`{courier_fee}`\n" \
                           f"Customer's name:\n{customer_name}\n" \
-                          f"Customer's Telegram:\n @{customer_username}\n" \
+                          f"Customer's Telegram:\n `@{customer_username}`\n" \
                           f"Customer's phone:\n{customer_phone}\n" \
                           f"Order comments:\n{comment}\n" \
                           f"Restaurant:\n`{rest_name}`\n" \
@@ -106,7 +108,7 @@ texts = {
             username,
             user_id,
             text: f"❗️ Eingehende Restaurant-Anmeldungsanfrage\n" \
-                  f"von @{username} ({user_id}):\n{text}",
+                  f"von `@{username}` (`{user_id}`):\n{text}",
         "REG_REQUEST_SENT_MSG": "Ihre Anfrage wurde an unseren Support-Service gesendet.",
         "LANG_SEL_MENU": "Menü zur Auswahl der Bot-Sprache.",
         "CHANGE_LANG_MSG": "Wählen Sie die Bot-Sprache aus",
@@ -120,7 +122,7 @@ texts = {
         "SUPPORT_FR_REST_MSG": lambda
             customer_username,
             customer_id,
-            req_text: f"❗️ Neue eingehende Support-Anfrage von Restaurant @{customer_username} " \
+            req_text: f"❗️ Neue eingehende Support-Anfrage von Restaurant `@{customer_username}` " \
                       f"({customer_id}):\n{req_text}",
         "SUPPORT_SENT_MSG": "Ihre Anfrage wurde an unseren Support-Service gesendet.\nSie werden sich in Kürze mit Ihnen in Verbindung setzen.",
         "DISH_AVAILABLE_SELECT_MSG": "Wählen Sie einen Artikel aus, um ihn verfügbar zu machen.",
@@ -166,7 +168,7 @@ texts = {
             rest_address: f"Neue eingehende Bestellung:\n`{order_uuid}`\n" \
                           f"Kurierlohn:\n€`{courier_fee}`\n" \
                           f"Name des Kunden:\n{customer_name}\n" \
-                          f"Telegram des Kunden:\n @{customer_username}\n" \
+                          f"Telegram des Kunden:\n `@{customer_username}`\n" \
                           f"Telefon des Kunden:\n{customer_phone}\n" \
                           f"Bestellkommentare:\n{comment}\n" \
                           f"Restaurant:\n`{rest_name}`\n" \
@@ -197,7 +199,7 @@ texts = {
             username,
             user_id,
             text: f"❗️ Входящий запрос на регистрацию ресторана\n" \
-                  f"от @{username} (`{user_id}`):\n" \
+                  f"от `@{username}` (`{user_id}`):\n" \
                   f"{text}",
         "REG_REQUEST_SENT_MSG": "Ваш запрос был отправлен Нашей Службе Поддержки.",
         "LANG_SEL_MENU": "Меню выбора языка",
@@ -212,7 +214,7 @@ texts = {
         "SUPPORT_FR_REST_MSG": lambda
             customer_username,
             customer_id,
-            req_text: f"❗️Новое входящие обращение от Заведения @{customer_username}" \
+            req_text: f"❗️Новое входящие обращение от Заведения `@{customer_username}` " \
                       f"({customer_id}):\n{req_text}",
         "SUPPORT_SENT_MSG": "Ваше обращение было отправлено в службу поддержки.\nСкоро с Вами свяжутся.",
         "DISH_AVAILABLE_SELECT_MSG": "Выберите товар, чтобы сделать его доступным для заказа.",
@@ -259,7 +261,7 @@ texts = {
             rest_address: f"Новый заказ:\n`{order_uuid}`\n" \
                           f"Вознаграждение курьера:\n€`{courier_fee}`\n" \
                           f"Имя покупателя:\n{customer_name}\n" \
-                          f"Телеграм покупателя:\n @{customer_username}\n" \
+                          f"Телеграм покупателя:\n `@{customer_username}`\n" \
                           f"Телефон покупателя:\n{customer_phone}\n" \
                           f"Комментарии:\n{comment}\n" \
                           f"Заведение:\n`{rest_name}`\n" \

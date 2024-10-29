@@ -1,4 +1,4 @@
-# 🛒 Telegram Lieferbot
+# 🛒 Telegram LieferBot
 
 ![image](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)
 ![image](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)
@@ -57,9 +57,9 @@ AND
 
 ## 🤖 Interaction with the bots:
 
-To be described in README's in corresponding bots' directories.
+To be described in corresponding README.md files ([Admin](./admin_bot/README.md), [Courier](./courier_bot/README.md), [Customer](./customer_bot/README.md), [Restaurant](./restaurant_bot/README.md)).
 
-## 👨‍🔧Built with:
+## 👨‍🔧 Built with:
 
 * [Python 3.12](https://www.python.org/) - programming language.
 * [PyCharm](https://www.jetbrains.com/pycharm/) - IDE from JetBrains.

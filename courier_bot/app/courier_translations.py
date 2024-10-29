@@ -3,7 +3,7 @@ from environs import Env
 env = Env()
 env.read_env()
 
-BOT_NAME = env.str("BRAND_NAME")
+BOT_NAME = env.str("BRAND_NAME", default="LieferBot")
 
 texts = {
     "en_US": {
@@ -16,7 +16,7 @@ texts = {
             username,
             user_id,
             text: f"❗️ Incoming courier registration request\n" \
-                  f"from @{username} (`{user_id}`):\n" \
+                  f"from `@{username}` (`{user_id}`):\n" \
                   f"{text}",
         "REG_REQ_SENT_MSG": "Your request has been sent to Our Support Service.",
         "LANG_SEL_MENU": "Bot language selection menu.",
@@ -39,7 +39,7 @@ texts = {
         "SUPPORT_FR_COUR_MSG": lambda
             customer_username,
             customer_id,
-            req_text: f"❗️ New incoming support request from courier @{customer_username}" \
+            req_text: f"❗️ New incoming support request from courier `@{customer_username}` " \
                       f"({customer_id}):\n{req_text}",
         "SUPPORT_SENT_MSG": "Your request was sent to our Support service.\nThey will contact you soon.",
         "COUR_ORDER_ACCEPTED_MSG": lambda order_uuid: f"✅ Order\n`{order_uuid}`\naccepted.",
@@ -50,7 +50,7 @@ texts = {
             courier_phone: f"Order\n`{order_uuid}`\n" \
                            f"Status update:\nCourier found.\n" \
                            f"Courier's name:\n{courier_name}\n" \
-                           f"Courier's Telegram:\n@{courier_username}\n" \
+                           f"Courier's Telegram:\n`@{courier_username}`\n" \
                            f"Courier's phone:\n{courier_phone}",
         "ORDER_ALREADY_ACCEPTED_MSG": "Sorry, order is already accepted by another courier.",
         "REST_ORDER_READY_MSG": lambda
@@ -83,7 +83,7 @@ texts = {
             username,
             user_id,
             text: f"❗️ Eingehende Kurieranmeldungsanfrage\n" \
-                  f"von @{username} (`{user_id}`):\n{text}",
+                  f"von `@{username}` (`{user_id}`):\n{text}",
         "REG_REQ_SENT_MSG": "Ihre Anfrage wurde an unseren Support-Service gesendet.",
         "LANG_SEL_MENU": "Menü zur Auswahl der Bot-Sprache.",
         "CHANGE_LANG_MSG": "Wählen Sie die Bot-Sprache aus",
@@ -105,7 +105,7 @@ texts = {
         "SUPPORT_FR_COUR_MSG": lambda
             customer_username,
             customer_id,
-            req_text: f"❗️ Neue eingehende Support-Anfrage von Kurier @{customer_username} " \
+            req_text: f"❗️ Neue eingehende Support-Anfrage von Kurier `@{customer_username}` " \
                       f"({customer_id}):\n{req_text}",
         "SUPPORT_SENT_MSG": "Ihre Anfrage wurde an unseren Support-Service gesendet.\nSie werden sich in Kürze mit Ihnen in Verbindung setzen.",
         "COUR_ORDER_ACCEPTED_MSG": lambda order_uuid: f"✅ Bestellung\n`{order_uuid}`\nakzeptiert.",
@@ -116,7 +116,7 @@ texts = {
             courier_phone: f"Bestellung\n`{order_uuid}`\n" \
                            f"Statusaktualisierung:\nKurier gefunden.\n" \
                            f"Name des Kuriers:\n{courier_name}\n" \
-                           f"Telegram des Kuriers:\n@{courier_username}\n" \
+                           f"Telegram des Kuriers:\n`@{courier_username}`\n" \
                            f"Telefon des Kuriers:\n{courier_phone}",
         "ORDER_ALREADY_ACCEPTED_MSG": "Entschuldigung, die Bestellung wurde bereits von einem anderen Kurier angenommen.",
         "REST_ORDER_READY_MSG": lambda
@@ -150,7 +150,7 @@ texts = {
             username,
             user_id,
             text: f"❗️ Входящий запрос на регистрацию курьера\n" \
-                  f"от @{username} (`{user_id}`):\n" \
+                  f"от `@{username}` (`{user_id}`):\n" \
                   f"{text}",
         "REG_REQ_SENT_MSG": "Ваш запрос был отправлен в Нашу Службу Поддержки.",
         "LANG_SEL_MENU": "Меню выбора языка",
@@ -173,7 +173,7 @@ texts = {
         "SUPPORT_FR_COUR_MSG": lambda
             customer_username,
             customer_id,
-            req_text: f"❗️Новое входящие обращение от Курьера @{customer_username}" \
+            req_text: f"❗️Новое входящие обращение от Курьера `@{customer_username}` " \
                       f"({customer_id}):\n{req_text}",
         "SUPPORT_SENT_MSG": "Ваше обращение было отправлено в службу поддержки.\nСкоро с Вами свяжутся.",
         "COUR_ORDER_ACCEPTED_MSG": lambda order_uuid: f"✅ Заказ\n`{order_uuid}`\nпринят.",
@@ -184,7 +184,7 @@ texts = {
             courier_phone: f"Заказ\n`{order_uuid}`\n" \
                            f"Новый статус:\nКурьер найден.\n" \
                            f"Имя курьера:\n{courier_name}\n" \
-                           f"Телеграм курьера:\n@{courier_username}\n" \
+                           f"Телеграм курьера:\n`@{courier_username}`\n" \
                            f"Номер телефона курьера:\n{courier_phone}",
         "ORDER_ALREADY_ACCEPTED_MSG": "Упс, этот заказ уже принял другой курьер.",
         "REST_ORDER_READY_MSG": lambda

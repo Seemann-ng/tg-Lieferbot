@@ -17,7 +17,8 @@ CREATE TABLE couriers
     courier_rating     NUMERIC(3, 2) DEFAULT 5.00,
     courier_phone_num  VARCHAR,
     lang_code          VARCHAR       DEFAULT 'en_US',
-    account_balance    NUMERIC(9, 2) DEFAULT 0.00
+    account_balance    NUMERIC(9, 2) DEFAULT 0.00,
+    paypal_id          VARCHAR
 );
 
 

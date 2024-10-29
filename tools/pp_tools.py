@@ -1,7 +1,9 @@
 import json
-import requests
-from typing import Dict
+from time import sleep
+from typing import Dict, Tuple, Any
 
+
+import requests
 from environs import Env
 from psycopg2.extensions import cursor
 
@@ -136,4 +138,46 @@ def pp_rest_payout(order_uuid: str, curs: cursor) -> int:
         }
     }
     response = requests.post(url, json=data, auth=(pp_username, pp_password))
+    return response.status_code
+
+
+@cursor_decorator
+@logger_decorator
+def pp_courier_payout(courier: Tuple[Any,...], curs: cursor) -> int:
+    """Commit PayPal payment to the Courier.
+
+    Args:
+        courier: Array containing info about courier and payment.
+        curs: Cursor object from psycopg2.
+
+    Returns:
+        Response status code.
+
+    """
+    if pp_mode == "deployment":
+        url = f"https://api-m.paypal.com/v1/payments/payouts"
+    else:
+        url = f"https://api-m.sandbox.paypal.com/v1/payments/payouts"
+    data = {
+        "items": [
+            {
+                "receiver": courier[4],
+                "amount": {
+                    "currency": "EUR",
+                    "value": str(courier[3])
+                },
+                "purpose": "SERVICES"
+            }
+        ],
+        "sender_batch_header": {
+            "recipient_type": "PAYPAL_ID"
+        }
+    }
+    response = requests.post(url, json=data, auth=(pp_username, pp_password))
+    if response.status_code == 201:
+        curs.execute(
+            "UPDATE couriers SET account_balance = 0.00 WHERE courier_id = %s",
+            (courier[0],)
+        )
+    sleep(1)
     return response.status_code
