@@ -21,25 +21,26 @@ docker compose up -d --build
 In the `.env` file, or through the `-e` flags, you must set the required variables from
 tables below.
 
-| Variable             | Default                 | Description                                                                        |
-|----------------------|-------------------------|------------------------------------------------------------------------------------|
-| CUSTOMER_BOT_TOKEN   | **(required)**          | Telegram bot token for Customer bot.                                               |
-| RESTAURANT_BOT_TOKEN | **(required)**          | Telegram bot token for Restaurant bot.                                             |
-| COURIER_BOT_TOKEN    | **(required)**          | Telegram bot token for Courier bot.                                                |
-| ADMIN_BOT_TOKEN      | **(required)**          | Telegram bot token for Admin bot.                                                  |
-| DB_USER              | **(required)**          | PostgreSQL DB username.                                                            |
-| DB_PASSWORD          | **(required)**          | PostgreSQL DB user password.                                                       |
-| DB_EXT_PORT          | **5432**                | External DB host port.                                                             |
-| DEF_LANG             | **en_US**               | Default language of the bots (`en_US`, `de_DE`, `ru_RU` available).                |
-| COURIER_FEE_BASE     | **2.25**                | (see remark below)                                                                 |
-| COURIER_FEE_RATE     | **0.08**                | (see remark below)                                                                 |
-| SERVICE_FEE_BASE     | **1.75**                | (see remark below)                                                                 |
-| SERVICE_FEE_RATE     | **0.05**                | (see remark below)                                                                 |
-| PP_USERNAME          | **(required)**          | PayPal app Client ID.                                                              |
-| PP_PASSWORD          | **(required)**          | PayPal app secret key.                                                             |
-| PP_MODE              | **sandbox**             | PayPal mode, `deployment` for real money transactions, `sandbox` for sandbox mode. |
-| BRAND_NAME           | **Shop**                | Name of the Service displayed on PayPal payment page.                              |
-| RETURN_LINK          | **https://google.com/** | URL Customer to be redirected to after payment completion on PayPal payment page.  |
+| Variable                  | Default                 | Description                                                                        |
+|---------------------------|-------------------------|------------------------------------------------------------------------------------|
+| DEF_LANG                  | **(required)**          | Default language of the bots (`en_US`, `de_DE`, `ru_RU` available).                |
+| CUSTOMER_BOT_TOKEN        | **(required)**          | Telegram bot token for Customer bot.                                               |
+| RESTAURANT_BOT_TOKEN      | **(required)**          | Telegram bot token for Restaurant bot.                                             |
+| COURIER_BOT_TOKEN         | **(required)**          | Telegram bot token for Courier bot.                                                |
+| ADMIN_BOT_TOKEN           | **(required)**          | Telegram bot token for Admin bot.                                                  |
+| DB_USER                   | **(required)**          | PostgreSQL DB username.                                                            |
+| DB_PASSWORD               | **(required)**          | PostgreSQL DB user password.                                                       |
+| DB_EXT_PORT               | **5432**                | External DB host port.                                                             |
+| COURIER_FEE_BASE          | **2.25**                | Base courier pay in Euros (see remark below).                                      |
+| COURIER_FEE_RATE          | **0.08**                | Courier fee coefficient (see remark below).                                        |
+| COURIER_FEE_DISTANCE_RATE | **0.25**                | Courier fee delivery distance coefficient in Euros per km (see remark below).      |
+| SERVICE_FEE_BASE          | **1.75**                | Base service pay in Euros (see remark below).                                      |
+| SERVICE_FEE_RATE          | **0.05**                | Service fee coefficient (see remark below).                                        |
+| PP_USERNAME               | **(required)**          | PayPal app Client ID.                                                              |
+| PP_PASSWORD               | **(required)**          | PayPal app secret key.                                                             |
+| PP_MODE                   | **sandbox**             | PayPal mode, `deployment` for real money transactions, `sandbox` for sandbox mode. |
+| BRAND_NAME                | **Shop**                | Name of the Service displayed on PayPal payment page.                              |
+| RETURN_LINK               | **https://google.com/** | URL Customer to be redirected to after payment completion on PayPal payment page.  |
 
 __REMARK:__
 
