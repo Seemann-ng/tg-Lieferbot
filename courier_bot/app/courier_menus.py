@@ -51,15 +51,7 @@ def transport_menu(lang_code: str) -> types.InlineKeyboardMarkup:
         text=texts[lang_code]["BICYCLE_BTN"],
         callback_data="type 1"
     )
-    motorcycle_button = types.InlineKeyboardButton(
-        text=texts[lang_code]["MOTORCYCLE_BTN"],
-        callback_data="type 2"
-    )
-    automobile_button = types.InlineKeyboardButton(
-        text=texts[lang_code]["AUTO_BTN"],
-        callback_data="type 3"
-    )
-    menu.add(feet_button, bicycle_button, motorcycle_button, automobile_button)
+    menu.add(feet_button, bicycle_button)
     return menu
 
 

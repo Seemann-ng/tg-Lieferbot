@@ -276,13 +276,16 @@ class Interface:
             "SELECT delivery_distance FROM orders WHERE order_uuid = %s",
             (self.data_to_read.data.split(maxsplit=1)[-1],)
         )
-        delivery_distance = float(curs.fetchone()[0])  # TODO remake algorithm.
+        delivery_distance = float(curs.fetchone()[0])
+        if delivery_distance <= 1.00:
+            return couriers if couriers else []
+        bicycles = 0
         for courier in couriers:
-            if courier[2] == "0" and delivery_distance >= 3:
-                couriers.remove(courier)
-            if courier[2] == "1" and delivery_distance >= 7:
-                couriers.remove(courier)
-            if courier[2] == "2" and delivery_distance >= 15:
+            bicycles += 1 if courier[2] == "1" else 0
+        if bicycles == 0:
+            return couriers if couriers else []
+        for courier in couriers:
+            if courier[2] == "0":
                 couriers.remove(courier)
         return couriers if couriers else []
 
