@@ -89,7 +89,7 @@ CREATE TABLE cart
     customer_id     INT,
     restaurant_type VARCHAR,
     restaurant_uuid uuid,
-    dishes_uuids    uuid[],
+    dishes_uuids    VARCHAR[],
     subtotal        NUMERIC(10, 2) DEFAULT 0.00,
     service_fee     NUMERIC(10, 2) DEFAULT 0.00,
     courier_fee     NUMERIC(10, 2) DEFAULT 0.00,
