@@ -24,9 +24,9 @@ __Commands:__
 
 `/delete_item` - Call item deletion menu.
 
-`/close_shift` - Set Restaurant status as open.
+`/open_shift` - Set Restaurant status as open.
 
-`/open_shift` - Set Restaurant status as closed.
+`/close_shift` - Set Restaurant status as closed.
 
 `/support` - Send support request.
 

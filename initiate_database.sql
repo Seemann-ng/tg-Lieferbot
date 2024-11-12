@@ -1,14 +1,14 @@
 CREATE TABLE admins
 (
     admin_username VARCHAR,
-    admin_id       INT,
+    admin_id       BIGINT,
     lang_code      VARCHAR DEFAULT 'en_US'
 );
 
 
 CREATE TABLE couriers
 (
-    courier_id         INT,
+    courier_id         BIGINT,
     courier_username   VARCHAR,
     courier_legal_name VARCHAR,
     courier_type       VARCHAR        DEFAULT '0',
@@ -24,7 +24,7 @@ CREATE TABLE couriers
 
 CREATE TABLE customers
 (
-    customer_id        INT,
+    customer_id        BIGINT,
     customer_username  VARCHAR,
     customer_name      VARCHAR,
     customer_location  NUMERIC(9, 6)[],
@@ -36,7 +36,7 @@ CREATE TABLE customers
 CREATE TABLE restaurants
 (
     restaurant_uuid    uuid,
-    restaurant_tg_id   INT,
+    restaurant_tg_id   BIGINT,
     restaurant_name    VARCHAR,
     restaurant_type    VARCHAR,
     restaurant_is_open BOOLEAN,
@@ -63,11 +63,11 @@ CREATE TABLE orders
 (
     order_uuid        uuid,
     restaurant_uuid   uuid,
-    restaurant_id     INT,
+    restaurant_id     BIGINT,
     restaurant_name   VARCHAR,
-    courier_id        INT           DEFAULT -1,
+    courier_id        BIGINT        DEFAULT -1,
     courier_name      VARCHAR,
-    customer_id       INT,
+    customer_id       BIGINT,
     customer_name     VARCHAR,
     delivery_location NUMERIC(9, 6)[],
     delivery_distance NUMERIC(7, 2) DEFAULT 0.00,
@@ -86,7 +86,7 @@ CREATE TABLE orders
 
 CREATE TABLE cart
 (
-    customer_id     INT,
+    customer_id     BIGINT,
     restaurant_type VARCHAR,
     restaurant_uuid uuid,
     dishes_uuids    VARCHAR[],
