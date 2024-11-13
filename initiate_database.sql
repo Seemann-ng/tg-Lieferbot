@@ -1,14 +1,14 @@
 CREATE TABLE admins
 (
     admin_username VARCHAR,
-    admin_id       BIGINT,
+    admin_id       BIGINT primary key,
     lang_code      VARCHAR DEFAULT 'en_US'
 );
 
 
 CREATE TABLE couriers
 (
-    courier_id         BIGINT,
+    courier_id         BIGINT primary key,
     courier_username   VARCHAR,
     courier_legal_name VARCHAR,
     courier_type       VARCHAR        DEFAULT '0',
@@ -24,7 +24,7 @@ CREATE TABLE couriers
 
 CREATE TABLE customers
 (
-    customer_id        BIGINT,
+    customer_id        BIGINT primary key,
     customer_username  VARCHAR,
     customer_name      VARCHAR,
     customer_location  NUMERIC(9, 6)[],
@@ -35,7 +35,7 @@ CREATE TABLE customers
 
 CREATE TABLE restaurants
 (
-    restaurant_uuid    uuid,
+    restaurant_uuid    uuid primary key,
     restaurant_tg_id   BIGINT,
     restaurant_name    VARCHAR,
     restaurant_type    VARCHAR,
@@ -49,7 +49,7 @@ CREATE TABLE restaurants
 
 CREATE TABLE dishes
 (
-    restaurant_uuid   uuid,
+    restaurant_uuid   uuid primary key,
     dish_uuid         uuid,
     category          VARCHAR        DEFAULT 'No category',
     dish_name         VARCHAR,
@@ -61,7 +61,7 @@ CREATE TABLE dishes
 
 CREATE TABLE orders
 (
-    order_uuid        uuid,
+    order_uuid        uuid primary key,
     restaurant_uuid   uuid,
     restaurant_id     BIGINT,
     restaurant_name   VARCHAR,
@@ -86,7 +86,7 @@ CREATE TABLE orders
 
 CREATE TABLE cart
 (
-    customer_id     BIGINT,
+    customer_id     BIGINT primary key,
     restaurant_type VARCHAR,
     restaurant_uuid uuid,
     dishes_uuids    VARCHAR[],
