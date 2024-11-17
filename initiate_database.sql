@@ -1,100 +1,100 @@
 CREATE TABLE admins
 (
-    admin_username VARCHAR,
-    admin_id       BIGINT primary key,
-    lang_code      VARCHAR DEFAULT 'en_US'
+    admin_username VARCHAR NOT NULL,
+    admin_id       BIGINT  NOT NULL PRIMARY KEY,
+    lang_code      VARCHAR NOT NULL DEFAULT 'en_US'
 );
 
 
 CREATE TABLE couriers
 (
-    courier_id         BIGINT primary key,
-    courier_username   VARCHAR,
-    courier_legal_name VARCHAR,
-    courier_type       VARCHAR        DEFAULT '0',
-    courier_status     BOOLEAN        DEFAULT FALSE,
-    is_occupied        BOOLEAN        DEFAULT FALSE,
-    courier_rating     NUMERIC(3, 2)  DEFAULT 5.00,
-    courier_phone_num  VARCHAR,
-    lang_code          VARCHAR        DEFAULT 'en_US',
-    account_balance    NUMERIC(10, 2) DEFAULT 0.00,
-    paypal_id          VARCHAR
+    courier_id         BIGINT         NOT NULL PRIMARY KEY,
+    courier_username   VARCHAR        NOT NULL,
+    courier_legal_name VARCHAR        NOT NULL,
+    courier_type       VARCHAR        NOT NULL DEFAULT '0',
+    courier_status     BOOLEAN        NOT NULL DEFAULT FALSE,
+    is_occupied        BOOLEAN        NOT NULL DEFAULT FALSE,
+    courier_rating     NUMERIC(3, 2)  NOT NULL DEFAULT 5.00,
+    courier_phone_num  VARCHAR        NOT NULL,
+    lang_code          VARCHAR        NOT NULL DEFAULT 'en_US',
+    account_balance    NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
+    paypal_id          VARCHAR        NOT NULL
 );
 
 
 CREATE TABLE customers
 (
-    customer_id        BIGINT primary key,
-    customer_username  VARCHAR,
-    customer_name      VARCHAR,
-    customer_location  NUMERIC(9, 6)[],
-    customer_phone_num VARCHAR DEFAULT '',
-    lang_code          VARCHAR DEFAULT 'en_US'
+    customer_id        BIGINT          NOT NULL PRIMARY KEY,
+    customer_username  VARCHAR         NOT NULL,
+    customer_name      VARCHAR         NOT NULL,
+    customer_location  NUMERIC(9, 6)[] NOT NULL,
+    customer_phone_num VARCHAR         NOT NULL DEFAULT '',
+    lang_code          VARCHAR         NOT NULL DEFAULT 'en_US'
 );
 
 
 CREATE TABLE restaurants
 (
-    restaurant_uuid    uuid primary key,
-    restaurant_tg_id   BIGINT,
-    restaurant_name    VARCHAR,
-    restaurant_type    VARCHAR,
-    restaurant_is_open BOOLEAN,
-    lang_code          VARCHAR DEFAULT 'en_US',
-    address            VARCHAR,
-    location           NUMERIC(9, 6)[],
-    paypal_id          VARCHAR
+    restaurant_uuid    uuid            NOT NULL PRIMARY KEY,
+    restaurant_tg_id   BIGINT          NOT NULL,
+    restaurant_name    VARCHAR         NOT NULL,
+    restaurant_type    VARCHAR         NOT NULL,
+    restaurant_is_open BOOLEAN         NOT NULL,
+    lang_code          VARCHAR         NOT NULL DEFAULT 'en_US',
+    address            VARCHAR         NOT NULL,
+    location           NUMERIC(9, 6)[] NOT NULL,
+    paypal_id          VARCHAR         NOT NULL
 );
 
 
 CREATE TABLE dishes
 (
-    restaurant_uuid   uuid primary key,
-    dish_uuid         uuid,
-    category          VARCHAR        DEFAULT 'No category',
-    dish_name         VARCHAR,
-    dish_description  VARCHAR,
-    dish_price        NUMERIC(10, 2) DEFAULT 0.00,
-    dish_is_available BOOLEAN        DEFAULT TRUE
+    restaurant_uuid   uuid           NOT NULL primary key,
+    dish_uuid         uuid           NOT NULL,
+    category          VARCHAR        NOT NULL DEFAULT 'No category',
+    dish_name         VARCHAR        NOT NULL,
+    dish_description  VARCHAR        NOT NULL,
+    dish_price        NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
+    dish_is_available BOOLEAN        NOT NULL DEFAULT TRUE
 );
 
 
 CREATE TABLE orders
 (
-    order_uuid        uuid primary key,
-    restaurant_uuid   uuid,
-    restaurant_id     BIGINT,
-    restaurant_name   VARCHAR,
-    courier_id        BIGINT        DEFAULT -1,
-    courier_name      VARCHAR,
-    customer_id       BIGINT,
-    customer_name     VARCHAR,
-    delivery_location NUMERIC(9, 6)[],
-    delivery_distance NUMERIC(7, 2) DEFAULT 0.00,
-    dishes            VARCHAR[],
-    dishes_subtotal   NUMERIC(10, 2),
-    courier_fee       NUMERIC(10, 2),
-    service_fee       NUMERIC(10, 2),
-    total             NUMERIC(10, 2),
-    order_comment     VARCHAR       DEFAULT '',
-    order_open_date   TIMESTAMP,
+    order_uuid        uuid            NOT NULL PRIMARY KEY,
+    restaurant_uuid   uuid            NOT NULL,
+    restaurant_id     BIGINT          NOT NULL,
+    restaurant_name   VARCHAR         NOT NULL,
+    courier_id        BIGINT          NOT NULL DEFAULT -1,
+    courier_name      VARCHAR         NOT NULL,
+    customer_id       BIGINT          NOT NULL,
+    customer_name     VARCHAR         NOT NULL,
+    delivery_location NUMERIC(9, 6)[] NOT NULL,
+    delivery_distance NUMERIC(7, 2)   NOT NULL DEFAULT 0.00,
+    dishes            VARCHAR[]       NOT NULL,
+    dishes_subtotal   NUMERIC(10, 2)  NOT NULL,
+    courier_fee       NUMERIC(10, 2)  NOT NULL,
+    service_fee       NUMERIC(10, 2)  NOT NULL,
+    total             NUMERIC(10, 2)  NOT NULL,
+    order_comment     VARCHAR         NOT NULL DEFAULT '',
+    order_open_date   TIMESTAMP       NOT NULL,
     order_close_date  TIMESTAMP,
-    order_status      VARCHAR,
-    paypal_order_id   VARCHAR
+    order_status      VARCHAR         NOT NULL,
+    paypal_order_id   VARCHAR         NOT NULL
 );
 
 
 CREATE TABLE cart
 (
-    customer_id     BIGINT primary key,
-    restaurant_type VARCHAR,
-    restaurant_uuid uuid,
-    dishes_uuids    VARCHAR[],
-    subtotal        NUMERIC(10, 2) DEFAULT 0.00,
-    service_fee     NUMERIC(10, 2) DEFAULT 0.00,
-    courier_fee     NUMERIC(10, 2) DEFAULT 0.00,
-    total           NUMERIC(10, 2) DEFAULT 0.00,
-    order_comment   VARCHAR        DEFAULT ''
+    customer_id     BIGINT         NOT NULL PRIMARY KEY,
+    restaurant_type VARCHAR        NOT NULL,
+    restaurant_uuid uuid           NOT NULL,
+    dishes_uuids    VARCHAR[]      NOT NULL,
+    subtotal        NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
+    service_fee     NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
+    courier_fee     NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
+    total           NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
+    order_comment   VARCHAR        NOT NULL DEFAULT ''
 );
 
 
